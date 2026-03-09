@@ -1,4 +1,13 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateReceiptItemDto } from './create-receipt-item.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString } from 'class-validator';
 
-export class UpdateReceiptItemDto extends PartialType(CreateReceiptItemDto) {}
+export class UpdateReceiptItemDto {
+    @ApiProperty({
+        example: '{"notes":"Sin cebolla"}',
+        description: 'Arbitrary metadata in JSON format',
+        required: false,
+    })
+    @IsString()
+    @IsOptional()
+    metadata?: string;
+}

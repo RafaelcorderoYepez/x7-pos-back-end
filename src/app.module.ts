@@ -108,6 +108,7 @@ import { PurchaseOrder } from './inventory/products-inventory/purchase-order/ent
 import { PurchaseOrderItem } from './inventory/products-inventory/purchase-order-item/entities/purchase-order-item.entity';
 import { Receipt } from './inventory/billing-transactions/receipts/entities/receipt.entity';
 import { ReceiptItem } from './inventory/billing-transactions/receipt-item/entities/receipt-item.entity';
+import { ReceiptTax } from './inventory/billing-transactions/receipt-tax/entities/receipt-tax.entity';
 import { KitchenStation } from './kitchen-display-system/kitchen-station/entities/kitchen-station.entity';
 import { KitchenDisplayDevice } from './kitchen-display-system/kitchen-display-device/entities/kitchen-display-device.entity';
 import { KitchenOrder } from './kitchen-display-system/kitchen-order/entities/kitchen-order.entity';
@@ -200,6 +201,7 @@ import { CashTipMovement } from './tips/cash-tip-movements/entities/cash-tip-mov
           PurchaseOrderItem,
           Receipt,
           ReceiptItem,
+          ReceiptTax,
           KitchenStation,
           KitchenDisplayDevice,
           KitchenOrder,
