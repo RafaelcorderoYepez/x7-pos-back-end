@@ -21,6 +21,26 @@ export class Receipt {
   @Column({ type: 'text', nullable: true })
   fiscal_data?: string | null;
 
+  @ApiProperty({ example: 0, description: 'Sum of all item subtotals before tax and discount', default: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  subtotal: number;
+
+  @ApiProperty({ example: 0, description: 'Total tax amount across all receipt taxes', default: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  total_tax: number;
+
+  @ApiProperty({ example: 0, description: 'Total discount amount across all receipt items', default: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  total_discount: number;
+
+  @ApiProperty({ example: 0, description: 'Grand total = subtotal + total_tax - total_discount', default: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  grand_total: number;
+
+  @ApiProperty({ example: 'USD', description: 'Currency code (ISO 4217)', default: 'USD' })
+  @Column({ type: 'varchar', length: 10, default: 'USD' })
+  currency: string;
+
   @ApiProperty({ example: 'active', enum: ReceiptStatus, description: 'Logical status' })
   @Column({ type: 'enum', enum: ReceiptStatus, default: ReceiptStatus.ACTIVE })
   status: ReceiptStatus;

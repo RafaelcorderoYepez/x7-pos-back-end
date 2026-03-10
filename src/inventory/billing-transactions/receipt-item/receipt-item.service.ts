@@ -42,18 +42,12 @@ export class ReceiptItemService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const receipt = await this.receiptRepo.findOne({
-      where: { id: receiptId },
-    });
-
+    const receipt = await this.receiptRepo.findOne({ where: { id: receiptId } });
     if (!receipt) {
       throw new NotFoundException(`Receipt with ID ${receiptId} not found`);
     }
 
-    const order = await this.orderRepo.findOne({
-      where: { id: receipt.order_id },
-    });
-
+    const order = await this.orderRepo.findOne({ where: { id: receipt.order_id } });
     if (!order) {
       throw new NotFoundException(
         `Order associated with receipt ${receiptId} not found`,
@@ -61,31 +55,10 @@ export class ReceiptItemService {
     }
 
     if (order.merchant_id !== merchantId) {
-      throw new ForbiddenException(
-        'This receipt does not belong to your merchant',
-      );
+      throw new ForbiddenException('This receipt does not belong to your merchant');
     }
 
     return receipt;
-  }
-
-  // ─── Helper: formato de respuesta ────────────────────────────────────────────
-
-  private format(item: ReceiptItem): ReceiptItemResponseDto {
-    return {
-      id: item.id,
-      receiptId: item.receipt_id,
-      name: item.name,
-      sku: item.sku ?? null,
-      quantity: Number(item.quantity),
-      unitPrice: Number(item.unit_price),
-      subtotal: Number(item.subtotal),
-      discountAmount: Number(item.discount_amount),
-      total: Number(item.total),
-      metadata: item.metadata ?? null,
-      createdAt: item.created_at,
-      updatedAt: item.updated_at,
-    };
   }
 
   // ─── CRUD ─────────────────────────────────────────────────────────────────────
@@ -150,11 +123,7 @@ export class ReceiptItemService {
 
     const saved = await this.receiptItemRepo.save(entity);
 
-    return {
-      statusCode: 201,
-      message: 'Receipt item created successfully',
-      data: this.format(saved),
-    };
+    return this.findOne(saved.id, merchantId, 'Created');
   }
 
   async findAll(
@@ -218,10 +187,25 @@ export class ReceiptItemService {
 
     const totalPages = Math.ceil(total / limit);
 
+    const data: ReceiptItemResponseDto[] = rows.map((r) => ({
+      id: r.id,
+      receipt_id: r.receipt_id,
+      name: r.name,
+      sku: r.sku ?? null,
+      quantity: Number(r.quantity),
+      unit_price: Number(r.unit_price),
+      subtotal: Number(r.subtotal),
+      discount_amount: Number(r.discount_amount),
+      total: Number(r.total),
+      metadata: r.metadata ?? null,
+      created_at: r.created_at,
+      updated_at: r.updated_at,
+    }));
+
     return {
       statusCode: 200,
       message: 'Receipt items retrieved successfully',
-      data: rows.map((r) => this.format(r)),
+      data,
       page,
       limit,
       total,
@@ -234,6 +218,7 @@ export class ReceiptItemService {
   async findOne(
     id: number,
     merchantId: number,
+    createdUpdatedDeleted?: string,
   ): Promise<OneReceiptItemResponseDto> {
     if (!id || id <= 0) {
       throw new BadRequestException('Invalid receipt item ID');
@@ -251,11 +236,55 @@ export class ReceiptItemService {
     // Check merchant ownership via receipt → order
     await this.verifyMerchantOwnership(item.receipt_id, merchantId);
 
-    return {
-      statusCode: 200,
-      message: 'Receipt item retrieved successfully',
-      data: this.format(item),
+    const dataForResponse: ReceiptItemResponseDto = {
+      id: item.id,
+      receipt_id: item.receipt_id,
+      name: item.name,
+      sku: item.sku ?? null,
+      quantity: Number(item.quantity),
+      unit_price: Number(item.unit_price),
+      subtotal: Number(item.subtotal),
+      discount_amount: Number(item.discount_amount),
+      total: Number(item.total),
+      metadata: item.metadata ?? null,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
     };
+
+    let response: OneReceiptItemResponseDto;
+
+    switch (createdUpdatedDeleted) {
+      case 'Created':
+        response = {
+          statusCode: 201,
+          message: 'Receipt item created successfully',
+          data: dataForResponse,
+        };
+        break;
+      case 'Updated':
+        response = {
+          statusCode: 200,
+          message: 'Receipt item updated successfully',
+          data: dataForResponse,
+        };
+        break;
+      case 'Deleted':
+        response = {
+          statusCode: 200,
+          message: 'Receipt item deleted successfully',
+          data: dataForResponse,
+        };
+        break;
+      default:
+        response = {
+          statusCode: 200,
+          message: 'Receipt item retrieved successfully',
+          data: dataForResponse,
+        };
+        break;
+    }
+
+    return response;
   }
 
   async update(
@@ -296,13 +325,9 @@ export class ReceiptItemService {
       item.metadata = dto.metadata;
     }
 
-    const saved = await this.receiptItemRepo.save(item);
+    await this.receiptItemRepo.save(item);
 
-    return {
-      statusCode: 200,
-      message: 'Receipt item updated successfully',
-      data: this.format(saved),
-    };
+    return this.findOne(id, merchantId, 'Updated');
   }
 
   async remove(
@@ -325,14 +350,27 @@ export class ReceiptItemService {
     // Check merchant ownership
     await this.verifyMerchantOwnership(item.receipt_id, merchantId);
 
-    const formatted = this.format(item);
+    const dataForResponse: ReceiptItemResponseDto = {
+      id: item.id,
+      receipt_id: item.receipt_id,
+      name: item.name,
+      sku: item.sku ?? null,
+      quantity: Number(item.quantity),
+      unit_price: Number(item.unit_price),
+      subtotal: Number(item.subtotal),
+      discount_amount: Number(item.discount_amount),
+      total: Number(item.total),
+      metadata: item.metadata ?? null,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+    };
 
     await this.receiptItemRepo.delete(id);
 
-    return {
+    return this.findOne(id, merchantId, 'Deleted').catch(() => ({
       statusCode: 200,
       message: 'Receipt item deleted successfully',
-      data: formatted,
-    };
+      data: dataForResponse,
+    }));
   }
 }

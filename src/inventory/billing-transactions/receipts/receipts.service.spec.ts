@@ -82,6 +82,7 @@ describe('ReceiptsService', () => {
       orderId: 1,
       type: 'invoice',
       fiscalData: '{"tax_id": "12345678", "fiscal_number": "ABC123"}',
+      currency: 'USD',
     };
 
     it('should create a receipt successfully', async () => {
@@ -112,6 +113,7 @@ describe('ReceiptsService', () => {
       const dtoWithoutFiscalData: CreateReceiptDto = {
         orderId: 1,
         type: 'invoice',
+        currency: 'USD',
       };
       const receiptWithoutFiscalData = {
         ...mockReceipt,
@@ -132,6 +134,7 @@ describe('ReceiptsService', () => {
       const dtoWithSpaces: CreateReceiptDto = {
         orderId: 1,
         type: '  invoice  ',
+        currency: 'USD',
       };
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
       jest.spyOn(receiptRepository, 'findOne').mockResolvedValue(null);

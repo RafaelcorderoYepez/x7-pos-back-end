@@ -16,7 +16,7 @@ export class ReceiptsService {
     private readonly receiptRepo: Repository<Receipt>,
     @InjectRepository(Order)
     private readonly orderRepo: Repository<Order>,
-  ) {}
+  ) { }
 
   async create(dto: CreateReceiptDto, authenticatedUserMerchantId: number): Promise<OneReceiptResponseDto> {
     // 1. Validate user permissions (ForbiddenException 403)
@@ -88,6 +88,11 @@ export class ReceiptsService {
       order_id: dto.orderId,
       type: trimmedType,
       fiscal_data: dto.fiscalData ?? null,
+      subtotal: dto.subtotal ?? 0,
+      total_tax: dto.totalTax ?? 0,
+      total_discount: dto.totalDiscount ?? 0,
+      grand_total: dto.grandTotal ?? 0,
+      currency: dto.currency,
       status: ReceiptStatus.ACTIVE,
     });
 
@@ -175,7 +180,7 @@ export class ReceiptsService {
       }
 
       // Add filter to only include receipts from merchant's orders
-      where.order_id = merchantOrderIds.length === 1 
+      where.order_id = merchantOrderIds.length === 1
         ? merchantOrderIds[0]
         : merchantOrderIds;
     }
@@ -288,6 +293,11 @@ export class ReceiptsService {
       }
       updateData.fiscal_data = dto.fiscalData ?? null;
     }
+    if (dto.subtotal !== undefined) updateData.subtotal = dto.subtotal;
+    if (dto.totalTax !== undefined) updateData.total_tax = dto.totalTax;
+    if (dto.totalDiscount !== undefined) updateData.total_discount = dto.totalDiscount;
+    if (dto.grandTotal !== undefined) updateData.grand_total = dto.grandTotal;
+    if (dto.currency !== undefined) updateData.currency = dto.currency;
 
     await this.receiptRepo.update(id, updateData);
     const updated = await this.receiptRepo.findOne({ where: { id } });
@@ -343,6 +353,11 @@ export class ReceiptsService {
       orderId: row.order_id,
       type: row.type,
       fiscalData: row.fiscal_data ?? null,
+      subtotal: Number(row.subtotal),
+      totalTax: Number(row.total_tax),
+      totalDiscount: Number(row.total_discount),
+      grandTotal: Number(row.grand_total),
+      currency: row.currency,
       status: row.status,
       createdAt: row.created_at,
       updatedAt: row.updated_at,

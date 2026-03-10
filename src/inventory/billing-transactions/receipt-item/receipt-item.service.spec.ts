@@ -149,6 +149,7 @@ describe('ReceiptItemService', () => {
       const savedItem = { ...mockItem, discount_amount: 0, subtotal: 20, total: 20 };
       mockReceiptItemRepo.create.mockReturnValue(savedItem);
       mockReceiptItemRepo.save.mockResolvedValue(savedItem);
+      mockReceiptItemRepo.findOne.mockResolvedValue(savedItem);
 
       const result = await service.create(dtoWithoutDiscount, MERCHANT_ID);
       expect(result.data.total).toBe(20);

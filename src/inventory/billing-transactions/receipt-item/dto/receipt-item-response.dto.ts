@@ -6,7 +6,7 @@ export class ReceiptItemResponseDto {
     id: number;
 
     @ApiProperty({ example: 10 })
-    receiptId: number;
+    receipt_id: number;
 
     @ApiProperty({ example: 'Burger Combo' })
     name: string;
@@ -18,13 +18,13 @@ export class ReceiptItemResponseDto {
     quantity: number;
 
     @ApiProperty({ example: 12.5 })
-    unitPrice: number;
+    unit_price: number;
 
     @ApiProperty({ example: 25.0 })
     subtotal: number;
 
     @ApiProperty({ example: 2.5 })
-    discountAmount: number;
+    discount_amount: number;
 
     @ApiProperty({ example: 22.5 })
     total: number;
@@ -33,14 +33,16 @@ export class ReceiptItemResponseDto {
     metadata?: string | null;
 
     @ApiProperty({ example: '2024-01-15T08:00:00Z' })
-    createdAt: Date;
+    created_at: Date;
 
     @ApiProperty({ example: '2024-01-15T09:00:00Z' })
-    updatedAt: Date;
+    updated_at: Date;
 }
 
-
 export class OneReceiptItemResponseDto extends SuccessResponse {
-    @ApiProperty({ type: ReceiptItemResponseDto })
+    @ApiProperty({
+        type: () => ReceiptItemResponseDto,
+        description: 'The receipt item',
+    })
     data: ReceiptItemResponseDto;
 }

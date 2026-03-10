@@ -15,6 +15,21 @@ export class ReceiptResponseDto {
   @ApiProperty({ example: '{"tax_id": "12345678", "fiscal_number": "ABC123"}', required: false })
   fiscalData?: string | null;
 
+  @ApiProperty({ example: 100.0 })
+  subtotal: number;
+
+  @ApiProperty({ example: 19.0 })
+  totalTax: number;
+
+  @ApiProperty({ example: 5.0 })
+  totalDiscount: number;
+
+  @ApiProperty({ example: 114.0 })
+  grandTotal: number;
+
+  @ApiProperty({ example: 'USD' })
+  currency: string;
+
   @ApiProperty({ example: 'active', enum: ReceiptStatus })
   status: ReceiptStatus;
 

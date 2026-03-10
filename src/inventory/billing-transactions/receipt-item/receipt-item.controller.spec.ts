@@ -18,17 +18,17 @@ const mockOneResponse: OneReceiptItemResponseDto = {
   message: 'Receipt item retrieved successfully',
   data: {
     id: 1,
-    receiptId: 10,
+    receipt_id: 10,
     name: 'Burger Combo',
     sku: 'SKU-001',
     quantity: 2,
-    unitPrice: 12.5,
+    unit_price: 12.5,
     subtotal: 25.0,
-    discountAmount: 2.5,
+    discount_amount: 2.5,
     total: 22.5,
     metadata: null,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01'),
+    created_at: new Date('2024-01-01'),
+    updated_at: new Date('2024-01-01'),
   },
 };
 

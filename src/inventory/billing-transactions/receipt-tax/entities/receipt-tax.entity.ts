@@ -23,7 +23,7 @@ export class ReceiptTax {
 
     @ApiProperty({ example: 5, required: false })
     @Column({ type: 'int', name: 'receipt_item_id', nullable: true })
-    receipt_item_id?: number;
+    receipt_item_id?: number | null;
 
     @ApiProperty({ example: 'IVA 19%' })
     @Column({ type: 'varchar', length: 150 })

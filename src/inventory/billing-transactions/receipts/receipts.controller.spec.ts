@@ -42,6 +42,11 @@ describe('ReceiptsController', () => {
     orderId: 1,
     type: 'invoice',
     fiscalData: '{"tax_id": "12345678", "fiscal_number": "ABC123"}',
+    subtotal: 100.0,
+    totalTax: 19.0,
+    totalDiscount: 0,
+    grandTotal: 119.0,
+    currency: 'USD',
     status: ReceiptStatus.ACTIVE,
     createdAt: new Date('2024-01-15T08:00:00Z'),
     updatedAt: new Date('2024-01-15T08:00:00Z'),
@@ -95,6 +100,7 @@ describe('ReceiptsController', () => {
       orderId: 1,
       type: 'invoice',
       fiscalData: '{"tax_id": "12345678", "fiscal_number": "ABC123"}',
+      currency: 'USD',
     };
 
     it('should create a new receipt successfully', async () => {
