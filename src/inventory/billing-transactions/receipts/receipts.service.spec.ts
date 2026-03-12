@@ -127,7 +127,7 @@ describe('ReceiptsService', () => {
       const result = await service.create(dtoWithoutFiscalData, 1);
 
       expect(result.statusCode).toBe(201);
-      expect(result.data.fiscalData).toBeNull();
+      expect(result.data.fiscal_data).toBeNull();
     });
 
     it('should trim type before creating', async () => {
@@ -275,9 +275,9 @@ describe('ReceiptsService', () => {
       expect(result.statusCode).toBe(200);
       expect(result.message).toBe('Receipts retrieved successfully');
       expect(result.data).toHaveLength(1);
-      expect(result.paginationMeta.page).toBe(1);
-      expect(result.paginationMeta.limit).toBe(10);
-      expect(result.paginationMeta.total).toBe(1);
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(10);
+      expect(result.total).toBe(1);
     });
 
     it('should return empty array when merchant has no orders', async () => {
@@ -287,7 +287,7 @@ describe('ReceiptsService', () => {
 
       expect(result.statusCode).toBe(200);
       expect(result.data).toHaveLength(0);
-      expect(result.paginationMeta.total).toBe(0);
+      expect(result.total).toBe(0);
     });
 
     it('should filter by orderId when provided', async () => {
@@ -371,8 +371,8 @@ describe('ReceiptsService', () => {
 
       const result = await service.findAll(emptyQuery, 1);
 
-      expect(result.paginationMeta.page).toBe(1);
-      expect(result.paginationMeta.limit).toBe(10);
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(10);
     });
 
     it('should throw ForbiddenException when user has no merchant_id', async () => {
@@ -430,10 +430,10 @@ describe('ReceiptsService', () => {
 
       const result = await service.findAll({ page: 2, limit: 10 }, 1);
 
-      expect(result.paginationMeta.total).toBe(25);
-      expect(result.paginationMeta.totalPages).toBe(3);
-      expect(result.paginationMeta.hasNext).toBe(true);
-      expect(result.paginationMeta.hasPrev).toBe(true);
+      expect(result.total).toBe(25);
+      expect(result.totalPages).toBe(3);
+      expect(result.hasNext).toBe(true);
+      expect(result.hasPrev).toBe(true);
     });
   });
 

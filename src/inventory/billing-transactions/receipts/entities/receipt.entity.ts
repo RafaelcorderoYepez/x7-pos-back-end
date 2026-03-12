@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { ReceiptStatus } from '../constants/receipt-status.enum';
 import { Order } from 'src/orders/entities/order.entity';
 
 @Entity('receipts')
@@ -41,9 +40,9 @@ export class Receipt {
   @Column({ type: 'varchar', length: 10, default: 'USD' })
   currency: string;
 
-  @ApiProperty({ example: 'active', enum: ReceiptStatus, description: 'Logical status' })
-  @Column({ type: 'enum', enum: ReceiptStatus, default: ReceiptStatus.ACTIVE })
-  status: ReceiptStatus;
+  @ApiProperty({ example: false, description: 'Whether the receipt has been logically deleted', default: false })
+  @Column({ type: 'boolean', name: 'is_active', default: true })
+  is_active: boolean;
 
   @ApiProperty({ example: '2024-01-15T08:00:00Z' })
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })

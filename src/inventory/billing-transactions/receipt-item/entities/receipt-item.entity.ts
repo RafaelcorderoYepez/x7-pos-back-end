@@ -58,7 +58,7 @@ export class ReceiptItem {
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updated_at: Date;
 
-  @ManyToOne(() => Receipt, (receipt) => receipt.id, {
+  @ManyToOne(() => Receipt, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'receipt_id' })

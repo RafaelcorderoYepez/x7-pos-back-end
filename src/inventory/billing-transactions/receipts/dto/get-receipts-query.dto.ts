@@ -1,11 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsPositive, IsString, Min } from 'class-validator';
-import { ReceiptStatus } from '../constants/receipt-status.enum';
 
 export enum ReceiptSortBy {
   CREATED_AT = 'createdAt',
   TYPE = 'type',
-  STATUS = 'status',
 }
 
 export class GetReceiptsQueryDto {
@@ -19,11 +17,6 @@ export class GetReceiptsQueryDto {
   @IsOptional()
   @IsString()
   type?: string;
-
-  @ApiPropertyOptional({ enum: ReceiptStatus })
-  @IsOptional()
-  @IsEnum(ReceiptStatus)
-  status?: ReceiptStatus;
 
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()
@@ -47,7 +40,3 @@ export class GetReceiptsQueryDto {
   @IsString()
   sortOrder?: 'ASC' | 'DESC';
 }
-
-
-
-
