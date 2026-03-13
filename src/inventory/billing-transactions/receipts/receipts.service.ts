@@ -9,6 +9,10 @@ import { Order } from 'src/orders/entities/order.entity';
 import { OneReceiptResponseDto, ReceiptResponseDto } from './dto/receipt-response.dto';
 import { AllPaginatedReceipts } from './dto/all-paginated-receipts.dto';
 
+import { ReceiptType } from './constants/receipt-type.enum';
+import { ReceiptItem } from '../receipt-item/entities/receipt-item.entity';
+import { ReceiptTax } from '../receipt-tax/entities/receipt-tax.entity';
+
 @Injectable()
 export class ReceiptsService {
   constructor(
@@ -16,7 +20,28 @@ export class ReceiptsService {
     private readonly receiptRepo: Repository<Receipt>,
     @InjectRepository(Order)
     private readonly orderRepo: Repository<Order>,
+    @InjectRepository(ReceiptItem)
+    private readonly receiptItemRepo: Repository<ReceiptItem>,
+    @InjectRepository(ReceiptTax)
+    private readonly receiptTaxRepo: Repository<ReceiptTax>,
   ) { }
+
+  async recalculateTotals(receiptId: number): Promise<void> {
+    const items = await this.receiptItemRepo.find({ where: { receipt_id: receiptId, is_active: true } });
+    const taxes = await this.receiptTaxRepo.find({ where: { receipt_id: receiptId, is_active: true } });
+
+    const subtotal = items.reduce((sum, item) => sum + Number(item.subtotal), 0);
+    const totalDiscount = items.reduce((sum, item) => sum + Number(item.discount_amount), 0);
+    const totalTax = taxes.reduce((sum, tax) => sum + Number(tax.amount), 0);
+    const grandTotal = subtotal + totalTax - totalDiscount;
+
+    await this.receiptRepo.update(receiptId, {
+      subtotal: Number(subtotal.toFixed(2)),
+      total_tax: Number(totalTax.toFixed(2)),
+      total_discount: Number(totalDiscount.toFixed(2)),
+      grand_total: Number(grandTotal.toFixed(2)),
+    });
+  }
 
   async create(dto: CreateReceiptDto, authenticatedUserMerchantId: number): Promise<OneReceiptResponseDto> {
     if (!authenticatedUserMerchantId) {
@@ -27,12 +52,9 @@ export class ReceiptsService {
       throw new BadRequestException('Invalid order ID');
     }
 
-    const trimmedType = dto.type?.trim() || '';
-    if (trimmedType.length === 0) {
-      throw new BadRequestException('Type is required and cannot be empty');
-    }
-    if (trimmedType.length > 50) {
-      throw new BadRequestException('Type must not exceed 50 characters');
+    const typeValue = dto.type;
+    if (!typeValue) {
+      throw new BadRequestException('Type is required');
     }
 
     const order = await this.orderRepo.findOne({ where: { id: dto.orderId } });
@@ -44,11 +66,11 @@ export class ReceiptsService {
     }
 
     const existingReceipt = await this.receiptRepo.findOne({
-      where: { order_id: dto.orderId, type: trimmedType, is_active: true },
+      where: { order_id: dto.orderId, type: typeValue, is_active: true },
     });
     if (existingReceipt) {
       throw new ConflictException(
-        `A receipt of type '${trimmedType}' already exists for order ${dto.orderId}`,
+        `A receipt of type '${typeValue}' already exists for order ${dto.orderId}`,
       );
     }
 
@@ -66,12 +88,12 @@ export class ReceiptsService {
 
     const entity = this.receiptRepo.create({
       order_id: dto.orderId,
-      type: trimmedType,
+      type: typeValue,
       fiscal_data: dto.fiscalData ?? null,
-      subtotal: dto.subtotal ?? 0,
-      total_tax: dto.totalTax ?? 0,
-      total_discount: dto.totalDiscount ?? 0,
-      grand_total: dto.grandTotal ?? 0,
+      subtotal: 0,
+      total_tax: 0,
+      total_discount: 0,
+      grand_total: 0,
       currency: dto.currency,
     });
 
@@ -98,7 +120,7 @@ export class ReceiptsService {
       }
     }
 
-    const where: any = { is_deleted: false };
+    const where: any = { is_active: true };
     if (query.orderId) where.order_id = query.orderId;
     if (query.type) where.type = query.type;
 
@@ -252,13 +274,10 @@ export class ReceiptsService {
       }
       updateData.fiscal_data = dto.fiscalData ?? null;
     }
-    if (dto.subtotal !== undefined) updateData.subtotal = dto.subtotal;
-    if (dto.totalTax !== undefined) updateData.total_tax = dto.totalTax;
-    if (dto.totalDiscount !== undefined) updateData.total_discount = dto.totalDiscount;
-    if (dto.grandTotal !== undefined) updateData.grand_total = dto.grandTotal;
     if (dto.currency !== undefined) updateData.currency = dto.currency;
 
     await this.receiptRepo.update(id, updateData);
+    await this.recalculateTotals(id);
 
     return this.findOne(id, authenticatedUserMerchantId, 'Updated');
   }
@@ -290,7 +309,6 @@ export class ReceiptsService {
       total_discount: Number(existing.total_discount),
       grand_total: Number(existing.grand_total),
       currency: existing.currency,
-      is_active: false,
       created_at: existing.created_at,
       updated_at: existing.updated_at,
     };

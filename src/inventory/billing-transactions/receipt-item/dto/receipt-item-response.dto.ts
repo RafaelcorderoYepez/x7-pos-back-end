@@ -37,6 +37,7 @@ export class ReceiptItemResponseDto {
 
     @ApiProperty({ example: '2024-01-15T09:00:00Z' })
     updated_at: Date;
+
 }
 
 export class OneReceiptItemResponseDto extends SuccessResponse {

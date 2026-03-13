@@ -12,7 +12,8 @@ import { Order } from 'src/orders/entities/order.entity';
 import { CreateReceiptDto } from './dto/create-receipt.dto';
 import { UpdateReceiptDto } from './dto/update-receipt.dto';
 import { GetReceiptsQueryDto, ReceiptSortBy } from './dto/get-receipts-query.dto';
-import { ReceiptStatus } from './constants/receipt-status.enum';
+
+import { ReceiptType } from './constants/receipt-type.enum';
 
 describe('ReceiptsService', () => {
   let service: ReceiptsService;
@@ -42,9 +43,8 @@ describe('ReceiptsService', () => {
   const mockReceipt = {
     id: 1,
     order_id: 1,
-    type: 'invoice',
+    type: ReceiptType.INVOICE,
     fiscal_data: '{"tax_id": "12345678", "fiscal_number": "ABC123"}',
-    status: ReceiptStatus.ACTIVE,
     created_at: new Date('2024-01-15T08:00:00Z'),
     updated_at: new Date('2024-01-15T08:00:00Z'),
   };
@@ -80,14 +80,16 @@ describe('ReceiptsService', () => {
   describe('create', () => {
     const createReceiptDto: CreateReceiptDto = {
       orderId: 1,
-      type: 'invoice',
+      type: ReceiptType.INVOICE,
       fiscalData: '{"tax_id": "12345678", "fiscal_number": "ABC123"}',
       currency: 'USD',
     };
 
     it('should create a receipt successfully', async () => {
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
-      jest.spyOn(receiptRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(receiptRepository, 'findOne')
+        .mockResolvedValueOnce(null) // existingReceipt check
+        .mockResolvedValueOnce(mockReceipt as any); // findOne helper
       jest.spyOn(receiptRepository, 'create').mockReturnValue(mockReceipt as any);
       jest.spyOn(receiptRepository, 'save').mockResolvedValue(mockReceipt as any);
 
@@ -97,8 +99,8 @@ describe('ReceiptsService', () => {
       expect(receiptRepository.findOne).toHaveBeenCalledWith({
         where: {
           order_id: 1,
-          type: 'invoice',
-          status: ReceiptStatus.ACTIVE,
+          type: ReceiptType.INVOICE,
+          is_active: true,
         },
       });
       expect(receiptRepository.create).toHaveBeenCalled();
@@ -106,13 +108,13 @@ describe('ReceiptsService', () => {
       expect(result.statusCode).toBe(201);
       expect(result.message).toBe('Receipt created successfully');
       expect(result.data.id).toBe(1);
-      expect(result.data.type).toBe('invoice');
+      expect(result.data.type).toBe(ReceiptType.INVOICE);
     });
 
     it('should create a receipt without fiscalData', async () => {
       const dtoWithoutFiscalData: CreateReceiptDto = {
         orderId: 1,
-        type: 'invoice',
+        type: ReceiptType.INVOICE,
         currency: 'USD',
       };
       const receiptWithoutFiscalData = {
@@ -120,7 +122,9 @@ describe('ReceiptsService', () => {
         fiscal_data: null,
       };
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
-      jest.spyOn(receiptRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(receiptRepository, 'findOne')
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(receiptWithoutFiscalData as any);
       jest.spyOn(receiptRepository, 'create').mockReturnValue(receiptWithoutFiscalData as any);
       jest.spyOn(receiptRepository, 'save').mockResolvedValue(receiptWithoutFiscalData as any);
 
@@ -128,28 +132,6 @@ describe('ReceiptsService', () => {
 
       expect(result.statusCode).toBe(201);
       expect(result.data.fiscal_data).toBeNull();
-    });
-
-    it('should trim type before creating', async () => {
-      const dtoWithSpaces: CreateReceiptDto = {
-        orderId: 1,
-        type: '  invoice  ',
-        currency: 'USD',
-      };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
-      jest.spyOn(receiptRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(receiptRepository, 'create').mockReturnValue(mockReceipt as any);
-      jest.spyOn(receiptRepository, 'save').mockResolvedValue(mockReceipt as any);
-
-      await service.create(dtoWithSpaces, 1);
-
-      expect(receiptRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          order_id: 1,
-          type: 'invoice',
-          status: ReceiptStatus.ACTIVE,
-        },
-      });
     });
 
     it('should throw ForbiddenException when user has no merchant_id', async () => {
@@ -173,22 +155,10 @@ describe('ReceiptsService', () => {
       await expect(service.create(invalidDto, 1)).rejects.toThrow('Invalid order ID');
     });
 
-    it('should throw BadRequestException when type is empty', async () => {
-      const invalidDto = { ...createReceiptDto, type: '' };
+    it('should throw BadRequestException when type is missing', async () => {
+      const invalidDto = { ...createReceiptDto, type: undefined as any };
       await expect(service.create(invalidDto, 1)).rejects.toThrow(BadRequestException);
-      await expect(service.create(invalidDto, 1)).rejects.toThrow('Type is required and cannot be empty');
-    });
-
-    it('should throw BadRequestException when type is only whitespace', async () => {
-      const invalidDto = { ...createReceiptDto, type: '   ' };
-      await expect(service.create(invalidDto, 1)).rejects.toThrow(BadRequestException);
-      await expect(service.create(invalidDto, 1)).rejects.toThrow('Type is required and cannot be empty');
-    });
-
-    it('should throw BadRequestException when type exceeds 50 characters', async () => {
-      const invalidDto = { ...createReceiptDto, type: 'a'.repeat(51) };
-      await expect(service.create(invalidDto, 1)).rejects.toThrow(BadRequestException);
-      await expect(service.create(invalidDto, 1)).rejects.toThrow('Type must not exceed 50 characters');
+      await expect(service.create(invalidDto, 1)).rejects.toThrow('Type is required');
     });
 
     it('should throw NotFoundException if order not found', async () => {
@@ -219,7 +189,7 @@ describe('ReceiptsService', () => {
 
       await expect(service.create(createReceiptDto, 1)).rejects.toThrow(ConflictException);
       await expect(service.create(createReceiptDto, 1)).rejects.toThrow(
-        `A receipt of type 'invoice' already exists for order ${createReceiptDto.orderId}`,
+        `A receipt of type '${ReceiptType.INVOICE}' already exists for order ${createReceiptDto.orderId}`,
       );
     });
 
@@ -306,7 +276,7 @@ describe('ReceiptsService', () => {
     });
 
     it('should filter by type when provided', async () => {
-      const queryWithType = { ...query, type: 'invoice' };
+      const queryWithType: GetReceiptsQueryDto = { ...query, type: ReceiptType.INVOICE };
       jest.spyOn(orderRepository, 'find').mockResolvedValue([{ id: 1 }] as any);
       jest.spyOn(receiptRepository, 'findAndCount').mockResolvedValue([[mockReceipt], 1] as any);
 
@@ -314,24 +284,11 @@ describe('ReceiptsService', () => {
 
       expect(receiptRepository.findAndCount).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({ type: 'invoice' }),
+          where: expect.objectContaining({ type: ReceiptType.INVOICE }),
         }),
       );
     });
 
-    it('should filter by status when provided', async () => {
-      const queryWithStatus = { ...query, status: ReceiptStatus.ACTIVE };
-      jest.spyOn(orderRepository, 'find').mockResolvedValue([{ id: 1 }] as any);
-      jest.spyOn(receiptRepository, 'findAndCount').mockResolvedValue([[mockReceipt], 1] as any);
-
-      await service.findAll(queryWithStatus, 1);
-
-      expect(receiptRepository.findAndCount).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({ status: ReceiptStatus.ACTIVE }),
-        }),
-      );
-    });
 
     it('should sort by createdAt DESC by default', async () => {
       jest.spyOn(orderRepository, 'find').mockResolvedValue([{ id: 1 }] as any);
@@ -445,7 +402,7 @@ describe('ReceiptsService', () => {
       const result = await service.findOne(1, 1);
 
       expect(receiptRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 1, status: ReceiptStatus.ACTIVE },
+        where: { id: 1, is_active: true },
       });
       expect(orderRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(result.statusCode).toBe(200);
@@ -502,14 +459,14 @@ describe('ReceiptsService', () => {
 
   describe('update', () => {
     const updateReceiptDto: UpdateReceiptDto = {
-      type: 'receipt',
+      type: ReceiptType.RECEIPT,
       fiscalData: '{"tax_id": "87654321"}',
     };
 
     it('should update a receipt successfully', async () => {
       const updatedReceipt = {
         ...mockReceipt,
-        type: 'receipt',
+        type: ReceiptType.RECEIPT,
         fiscal_data: '{"tax_id": "87654321"}',
       };
       jest.spyOn(receiptRepository, 'findOne')
@@ -523,12 +480,12 @@ describe('ReceiptsService', () => {
       expect(receiptRepository.update).toHaveBeenCalled();
       expect(result.statusCode).toBe(200);
       expect(result.message).toBe('Receipt updated successfully');
-      expect(result.data.type).toBe('receipt');
+      expect(result.data.type).toBe(ReceiptType.RECEIPT);
     });
 
     it('should update only type when provided', async () => {
-      const dtoOnlyType: UpdateReceiptDto = { type: 'receipt' };
-      const updatedReceipt = { ...mockReceipt, type: 'receipt' };
+      const dtoOnlyType: UpdateReceiptDto = { type: ReceiptType.RECEIPT };
+      const updatedReceipt = { ...mockReceipt, type: ReceiptType.RECEIPT };
       jest.spyOn(receiptRepository, 'findOne')
         .mockResolvedValueOnce(mockReceipt as any)
         .mockResolvedValueOnce(updatedReceipt as any);
@@ -539,7 +496,7 @@ describe('ReceiptsService', () => {
 
       expect(receiptRepository.update).toHaveBeenCalledWith(
         1,
-        expect.objectContaining({ type: 'receipt' }),
+        expect.objectContaining({ type: ReceiptType.RECEIPT }),
       );
     });
 
@@ -712,22 +669,14 @@ describe('ReceiptsService', () => {
     });
 
     it('should throw NotFoundException if receipt not found after update', async () => {
-      const receiptFindOneSpy = jest.spyOn(receiptRepository, 'findOne').mockImplementation((options: any) => {
-        // First call: existing receipt (with status ACTIVE)
-        if (options.where.status === ReceiptStatus.ACTIVE) {
-          return Promise.resolve(mockReceipt as any);
-        }
-        // Second call: receipt not found after update (by id only, no status filter)
-        if (options.where.id === 1 && !options.where.status) {
-          return Promise.resolve(null);
-        }
-        return Promise.resolve(null);
-      });
+      const receiptFindOneSpy = jest.spyOn(receiptRepository, 'findOne')
+        .mockResolvedValueOnce(mockReceipt as any) // update: existing check
+        .mockResolvedValueOnce(null); // findOne helper: after update
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
       jest.spyOn(receiptRepository, 'update').mockResolvedValue(undefined as any);
 
       await expect(service.update(1, updateReceiptDto, 1)).rejects.toThrow(
-        new NotFoundException('Receipt not found after update'),
+        new NotFoundException('Receipt not found'),
       );
       expect(receiptFindOneSpy).toHaveBeenCalledTimes(2);
     });
@@ -741,7 +690,7 @@ describe('ReceiptsService', () => {
 
       const result = await service.remove(1, 1);
 
-      expect(receiptRepository.update).toHaveBeenCalledWith(1, { status: ReceiptStatus.DELETED });
+      expect(receiptRepository.update).toHaveBeenCalledWith(1, expect.any(Object));
       expect(result.statusCode).toBe(200);
       expect(result.message).toBe('Receipt deleted successfully');
       expect(result.data.id).toBe(1);

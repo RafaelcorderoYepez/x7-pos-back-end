@@ -44,6 +44,10 @@ export class ReceiptTax {
     @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
     created_at: Date;
 
+    @ApiProperty({ example: true, description: 'Whether the tax is active' })
+    @Column({ type: 'boolean', name: 'is_active', default: true })
+    is_active: boolean;
+
     @ManyToOne(() => Receipt, {
         onDelete: 'CASCADE',
     })

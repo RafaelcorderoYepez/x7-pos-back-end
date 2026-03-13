@@ -20,6 +20,7 @@ import { AllPaginatedReceiptItems } from './dto/all-paginated-receipt-items.dto'
 import { ReceiptItem } from './entities/receipt-item.entity';
 import { Receipt } from '../receipts/entities/receipt.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { ReceiptsService } from '../receipts/receipts.service';
 
 @Injectable()
 export class ReceiptItemService {
@@ -30,6 +31,7 @@ export class ReceiptItemService {
     private readonly receiptRepo: Repository<Receipt>,
     @InjectRepository(Order)
     private readonly orderRepo: Repository<Order>,
+    private readonly receiptsService: ReceiptsService,
   ) { }
 
   // ─── Helper: verifica ownership via receipt → order → merchant ───────────────
@@ -42,7 +44,7 @@ export class ReceiptItemService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const receipt = await this.receiptRepo.findOne({ where: { id: receiptId } });
+    const receipt = await this.receiptRepo.findOne({ where: { id: receiptId, is_active: true } });
     if (!receipt) {
       throw new NotFoundException(`Receipt with ID ${receiptId} not found`);
     }
@@ -122,6 +124,7 @@ export class ReceiptItemService {
     });
 
     const saved = await this.receiptItemRepo.save(entity);
+    await this.receiptsService.recalculateTotals(dto.receiptId);
 
     return this.findOne(saved.id, merchantId, 'Created');
   }
@@ -151,7 +154,8 @@ export class ReceiptItemService {
       .createQueryBuilder('ri')
       .innerJoin('ri.receipt', 'receipt')
       .innerJoin(Order, 'order', 'order.id = receipt.order_id')
-      .where('order.merchant_id = :merchantId', { merchantId });
+      .where('order.merchant_id = :merchantId', { merchantId })
+      .andWhere('ri.is_active = :isActive', { isActive: true });
 
     if (query.receiptId) {
       qb.andWhere('ri.receipt_id = :receiptId', {
@@ -227,7 +231,9 @@ export class ReceiptItemService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const item = await this.receiptItemRepo.findOne({ where: { id } });
+    const item = await this.receiptItemRepo.findOne({
+      where: { id, is_active: true },
+    });
 
     if (!item) {
       throw new NotFoundException(`Receipt item with ID ${id} not found`);
@@ -299,7 +305,9 @@ export class ReceiptItemService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const item = await this.receiptItemRepo.findOne({ where: { id } });
+    const item = await this.receiptItemRepo.findOne({
+      where: { id, is_active: true },
+    });
 
     if (!item) {
       throw new NotFoundException(`Receipt item with ID ${id} not found`);
@@ -326,6 +334,7 @@ export class ReceiptItemService {
     }
 
     await this.receiptItemRepo.save(item);
+    await this.receiptsService.recalculateTotals(item.receipt_id);
 
     return this.findOne(id, merchantId, 'Updated');
   }
@@ -341,7 +350,9 @@ export class ReceiptItemService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const item = await this.receiptItemRepo.findOne({ where: { id } });
+    const item = await this.receiptItemRepo.findOne({
+      where: { id, is_active: true },
+    });
 
     if (!item) {
       throw new NotFoundException(`Receipt item with ID ${id} not found`);
@@ -365,12 +376,13 @@ export class ReceiptItemService {
       updated_at: item.updated_at,
     };
 
-    await this.receiptItemRepo.delete(id);
+    await this.receiptItemRepo.update(id, { is_active: false });
+    await this.receiptsService.recalculateTotals(item.receipt_id);
 
-    return this.findOne(id, merchantId, 'Deleted').catch(() => ({
+    return {
       statusCode: 200,
       message: 'Receipt item deleted successfully',
       data: dataForResponse,
-    }));
+    };
   }
 }

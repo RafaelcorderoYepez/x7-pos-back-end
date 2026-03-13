@@ -45,6 +45,7 @@ describe('ReceiptItemService', () => {
     create: jest.fn(),
     save: jest.fn(),
     findOne: jest.fn(),
+    update: jest.fn(),
     delete: jest.fn(),
     createQueryBuilder: jest.fn(),
   };
@@ -290,14 +291,14 @@ describe('ReceiptItemService', () => {
   // ─── remove ──────────────────────────────────────────────────────────────────
 
   describe('remove', () => {
-    it('should delete item and return formatted data', async () => {
-      mockReceiptItemRepo.delete.mockResolvedValue({ affected: 1 });
+    it('should delete item successfully (logical delete)', async () => {
+      mockReceiptItemRepo.update.mockResolvedValue({ affected: 1 });
 
       const result = await service.remove(1, MERCHANT_ID);
 
       expect(result.statusCode).toBe(200);
       expect(result.message).toContain('deleted');
-      expect(mockReceiptItemRepo.delete).toHaveBeenCalledWith(1);
+      expect(mockReceiptItemRepo.update).toHaveBeenCalledWith(1, expect.any(Object));
     });
 
     it('should throw BadRequestException for invalid id', async () => {

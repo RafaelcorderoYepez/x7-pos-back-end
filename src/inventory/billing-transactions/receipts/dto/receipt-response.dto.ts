@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SuccessResponse } from 'src/common/dtos/success-response.dto';
 
+import { ReceiptType } from '../constants/receipt-type.enum';
+
 export class ReceiptResponseDto {
   @ApiProperty({ example: 1 })
   id: number;
@@ -8,8 +10,8 @@ export class ReceiptResponseDto {
   @ApiProperty({ example: 200 })
   order_id: number;
 
-  @ApiProperty({ example: 'invoice' })
-  type: string;
+  @ApiProperty({ example: ReceiptType.INVOICE, enum: ReceiptType })
+  type: ReceiptType;
 
   @ApiProperty({ example: '{"tax_id": "12345678", "fiscal_number": "ABC123"}', required: false, nullable: true })
   fiscal_data?: string | null;
@@ -29,8 +31,6 @@ export class ReceiptResponseDto {
   @ApiProperty({ example: 'USD' })
   currency: string;
 
-  @ApiProperty({ example: true })
-  is_active?: boolean;
 
   @ApiProperty({ example: '2024-01-15T08:00:00Z' })
   created_at: Date;

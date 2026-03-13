@@ -5,9 +5,10 @@ import { ReceiptItemController } from './receipt-item.controller';
 import { ReceiptItem } from './entities/receipt-item.entity';
 import { Receipt } from '../receipts/entities/receipt.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { ReceiptsModule } from '../receipts/receipts.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ReceiptItem, Receipt, Order])],
+  imports: [TypeOrmModule.forFeature([ReceiptItem, Receipt, Order]), ReceiptsModule],
   controllers: [ReceiptItemController],
   providers: [ReceiptItemService],
   exports: [ReceiptItemService],

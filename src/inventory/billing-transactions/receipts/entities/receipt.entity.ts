@@ -2,6 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDa
 import { ApiProperty } from '@nestjs/swagger';
 import { Order } from 'src/orders/entities/order.entity';
 
+import { ReceiptType } from '../constants/receipt-type.enum';
+
 @Entity('receipts')
 export class Receipt {
   @ApiProperty({ example: 1, description: 'Unique identifier' })
@@ -12,9 +14,13 @@ export class Receipt {
   @Column({ type: 'int', name: 'order_id' })
   order_id: number;
 
-  @ApiProperty({ example: 'invoice', description: 'Type of receipt' })
-  @Column({ type: 'varchar', length: 50 })
-  type: string;
+  @ApiProperty({ example: ReceiptType.INVOICE, enum: ReceiptType, description: 'Type of receipt' })
+  @Column({
+    type: 'enum',
+    enum: ReceiptType,
+    default: ReceiptType.RECEIPT,
+  })
+  type: ReceiptType;
 
   @ApiProperty({ example: '{"tax_id": "12345678", "fiscal_number": "ABC123"}', description: 'Fiscal data in JSON format' })
   @Column({ type: 'text', nullable: true })

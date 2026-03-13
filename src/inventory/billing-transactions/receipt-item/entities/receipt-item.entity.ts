@@ -58,6 +58,10 @@ export class ReceiptItem {
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updated_at: Date;
 
+  @ApiProperty({ example: true, description: 'Whether the item is active' })
+  @Column({ type: 'boolean', name: 'is_active', default: true })
+  is_active: boolean;
+
   @ManyToOne(() => Receipt, {
     onDelete: 'CASCADE',
   })

@@ -1,6 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsPositive, IsString, Min } from 'class-validator';
 
+import { ReceiptType } from '../constants/receipt-type.enum';
+
 export enum ReceiptSortBy {
   CREATED_AT = 'createdAt',
   TYPE = 'type',
@@ -13,10 +15,10 @@ export class GetReceiptsQueryDto {
   @IsPositive()
   orderId?: number;
 
-  @ApiPropertyOptional({ example: 'invoice' })
+  @ApiPropertyOptional({ example: ReceiptType.INVOICE, enum: ReceiptType })
   @IsOptional()
-  @IsString()
-  type?: string;
+  @IsEnum(ReceiptType)
+  type?: ReceiptType;
 
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()

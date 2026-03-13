@@ -22,6 +22,7 @@ import { Receipt } from '../receipts/entities/receipt.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { ReceiptTaxScope } from './constants/receipt-tax-scope.enum';
 import { ReceiptItem } from '../receipt-item/entities/receipt-item.entity';
+import { ReceiptsService } from '../receipts/receipts.service';
 
 @Injectable()
 export class ReceiptTaxService {
@@ -34,6 +35,7 @@ export class ReceiptTaxService {
     private readonly orderRepo: Repository<Order>,
     @InjectRepository(ReceiptItem)
     private readonly receiptItemRepo: Repository<ReceiptItem>,
+    private readonly receiptsService: ReceiptsService,
   ) { }
 
   // ─── Helper: verifica ownership via receipt → order → merchant ───────────────
@@ -46,7 +48,7 @@ export class ReceiptTaxService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const receipt = await this.receiptRepo.findOne({ where: { id: receiptId } });
+    const receipt = await this.receiptRepo.findOne({ where: { id: receiptId, is_active: true } });
     if (!receipt) {
       throw new NotFoundException(`Receipt with ID ${receiptId} not found`);
     }
@@ -102,7 +104,7 @@ export class ReceiptTaxService {
     // If receiptItemId provided, verify it belongs to the same receipt
     if (dto.receiptItemId) {
       const item = await this.receiptItemRepo.findOne({
-        where: { id: dto.receiptItemId, receipt_id: dto.receiptId },
+        where: { id: dto.receiptItemId, receipt_id: dto.receiptId, is_active: true },
       });
       if (!item) {
         throw new NotFoundException(
@@ -121,6 +123,7 @@ export class ReceiptTaxService {
     });
 
     const saved = await this.receiptTaxRepo.save(entity);
+    await this.receiptsService.recalculateTotals(dto.receiptId);
 
     return this.findOne(saved.id, merchantId, 'Created');
   }
@@ -150,7 +153,8 @@ export class ReceiptTaxService {
       .createQueryBuilder('rt')
       .innerJoin('rt.receipt', 'receipt')
       .innerJoin(Order, 'order', 'order.id = receipt.order_id')
-      .where('order.merchant_id = :merchantId', { merchantId });
+      .where('order.merchant_id = :merchantId', { merchantId })
+      .andWhere('rt.is_active = :isActive', { isActive: true });
 
     if (query.receiptId) {
       qb.andWhere('rt.receipt_id = :receiptId', { receiptId: query.receiptId });
@@ -228,7 +232,9 @@ export class ReceiptTaxService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const tax = await this.receiptTaxRepo.findOne({ where: { id } });
+    const tax = await this.receiptTaxRepo.findOne({
+      where: { id, is_active: true },
+    });
     if (!tax) {
       throw new NotFoundException(`Receipt tax with ID ${id} not found`);
     }
@@ -295,7 +301,9 @@ export class ReceiptTaxService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const tax = await this.receiptTaxRepo.findOne({ where: { id } });
+    const tax = await this.receiptTaxRepo.findOne({
+      where: { id, is_active: true },
+    });
     if (!tax) {
       throw new NotFoundException(`Receipt tax with ID ${id} not found`);
     }
@@ -314,6 +322,7 @@ export class ReceiptTaxService {
     }
 
     await this.receiptTaxRepo.save(tax);
+    await this.receiptsService.recalculateTotals(tax.receipt_id);
 
     return this.findOne(id, merchantId, 'Updated');
   }
@@ -329,7 +338,9 @@ export class ReceiptTaxService {
       throw new ForbiddenException('You must be associated with a merchant');
     }
 
-    const tax = await this.receiptTaxRepo.findOne({ where: { id } });
+    const tax = await this.receiptTaxRepo.findOne({
+      where: { id, is_active: true },
+    });
     if (!tax) {
       throw new NotFoundException(`Receipt tax with ID ${id} not found`);
     }
@@ -348,7 +359,8 @@ export class ReceiptTaxService {
       created_at: tax.created_at,
     };
 
-    await this.receiptTaxRepo.delete(id);
+    await this.receiptTaxRepo.update(id, { is_active: false });
+    await this.receiptsService.recalculateTotals(tax.receipt_id);
 
     return {
       statusCode: 200,

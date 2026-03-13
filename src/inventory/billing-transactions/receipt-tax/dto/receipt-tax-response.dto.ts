@@ -26,6 +26,7 @@ export class ReceiptTaxResponseDto {
 
     @ApiProperty({ example: '2024-01-15T08:00:00Z' })
     created_at: Date;
+
 }
 
 export class OneReceiptTaxResponseDto extends SuccessResponse {
