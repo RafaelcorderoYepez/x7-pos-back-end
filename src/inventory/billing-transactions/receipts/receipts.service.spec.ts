@@ -9,6 +9,8 @@ import { BadRequestException, ConflictException, ForbiddenException, NotFoundExc
 import { ReceiptsService } from './receipts.service';
 import { Receipt } from './entities/receipt.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { ReceiptItem } from '../receipt-item/entities/receipt-item.entity';
+import { ReceiptTax } from '../receipt-tax/entities/receipt-tax.entity';
 import { CreateReceiptDto } from './dto/create-receipt.dto';
 import { UpdateReceiptDto } from './dto/update-receipt.dto';
 import { GetReceiptsQueryDto, ReceiptSortBy } from './dto/get-receipts-query.dto';
@@ -19,6 +21,8 @@ describe('ReceiptsService', () => {
   let service: ReceiptsService;
   let receiptRepository: Repository<Receipt>;
   let orderRepository: Repository<Order>;
+  let itemRepository: Repository<ReceiptItem>;
+  let taxRepository: Repository<ReceiptTax>;
 
   const mockReceiptRepository = {
     create: jest.fn(),
@@ -33,6 +37,8 @@ describe('ReceiptsService', () => {
     findOne: jest.fn(),
     find: jest.fn(),
   };
+  const mockReceiptItemRepository = { find: jest.fn() };
+  const mockReceiptTaxRepository = { find: jest.fn() };
 
   const mockOrder = {
     id: 1,
@@ -47,6 +53,7 @@ describe('ReceiptsService', () => {
     fiscal_data: '{"tax_id": "12345678", "fiscal_number": "ABC123"}',
     created_at: new Date('2024-01-15T08:00:00Z'),
     updated_at: new Date('2024-01-15T08:00:00Z'),
+    is_active: true,
   };
 
   beforeEach(async () => {
@@ -61,12 +68,28 @@ describe('ReceiptsService', () => {
           provide: getRepositoryToken(Order),
           useValue: mockOrderRepository,
         },
+        {
+          provide: getRepositoryToken(ReceiptItem),
+          useValue: mockReceiptItemRepository,
+        },
+        {
+          provide: getRepositoryToken(ReceiptTax),
+          useValue: mockReceiptTaxRepository,
+        },
       ],
     }).compile();
 
     service = module.get<ReceiptsService>(ReceiptsService);
     receiptRepository = module.get<Repository<Receipt>>(getRepositoryToken(Receipt));
     orderRepository = module.get<Repository<Order>>(getRepositoryToken(Order));
+    itemRepository = module.get<Repository<ReceiptItem>>(getRepositoryToken(ReceiptItem));
+    taxRepository = module.get<Repository<ReceiptTax>>(getRepositoryToken(ReceiptTax));
+
+    // Default return values for repositories
+    mockReceiptItemRepository.find.mockResolvedValue([]);
+    mockReceiptTaxRepository.find.mockResolvedValue([]);
+    mockReceiptRepository.findOne.mockResolvedValue(mockReceipt);
+    mockOrderRepository.findOne.mockResolvedValue(mockOrder);
   });
 
   afterEach(() => {

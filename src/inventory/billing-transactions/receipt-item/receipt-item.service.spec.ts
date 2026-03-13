@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { ReceiptItem } from './entities/receipt-item.entity';
 import { Receipt } from '../receipts/entities/receipt.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { ReceiptsService } from '../receipts/receipts.service';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CreateReceiptItemDto } from './dto/create-receipt-item.dto';
 import { UpdateReceiptItemDto } from './dto/update-receipt-item.dto';
@@ -57,6 +58,7 @@ describe('ReceiptItemService', () => {
   const mockOrderRepo = {
     findOne: jest.fn(),
   };
+  const mockReceiptsService = { recalculateTotals: jest.fn() };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -65,6 +67,7 @@ describe('ReceiptItemService', () => {
         { provide: getRepositoryToken(ReceiptItem), useValue: mockReceiptItemRepo },
         { provide: getRepositoryToken(Receipt), useValue: mockReceiptRepo },
         { provide: getRepositoryToken(Order), useValue: mockOrderRepo },
+        { provide: ReceiptsService, useValue: mockReceiptsService },
       ],
     }).compile();
 

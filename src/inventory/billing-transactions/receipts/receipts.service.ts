@@ -1,5 +1,5 @@
-import { Injectable, BadRequestException, ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, BadRequestException, ConflictException, ForbiddenException, NotFoundException, Inject } from '@nestjs/common';
+import { InjectRepository, getRepositoryToken } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateReceiptDto } from './dto/create-receipt.dto';
 import { UpdateReceiptDto } from './dto/update-receipt.dto';
@@ -20,9 +20,9 @@ export class ReceiptsService {
     private readonly receiptRepo: Repository<Receipt>,
     @InjectRepository(Order)
     private readonly orderRepo: Repository<Order>,
-    @InjectRepository(ReceiptItem)
+    @Inject(getRepositoryToken(ReceiptItem))
     private readonly receiptItemRepo: Repository<ReceiptItem>,
-    @InjectRepository(ReceiptTax)
+    @Inject(getRepositoryToken(ReceiptTax))
     private readonly receiptTaxRepo: Repository<ReceiptTax>,
   ) { }
 

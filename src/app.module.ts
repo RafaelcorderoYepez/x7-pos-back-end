@@ -34,6 +34,7 @@ import { PurchaseOrderModule } from './inventory/products-inventory/purchase-ord
 import { PurchaseOrderItemModule } from './inventory/products-inventory/purchase-order-item/purchase-order-item.module';
 import { ReceiptsModule } from './inventory/billing-transactions/receipts/receipts.module';
 import { ReceiptItemModule } from './inventory/billing-transactions/receipt-item/receipt-item.module';
+import { ReceiptTaxModule } from './inventory/billing-transactions/receipt-tax/receipt-tax.module';
 import { KitchenStationModule } from './kitchen-display-system/kitchen-station/kitchen-station.module';
 import { KitchenDisplayDeviceModule } from './kitchen-display-system/kitchen-display-device/kitchen-display-device.module';
 import { KitchenOrderModule } from './kitchen-display-system/kitchen-order/kitchen-order.module';
@@ -283,6 +284,7 @@ import { MerchantTipRule } from './configuration/merchant-tip-rule/entity/mercha
     PurchaseOrderItemModule,
     ReceiptsModule,
     ReceiptItemModule,
+    ReceiptTaxModule,
     KitchenStationModule,
     KitchenDisplayDeviceModule,
     KitchenOrderModule,
@@ -319,7 +321,6 @@ import { MerchantTipRule } from './configuration/merchant-tip-rule/entity/mercha
     TipPoolMembersModule,
     TipSettlementsModule,
     CashTipMovementsModule,
-    QROrderItemModule,
     ConfigurationModule,
   ],
 })
