@@ -150,6 +150,9 @@ import { TipPool } from './tips/tip-pools/entities/tip-pool.entity';
 import { TipPoolMember } from './tips/tip-pool-members/entities/tip-pool-member.entity';
 import { TipSettlement } from './tips/tip-settlements/entities/tip-settlement.entity';
 import { CashTipMovement } from './tips/cash-tip-movements/entities/cash-tip-movement.entity';
+import { ConfigurationModule } from './configuration/configuration.module';
+import { Configuration } from './configuration/entity/configuration-entity';
+import { MerchantTipRule } from './configuration/merchant-tip-rule/entity/merchant-tip-rule-entity';
 
 @Module({
   imports: [
@@ -241,6 +244,8 @@ import { CashTipMovement } from './tips/cash-tip-movements/entities/cash-tip-mov
           TipAllocation,
           TipPool,
           TipPoolMember,
+          Configuration,
+          MerchantTipRule,
           TipSettlement,
           CashTipMovement,
         ],
@@ -314,6 +319,8 @@ import { CashTipMovement } from './tips/cash-tip-movements/entities/cash-tip-mov
     TipPoolMembersModule,
     TipSettlementsModule,
     CashTipMovementsModule,
+    QROrderItemModule,
+    ConfigurationModule,
   ],
 })
 export class AppModule { }
