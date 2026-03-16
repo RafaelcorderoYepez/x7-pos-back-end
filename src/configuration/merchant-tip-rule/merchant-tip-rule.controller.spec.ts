@@ -6,6 +6,7 @@ import { MerchantTipRule } from './entity/merchant-tip-rule-entity';
 import { Company } from 'src/companies/entities/company.entity';
 import { TipCalculationMethod } from '../constants/tip-calculation-method.enum';
 import { TipDistributionMethod } from '../constants/tip-distribution-method.enum';
+import { User } from 'src/users/entities/user.entity';
 
 describe('MerchantTipRuleController', () => {
   let controller: MerchantTipRuleController;
@@ -27,13 +28,17 @@ describe('MerchantTipRuleController', () => {
     configurations: [],
   } as Company;
 
+  const mockUser = {
+    id: 1,
+  } as User;
+
   const mockMerchantTipRule: MerchantTipRule = {
     id: 1,
     company: mockCompany,
     createdAt: new Date(),
     updatedAt: new Date(),
-    createdBy: 'Test User',
-    updatedBy: 'Test User',
+    createdBy: mockUser,
+    updatedBy: mockUser,
     status: 'active',
     name: 'Test Merchant Tip Rule',
     tipCalculationMethod: TipCalculationMethod.PERCENTAGE,
@@ -52,8 +57,8 @@ describe('MerchantTipRuleController', () => {
     companyId: mockCompany.id,
     createdAt: new Date(),
     updatedAt: new Date(),
-    createdBy: 'Test User',
-    updatedBy: 'Test User',
+    createdById: mockUser.id,
+    updatedById: mockUser.id,
     status: 'active',
     name: 'Test Merchant Tip Rule',
     tipCalculationMethod: TipCalculationMethod.PERCENTAGE,
@@ -91,8 +96,8 @@ describe('MerchantTipRuleController', () => {
     companyId: mockCompany.id,
     createdAt: new Date(),
     updatedAt: new Date(),
-    createdBy: 'Test User 2',
-    updatedBy: 'Test User 2',
+    createdById: mockUser.id,
+    updatedById: mockUser.id,
     status: 'active',
     name: 'Test Merchant Tip Rule 2',
     tipCalculationMethod: TipCalculationMethod.CUSTOM,
@@ -141,10 +146,10 @@ describe('MerchantTipRuleController', () => {
   });
 
   //--------------------------------------------------------------
-  // POST /merchant-tip-tule
+  // POST /merchant-tip-rule
   //--------------------------------------------------------------
-  describe('POST /merchant-tip-tule', () => {
-    it('should create a merchant tip tule successfully', async () => {
+  describe('POST /merchant-tip-rule', () => {
+    it('should create a merchant tip rule successfully', async () => {
       const expectedResponse = {
         statusCode: 201,
         message: 'Merchant tip rule created successfully',
@@ -315,7 +320,7 @@ describe('MerchantTipRuleController', () => {
     });
 
     it('should handle errors during deletion', async () => {
-      const errorMessage = 'Failed to delete QR Order';
+      const errorMessage = 'Failed to delete Merchant Tip Rule';
       const removeSpy = jest
         .spyOn(service, 'remove')
         .mockRejectedValue(new Error(errorMessage));

@@ -93,7 +93,7 @@ export class MerchantTipRuleController {
       example: {
         statusCode: 400,
         message: [
-          'QR Order must be a string',
+          'Merchant Tip Rule must be a string',
           'status must be one of the following values: active, inactive',
         ],
         error: 'Bad Request',

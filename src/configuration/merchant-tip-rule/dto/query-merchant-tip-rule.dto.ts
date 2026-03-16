@@ -1,4 +1,4 @@
-//src/configuration/dto/query-merchant-tip-rule.dto.ts
+//src/configuration/merchant-tip-rule/dto/query-merchant-tip-rule.dto.ts
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, IsNumber, Min } from 'class-validator';
 import { Type } from 'class-transformer';
