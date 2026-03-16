@@ -8,8 +8,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Supplier } from '../../../products-inventory/suppliers/entities/supplier.entity';
-import { Company } from '../../../companies/entities/company.entity';
+import { Supplier } from 'src/inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Company } from 'src/companies/entities/company.entity';
 import { SupplierInvoiceStatus } from '../constants/supplier-invoice-status.enum';
 
 @Entity('supplier_invoices')
