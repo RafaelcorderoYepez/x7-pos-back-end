@@ -38,9 +38,9 @@ import { Product } from './products-inventory/products/entities/product.entity';
 import { Supplier } from './products-inventory/suppliers/entities/supplier.entity';
 import { ShiftAssignment } from './shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from './table-assignments/entities/table-assignment.entity';
-import { CashDrawersModule } from './cash-drawers/cash-drawers.module';
-import { CashDrawer } from './cash-drawers/entities/cash-drawer.entity';
-import { CashTransaction } from './cash-transactions/entities/cash-transaction.entity';
+import { CashdrawerModule } from './cashdrawer/cashdrawer.module';
+import { CashDrawer } from './cashdrawer/cash-drawers/entities/cash-drawer.entity';
+import { CashTransaction } from './cashdrawer/cash-transactions/entities/cash-transaction.entity';
 import { Receipt } from './receipts/entities/receipt.entity';
 import { Order } from './orders/entities/order.entity';
 
@@ -50,15 +50,13 @@ import { SubscriptionPlan } from './subscriptions/subscription-plan/entity/subsc
 import { MerchantSubscription } from './subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
 import { ApplicationEntity } from './subscriptions/applications/entity/application-entity';
 import { PlanApplication } from './subscriptions/plan-applications/entity/plan-applications.entity';
-import { CashTransactionsModule } from './cash-transactions/cash-transactions.module';
 import { ReceiptsModule } from './receipts/receipts.module';
 import { OrdersModule } from './orders/orders.module';
 import { SubscriptionApplication } from './subscriptions/subscription-application/entity/subscription-application.entity';
 import { Item } from './products-inventory/stocks/items/entities/item.entity';
 import { Movement } from './products-inventory/stocks/movements/entities/movement.entity';
 import { FeatureEntity } from './subscriptions/features/entity/features.entity';
-import { CashDrawerHistoryModule } from './cash-drawer-history/cash-drawer-history.module';
-import { CashDrawerHistory } from './cash-drawer-history/entities/cash-drawer-history.entity';
+import { CashDrawerHistory } from './cashdrawer/cash-drawer-history/entities/cash-drawer-history.entity';
 import { OrderItemModule } from './order-item/order-item.module';
 import { OrderItem } from './order-item/entities/order-item.entity';
 import { KitchenStationModule } from './kitchen-display-system/kitchen-station/kitchen-station.module';
@@ -143,6 +141,16 @@ import { CashTipMovementsModule } from './tips/cash-tip-movements/cash-tip-movem
 import { CashTipMovement } from './tips/cash-tip-movements/entities/cash-tip-movement.entity';
 import { CollaboratorContract } from './hr/collaborator-contracts/entities/collaborator-contract.entity';
 import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.entity';
+import { PayrollAdjustmentsModule } from './payroll/payroll-adjustments/payroll-adjustments.module';
+import { PayrollEntriesModule } from './payroll/payroll-entries/payroll-entries.module';
+import { PayrollRunsModule } from './payroll/payroll-runs/payroll-runs.module';
+import { PayrollEntry } from './payroll/payroll-entries/entities/payroll-entry.entity';
+import { PayrollRun } from './payroll/payroll-runs/entities/payroll-run.entity';
+import { PayrollAdjustment } from './payroll/payroll-adjustments/entities/payroll-adjustment.entity';
+import { PayrollTaxDetail } from './payroll/payroll-tax-details/entities/payroll-tax-detail.entity';
+import { PayrollTaxDetailsModule } from './payroll/payroll-tax-details/payroll-tax-details.module';
+import { AcountPayableModule } from './acount-payable/acount-payable.module';
+import { SuplierInvoice } from './acount-payable/suplier-invoices/entities/suplier-invoice.entity';
 
 @Module({
   imports: [
@@ -179,15 +187,10 @@ import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.en
           MerchantSubscription,
           ApplicationEntity,
           PlanApplication,
-          MerchantSubscription,
-          ApplicationEntity,
-          PlanApplication,
           SubscriptionApplication,
           FeatureEntity,
           PlanFeature,
           SubscriptionPayment,
-          Product,
-          Supplier,
           Variant,
           Modifier,
           Location,
@@ -195,8 +198,6 @@ import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.en
           Movement,
           PurchaseOrder,
           PurchaseOrderItem,
-          Collaborator,
-          Shift,
           CashDrawerHistory,
           OrderItem,
           KitchenStation,
@@ -238,11 +239,15 @@ import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.en
           CashTipMovement,
           CollaboratorContract,
           TimeEntry,
+          PayrollEntry,
+          PayrollRun,
+          PayrollAdjustment,
+          PayrollTaxDetail,
+          SuplierInvoice,
         ],
         synchronize: true,
       }),
     }),
-    // Modules
     AuthModule,
     MailModule,
     CompaniesModule,
@@ -258,44 +263,30 @@ import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.en
     SubscriptionsModule,
     MerchantSubscriptionModule,
     ApplicationsModule,
-    ShiftsModule,
     PlanApplicationsModule,
     SubscriptionApplicationModule,
-    TableAssignmentsModule,
-    CashDrawersModule,
-    PlanApplicationsModule,
-    CashTransactionsModule,
+    CashdrawerModule,
     ReceiptsModule,
     OrdersModule,
     PurchaseOrderModule,
     PurchaseOrderItemModule,
     FeaturesModule,
-    CashDrawerHistoryModule,
     OrderItemModule,
     KitchenStationModule,
     OnlineStoresModule,
     PlanFeaturesModule,
     SubscriptionPaymentsModule,
     QRCodeModule,
-
     QRMenuModule,
     OnlineMenuModule,
     LoyaltyModule,
-
     OnlineMenuCategoryModule,
-
     OnlineMenuItemModule,
-
     OnlineOrderModule,
-
     OnlineOrderItemModule,
-
     OnlineDeliveryInfoModule,
-
     OnlinePaymentModule,
-
     KitchenDisplayDeviceModule,
-
     KitchenOrderModule,
     QRMenuSectionModule,
     QRMenuItemModule,
@@ -317,6 +308,11 @@ import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.en
     TipPoolMembersModule,
     TipSettlementsModule,
     CashTipMovementsModule,
+    PayrollAdjustmentsModule,
+    PayrollEntriesModule,
+    PayrollRunsModule,
+    PayrollTaxDetailsModule,
+    AcountPayableModule,
   ],
 })
 export class AppModule {}

@@ -20,7 +20,7 @@ import { Supplier } from 'src/products-inventory/suppliers/entities/supplier.ent
 import { Shift } from 'src/shifts/entities/shift.entity';
 import { ShiftAssignment } from 'src/shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from 'src/table-assignments/entities/table-assignment.entity';
-import { CashDrawer } from 'src/cash-drawers/entities/cash-drawer.entity';
+import { CashDrawer } from 'src/cashdrawer/cash-drawers/entities/cash-drawer.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { Movement } from 'src/products-inventory/stocks/movements/entities/movement.entity';
 import { LoyaltyProgram } from 'src/loyalty/loyalty-programs/entities/loyalty-program.entity';

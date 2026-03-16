@@ -14,7 +14,7 @@ import {
 import { AllPaginatedLoyaltyPointsTransactionDto } from './dto/all-paginated-loyalty-points-transaction.dto';
 import { LoyaltyPointsSource } from './constants/loyalty-points-source.enum';
 import { OrderBusinessStatus } from 'src/orders/constants/order-business-status.enum';
-import { CashTransactionType } from 'src/cash-transactions/constants/cash-transaction-type.enum';
+import { CashTransactionType } from 'src/cashdrawer/cash-transactions/constants/cash-transaction-type.enum';
 
 describe('LoyaltyPointsTransactionController', () => {
   let controller: LoyaltyPointsTransactionController;

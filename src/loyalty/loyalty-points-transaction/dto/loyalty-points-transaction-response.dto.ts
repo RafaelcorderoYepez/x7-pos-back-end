@@ -1,7 +1,7 @@
 import { OrderLittleResponseDto } from 'src/orders/dto/order-response.dto';
 import { SuccessResponse } from '../../../common/dtos/success-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { CashTransactionLittleResponseDto } from 'src/cash-transactions/dto/cash-transaction-response.dto';
+import { CashTransactionLittleResponseDto } from 'src/cashdrawer/cash-transactions/dto/cash-transaction-response.dto';
 import { LoyaltyCustomerLittleResponseDto } from 'src/loyalty/loyalty-customer/dto/loyalty-customer-response.dto';
 
 export class LoyaltyPointsTransactionResponseDto {

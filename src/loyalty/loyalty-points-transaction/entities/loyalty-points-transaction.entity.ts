@@ -9,7 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { LoyaltyCustomer } from 'src/loyalty/loyalty-customer/entities/loyalty-customer.entity';
 import { Order } from 'src/orders/entities/order.entity';
-import { CashTransaction } from 'src/cash-transactions/entities/cash-transaction.entity';
+import { CashTransaction } from 'src/cashdrawer/cash-transactions/entities/cash-transaction.entity';
 import { LoyaltyPointsSource } from '../constants/loyalty-points-source.enum';
 
 @Entity('loyalty_point_transactions')

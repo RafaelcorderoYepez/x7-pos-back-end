@@ -14,8 +14,8 @@ import { LoyaltyCustomer } from '../loyalty-customer/entities/loyalty-customer.e
 import { DataSource, Repository } from 'typeorm';
 import { ErrorMessage } from 'src/common/constants/error-messages';
 import { Order } from 'src/orders/entities/order.entity';
-import { CashTransaction } from 'src/cash-transactions/entities/cash-transaction.entity';
-import { CashTransactionStatus } from 'src/cash-transactions/constants/cash-transaction-status.enum';
+import { CashTransaction } from 'src/cashdrawer/cash-transactions/entities/cash-transaction.entity';
+import { CashTransactionStatus } from 'src/cashdrawer/cash-transactions/constants/cash-transaction-status.enum';
 import { OrderBusinessStatus } from 'src/orders/constants/order-business-status.enum';
 
 @Injectable()

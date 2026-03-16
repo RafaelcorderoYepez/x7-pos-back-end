@@ -12,7 +12,7 @@ import { ShiftRole } from '../constants/shift-role.enum';
 import { ShiftStatus } from '../constants/shift-status.enum';
 import { ShiftAssignment } from '../../shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from '../../table-assignments/entities/table-assignment.entity';
-import { CashDrawer } from '../../cash-drawers/entities/cash-drawer.entity';
+import { CashDrawer } from '../../cashdrawer/cash-drawers/entities/cash-drawer.entity';
 
 @Entity()
 export class Shift {
