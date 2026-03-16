@@ -8,7 +8,7 @@ import {
   Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { CashDrawer } from '../../../cash-drawers/entities/cash-drawer.entity';
+import { CashDrawer } from '../../../cashdrawer/cash-drawers/entities/cash-drawer.entity';
 import { Tip } from '../../tips/entities/tip.entity';
 import { CashTipMovementType } from '../constants/cash-tip-movement-type.enum';
 
