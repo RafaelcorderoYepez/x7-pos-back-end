@@ -7,6 +7,7 @@ import { CashTransaction } from 'src/cashdrawer/cash-transactions/entities/cash-
 import { LoyaltyCustomer } from '../loyalty-customer/entities/loyalty-customer.entity';
 import { Customer } from 'src/customers/entities/customer.entity';
 import { LoyaltyPointTransaction } from './entities/loyalty-points-transaction.entity';
+import { LoyaltyTier } from '../loyalty-tier/entities/loyalty-tier.entity';
 
 @Module({
   imports: [
@@ -16,10 +17,11 @@ import { LoyaltyPointTransaction } from './entities/loyalty-points-transaction.e
       LoyaltyCustomer,
       Customer,
       LoyaltyPointTransaction,
+      LoyaltyTier,
     ]),
   ],
   controllers: [LoyaltyPointsTransactionController],
   providers: [LoyaltyPointsTransactionService],
   exports: [LoyaltyPointsTransactionService],
 })
-export class LoyaltyPointsTransactionModule {}
+export class LoyaltyPointsTransactionModule { }
