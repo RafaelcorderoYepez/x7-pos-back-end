@@ -20,41 +20,46 @@ import { FeaturesModule } from './subscriptions/features/features.module';
 import { HrModule } from './hr/hr.module';
 import { ShiftAssignmentsModule } from './shift-assignments/shift-assignments.module';
 import { TableAssignmentsModule } from './table-assignments/table-assignments.module';
-import { ProductsInventoryModule } from './products-inventory/products-inventory.module';
+import { ProductsInventoryModule } from './inventory/products-inventory/products-inventory.module';
 
 // Entities;
 import { User } from './users/entities/user.entity';
 import { Company } from './companies/entities/company.entity';
 import { Merchant } from './merchants/entities/merchant.entity';
 import { Customer } from './customers/entities/customer.entity';
-import { Category } from './products-inventory/category/entities/category.entity';
+import { Category } from './inventory/products-inventory/category/entities/category.entity';
 import { Table } from './tables/entities/table.entity';
 import { Collaborator } from './hr/collaborators/entities/collaborator.entity';
-import { Location } from './products-inventory/stocks/locations/entities/location.entity';
+import { Location } from './inventory/products-inventory/stocks/locations/entities/location.entity';
 
 import { Shift } from './shifts/entities/shift.entity';
 import { ShiftsModule } from './shifts/shifts.module';
-import { Product } from './products-inventory/products/entities/product.entity';
-import { Supplier } from './products-inventory/suppliers/entities/supplier.entity';
+import { Product } from './inventory/products-inventory/products/entities/product.entity';
+import { Supplier } from './inventory/products-inventory/suppliers/entities/supplier.entity';
 import { ShiftAssignment } from './shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from './table-assignments/entities/table-assignment.entity';
 import { CashdrawerModule } from './cashdrawer/cashdrawer.module';
 import { CashDrawer } from './cashdrawer/cash-drawers/entities/cash-drawer.entity';
 import { CashTransaction } from './cashdrawer/cash-transactions/entities/cash-transaction.entity';
 import { Receipt } from './receipts/entities/receipt.entity';
+import { CashDrawersModule } from './cash-drawers/cash-drawers.module';
+import { CashDrawer } from './cash-drawers/entities/cash-drawer.entity';
+import { CashTransaction } from './cash-transactions/entities/cash-transaction.entity';
+import { Receipt } from './inventory/billing-transactions/receipts/entities/receipt.entity';
 import { Order } from './orders/entities/order.entity';
 
-import { Variant } from './products-inventory/variants/entities/variant.entity';
-import { Modifier } from './products-inventory/modifiers/entities/modifier.entity';
+import { Variant } from './inventory/products-inventory/variants/entities/variant.entity';
+import { Modifier } from './inventory/products-inventory/modifiers/entities/modifier.entity';
 import { SubscriptionPlan } from './subscriptions/subscription-plan/entity/subscription-plan.entity';
 import { MerchantSubscription } from './subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
 import { ApplicationEntity } from './subscriptions/applications/entity/application-entity';
 import { PlanApplication } from './subscriptions/plan-applications/entity/plan-applications.entity';
 import { ReceiptsModule } from './receipts/receipts.module';
+import { CashTransactionsModule } from './cash-transactions/cash-transactions.module';
 import { OrdersModule } from './orders/orders.module';
 import { SubscriptionApplication } from './subscriptions/subscription-application/entity/subscription-application.entity';
-import { Item } from './products-inventory/stocks/items/entities/item.entity';
-import { Movement } from './products-inventory/stocks/movements/entities/movement.entity';
+import { Item } from './inventory/products-inventory/stocks/items/entities/item.entity';
+import { Movement } from './inventory/products-inventory/stocks/movements/entities/movement.entity';
 import { FeatureEntity } from './subscriptions/features/entity/features.entity';
 import { CashDrawerHistory } from './cashdrawer/cash-drawer-history/entities/cash-drawer-history.entity';
 import { OrderItemModule } from './order-item/order-item.module';
@@ -69,10 +74,10 @@ import { PlanFeaturesModule } from './subscriptions/plan-features/plan-features.
 import { PlanFeature } from './subscriptions/plan-features/entity/plan-features.entity';
 import { SubscriptionPaymentsModule } from './subscriptions/subscription-payments/subscription-payments.module';
 import { SubscriptionPayment } from './subscriptions/subscription-payments/entity/subscription-payments.entity';
-import { PurchaseOrderModule } from './products-inventory/purchase-order/purchase-order.module';
-import { PurchaseOrderItemModule } from './products-inventory/purchase-order-item/purchase-order-item.module';
-import { PurchaseOrder } from './products-inventory/purchase-order/entities/purchase-order.entity';
-import { PurchaseOrderItem } from './products-inventory/purchase-order-item/entities/purchase-order-item.entity';
+import { PurchaseOrderModule } from './inventory/products-inventory/purchase-order/purchase-order.module';
+import { PurchaseOrderItemModule } from './inventory/products-inventory/purchase-order-item/purchase-order-item.module';
+import { PurchaseOrder } from './inventory/products-inventory/purchase-order/entities/purchase-order.entity';
+import { PurchaseOrderItem } from './inventory/products-inventory/purchase-order-item/entities/purchase-order-item.entity';
 import { QRCodeModule } from './qr-code/qr-code.module';
 import { QRMenuModule } from './qr-code/qr-menu/qr-menu.module';
 import { QRMenu } from './qr-code/qr-menu/entity/qr-menu.entity';
@@ -157,6 +162,11 @@ import { QROrderItemModule } from './qr-code/qr-order-item/qr-order-item.module'
 import { QROrderItem } from './qr-code/qr-order-item/entity/qr-order-item.entity';
 import { LoyaltyRewardsRedemtion } from './loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyCoupon } from './loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
+import { ConfigurationModule } from './configuration/configuration.module';
+import { Configuration } from './configuration/entity/configuration-entity';
+import { MerchantTipRule } from './configuration/merchant-tip-rule/entity/merchant-tip-rule-entity';
+import { InventoryModule } from './inventory/inventory.module';
+import { ReceiptsModule } from './inventory/billing-transactions/receipts/receipts.module';
 
 @Module({
   imports: [
@@ -245,6 +255,8 @@ import { LoyaltyCoupon } from './loyalty/loyalty-coupons/entities/loyalty-coupon
           TipAllocation,
           TipPool,
           TipPoolMember,
+          Configuration,
+          MerchantTipRule,
           TipSettlement,
           CashTipMovement,
           CollaboratorContract,
@@ -317,6 +329,7 @@ import { LoyaltyCoupon } from './loyalty/loyalty-coupons/entities/loyalty-coupon
     TipAllocationsModule,
     TipPoolsModule,
     TipPoolMembersModule,
+    InventoryModule,
     TipSettlementsModule,
     CashTipMovementsModule,
     PayrollAdjustmentsModule,
@@ -325,6 +338,7 @@ import { LoyaltyCoupon } from './loyalty/loyalty-coupons/entities/loyalty-coupon
     PayrollTaxDetailsModule,
     AcountPayableModule,
     QROrderItemModule,
+    ConfigurationModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
