@@ -8,8 +8,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Product } from '../../products/entities/product.entity';
-import { PurchaseOrder } from '../../purchase-order/entities/purchase-order.entity';
+import { Product } from '../../../inventory/products-inventory/products/entities/product.entity';
+import { PurchaseOrder } from '../../../inventory/products-inventory/purchase-order/entities/purchase-order.entity';
 
 @Entity({ name: 'supplier' })
 export class Supplier {

@@ -6,13 +6,13 @@ import {
   ProductResponseDto,
 } from './dto/product-response.dto';
 import { GetProductsQueryDto } from './dto/get-products-query.dto';
-import { AllPaginatedProducts } from './dto/all-paginated-purchase-orders.dto';
+import { AllPaginatedProducts } from './dto/all-paginated-products.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { Category } from '../category/entities/category.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
 import { ModifiersService } from '../modifiers/modifiers.service';
 import { VariantsService } from '../variants/variants.service';
 import { CategoryLittleResponseDto } from '../category/dto/category-response.dto';

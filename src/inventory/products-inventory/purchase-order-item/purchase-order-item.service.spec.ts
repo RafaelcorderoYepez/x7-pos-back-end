@@ -16,7 +16,7 @@ import { GetPurchaseOrdersItemsQueryDto } from './dto/get-purchase-order-item-qu
 import { PurchaseOrderStatus } from '../purchase-order/constants/purchase-order-status.enum';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { Category } from '../category/entities/category.entity';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
 
 describe('PurchaseOrderItemService', () => {
   let service: PurchaseOrderItemService;
@@ -228,7 +228,7 @@ describe('PurchaseOrderItemService', () => {
     variantRepo = module.get(getRepositoryToken(Variant));
 
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => { });
   });
 
   afterEach(() => {

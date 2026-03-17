@@ -22,7 +22,7 @@ import { CashTransaction } from '../../cashdrawer/cash-transactions/entities/cas
 import { LoyaltyPointTransaction } from 'src/loyalty/loyalty-points-transaction/entities/loyalty-points-transaction.entity';
 import { LoyaltyRewardsRedemtion } from 'src/loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyCoupon } from 'src/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
-import { Receipt } from 'src/inventory/billing-transactions/receipts/entities/receipt.entity';
+import { Receipt } from 'src/core/billing-transactions/receipts/entities/receipt.entity';
 
 @Entity('orders')
 @Index(['merchant_id', 'status', 'created_at'])

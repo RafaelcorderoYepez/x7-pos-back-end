@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import { GetProductsQueryDto } from './dto/get-products-query.dto';
-import { AllPaginatedProducts } from './dto/all-paginated-purchase-orders.dto';
+import { AllPaginatedProducts } from './dto/all-paginated-products.dto';
 import { UserRole } from 'src/users/constants/role.enum';
 import { Scope } from 'src/users/constants/scope.enum';
 import { CreateProductDto } from './dto/create-product.dto';

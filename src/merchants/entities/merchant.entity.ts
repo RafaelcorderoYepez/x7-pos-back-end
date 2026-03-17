@@ -16,7 +16,7 @@ import { Category } from 'src/inventory/products-inventory/category/entities/cat
 import { Table } from 'src/tables/entities/table.entity';
 import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity';
 import { Product } from 'src/inventory/products-inventory/products/entities/product.entity';
-import { Supplier } from 'src/inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
 import { Shift } from 'src/shifts/entities/shift.entity';
 import { ShiftAssignment } from 'src/shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from 'src/table-assignments/entities/table-assignment.entity';

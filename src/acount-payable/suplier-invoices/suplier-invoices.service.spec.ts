@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { SuplierInvoicesService } from './suplier-invoices.service';
 import { SuplierInvoice } from './entities/suplier-invoice.entity';
 import { Company } from '../../companies/entities/company.entity';
-import { Supplier } from '../../inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from '../../business-partners/suppliers/entities/supplier.entity';
 import { SupplierInvoiceStatus } from './constants/supplier-invoice-status.enum';
 
 describe('SuplierInvoicesService', () => {

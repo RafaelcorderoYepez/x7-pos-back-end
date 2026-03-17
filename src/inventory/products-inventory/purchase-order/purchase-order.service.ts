@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 import { ErrorMessage } from 'src/common/constants/error-messages';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { PurchaseOrderItem } from '../purchase-order-item/entities/purchase-order-item.entity';
 
@@ -27,7 +27,7 @@ export class PurchaseOrderService {
     private readonly supplierRepository: Repository<Supplier>,
     @InjectRepository(PurchaseOrderItem)
     private readonly purchaseOrderItemRepository: Repository<PurchaseOrderItem>,
-  ) {}
+  ) { }
 
   async create(
     merchant_id: number,
@@ -109,16 +109,16 @@ export class PurchaseOrderService {
           orderDate: purchaseOrder.orderDate,
           merchant: purchaseOrder.merchant
             ? {
-                id: purchaseOrder.merchant.id,
-                name: purchaseOrder.merchant.name,
-              }
+              id: purchaseOrder.merchant.id,
+              name: purchaseOrder.merchant.name,
+            }
             : null,
           supplier: purchaseOrder.supplier
             ? {
-                id: purchaseOrder.supplier.id,
-                name: purchaseOrder.supplier.name,
-                contactInfo: purchaseOrder.supplier.contactInfo,
-              }
+              id: purchaseOrder.supplier.id,
+              name: purchaseOrder.supplier.name,
+              contactInfo: purchaseOrder.supplier.contactInfo,
+            }
             : null,
         };
         return result;
@@ -173,16 +173,16 @@ export class PurchaseOrderService {
       orderDate: purchaseOrder.orderDate,
       merchant: purchaseOrder.merchant
         ? {
-            id: purchaseOrder.merchant.id,
-            name: purchaseOrder.merchant.name,
-          }
+          id: purchaseOrder.merchant.id,
+          name: purchaseOrder.merchant.name,
+        }
         : null,
       supplier: purchaseOrder.supplier
         ? {
-            id: purchaseOrder.supplier.id,
-            name: purchaseOrder.supplier.name,
-            contactInfo: purchaseOrder.supplier.contactInfo,
-          }
+          id: purchaseOrder.supplier.id,
+          name: purchaseOrder.supplier.name,
+          contactInfo: purchaseOrder.supplier.contactInfo,
+        }
         : null,
     };
 

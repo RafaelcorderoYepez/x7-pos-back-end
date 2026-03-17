@@ -13,7 +13,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ModifiersService } from '../modifiers/modifiers.service';
 import { VariantsService } from '../variants/variants.service';
 import { Category } from '../category/entities/category.entity';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
 
 describe('ProductsService', () => {
   let service: ProductsService;
@@ -203,7 +203,7 @@ describe('ProductsService', () => {
     variantsService = module.get(VariantsService);
 
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => { });
   });
 
   afterEach(() => {

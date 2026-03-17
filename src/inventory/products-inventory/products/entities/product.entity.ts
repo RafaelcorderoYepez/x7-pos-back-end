@@ -10,11 +10,11 @@ import {
 } from 'typeorm';
 import { LoyaltyReward } from 'src/loyalty/loyalty-reward/entities/loyalty-reward.entity';
 import { Category } from '../../category/entities/category.entity';
-import { Supplier } from '../../suppliers/entities/supplier.entity';
 import { Variant } from '../../variants/entities/variant.entity';
 import { Modifier } from '../../modifiers/entities/modifier.entity';
 import { Item } from '../../stocks/items/entities/item.entity';
 import { PurchaseOrderItem } from '../../purchase-order-item/entities/purchase-order-item.entity';
+import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
 
 @Entity({ name: 'product' })
 export class Product {

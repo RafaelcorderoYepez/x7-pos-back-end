@@ -5,7 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PurchaseOrder } from './entities/purchase-order.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
 import { PurchaseOrderItem } from '../purchase-order-item/entities/purchase-order-item.entity';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
@@ -214,7 +214,7 @@ describe('PurchaseOrderService', () => {
     purchaseOrderItemRepo = module.get(getRepositoryToken(PurchaseOrderItem));
 
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => { });
   });
 
   afterEach(() => {
