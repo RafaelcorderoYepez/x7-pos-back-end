@@ -4,7 +4,7 @@ import { MarketingCampaingAudienceService } from './marketing-campaing-audience.
 import { MarketingCampaingAudienceController } from './marketing-campaing-audience.controller';
 import { MarketingCampaignAudience } from './entities/marketing-campaing-audience.entity';
 import { MarketingCampaign } from '../marketing_campaing/entities/marketing_campaing.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 
 @Module({
   imports: [

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { OnlineOrder } from './entities/online-order.entity';
 import { OnlineStore } from '../online-stores/entities/online-store.entity';
 import { Order } from '../../orders/entities/order.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateOnlineOrderDto } from './dto/create-online-order.dto';
 import { UpdateOnlineOrderDto } from './dto/update-online-order.dto';
 import { GetOnlineOrderQueryDto, OnlineOrderSortBy } from './dto/get-online-order-query.dto';
@@ -24,7 +24,7 @@ export class OnlineOrderService {
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
-  ) {}
+  ) { }
 
   async create(createOnlineOrderDto: CreateOnlineOrderDto, authenticatedUserMerchantId: number): Promise<OneOnlineOrderResponseDto> {
     if (!authenticatedUserMerchantId) {
@@ -187,17 +187,17 @@ export class OnlineOrderService {
     }
 
     const sortField = query.sortBy === OnlineOrderSortBy.MERCHANT_ID ? 'onlineOrder.merchant_id' :
-                     query.sortBy === OnlineOrderSortBy.STORE_ID ? 'onlineOrder.store_id' :
-                     query.sortBy === OnlineOrderSortBy.ORDER_ID ? 'onlineOrder.order_id' :
-                     query.sortBy === OnlineOrderSortBy.CUSTOMER_ID ? 'onlineOrder.customer_id' :
-                     query.sortBy === OnlineOrderSortBy.TYPE ? 'onlineOrder.type' :
-                     query.sortBy === OnlineOrderSortBy.PAYMENT_STATUS ? 'onlineOrder.payment_status' :
-                     query.sortBy === OnlineOrderSortBy.TOTAL_AMOUNT ? 'onlineOrder.total_amount' :
-                     query.sortBy === OnlineOrderSortBy.PLACED_AT ? 'onlineOrder.placed_at' :
-                     query.sortBy === OnlineOrderSortBy.SCHEDULED_AT ? 'onlineOrder.scheduled_at' :
-                     query.sortBy === OnlineOrderSortBy.UPDATED_AT ? 'onlineOrder.updated_at' :
-                     query.sortBy === OnlineOrderSortBy.ID ? 'onlineOrder.id' :
-                     'onlineOrder.updated_at';
+      query.sortBy === OnlineOrderSortBy.STORE_ID ? 'onlineOrder.store_id' :
+        query.sortBy === OnlineOrderSortBy.ORDER_ID ? 'onlineOrder.order_id' :
+          query.sortBy === OnlineOrderSortBy.CUSTOMER_ID ? 'onlineOrder.customer_id' :
+            query.sortBy === OnlineOrderSortBy.TYPE ? 'onlineOrder.type' :
+              query.sortBy === OnlineOrderSortBy.PAYMENT_STATUS ? 'onlineOrder.payment_status' :
+                query.sortBy === OnlineOrderSortBy.TOTAL_AMOUNT ? 'onlineOrder.total_amount' :
+                  query.sortBy === OnlineOrderSortBy.PLACED_AT ? 'onlineOrder.placed_at' :
+                    query.sortBy === OnlineOrderSortBy.SCHEDULED_AT ? 'onlineOrder.scheduled_at' :
+                      query.sortBy === OnlineOrderSortBy.UPDATED_AT ? 'onlineOrder.updated_at' :
+                        query.sortBy === OnlineOrderSortBy.ID ? 'onlineOrder.id' :
+                          'onlineOrder.updated_at';
     const sortOrder = query.sortOrder || 'DESC';
     queryBuilder.orderBy(sortField, sortOrder);
 

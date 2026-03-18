@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SuppliersService } from './suppliers.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Supplier } from './entities/supplier.entity';
+import { Company } from 'src/companies/entities/company.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { Repository } from 'typeorm';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
@@ -18,6 +19,7 @@ describe('SuppliersService', () => {
   let supplierRepository: jest.Mocked<
     Repository<Supplier> & { save: jest.Mock }
   >;
+  let merchantRepository: jest.Mocked<Repository<Merchant>>;
 
   type MockQueryBuilder = {
     leftJoinAndSelect: jest.Mock;
@@ -37,23 +39,30 @@ describe('SuppliersService', () => {
     name: 'Test Merchant',
   };
 
+  const mockDate = new Date('2024-01-01T00:00:00.000Z');
+
   const mockSupplier: Partial<Supplier> = {
     id: 1,
     name: 'Test Supplier',
-    contactInfo: 'test@example.com',
-    merchantId: mockMerchant.id,
-    merchant: mockMerchant as Merchant,
+    tax_id: '12345678-9',
+    email: 'test@example.com',
+    phone: '+123456789',
+    address: '123 Main St',
+    company_id: 1,
     isActive: true,
+    created_at: mockDate,
+    updated_at: mockDate,
   };
 
   const mockCreateSupplierDto: CreateSupplierDto = {
     name: 'New Supplier',
-    contactInfo: 'new@example.com',
+    email: 'new@example.com',
+    tax_id: '11111111-1',
   };
 
   const mockUpdateSupplierDto: UpdateSupplierDto = {
     name: 'Updated Supplier',
-    contactInfo: 'updated@example.com',
+    email: 'updated@example.com',
   };
 
   const mockQuery: GetSuppliersQueryDto = {
@@ -65,11 +74,13 @@ describe('SuppliersService', () => {
   const mockSupplierResponseDto: SupplierResponseDto = {
     id: mockSupplier.id!,
     name: mockSupplier.name!,
-    contactInfo: mockSupplier.contactInfo!,
-    merchant: {
-      id: mockMerchant.id,
-      name: mockMerchant.name,
-    },
+    tax_id: mockSupplier.tax_id!,
+    email: mockSupplier.email!,
+    phone: mockSupplier.phone!,
+    address: mockSupplier.address!,
+    company_id: mockSupplier.company_id!,
+    created_at: mockDate,
+    updated_at: mockDate,
   };
 
   beforeEach(async () => {
@@ -97,6 +108,7 @@ describe('SuppliersService', () => {
     mockSupplierRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
 
     const mockMerchantRepo = {
+      findOne: jest.fn(),
       findOneBy: jest.fn(),
     };
 
@@ -111,11 +123,19 @@ describe('SuppliersService', () => {
           provide: getRepositoryToken(Merchant),
           useValue: mockMerchantRepo,
         },
+        {
+          provide: getRepositoryToken(Company),
+          useValue: {
+            findOneBy: jest.fn(),
+            findOne: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<SuppliersService>(SuppliersService);
     supplierRepository = module.get(getRepositoryToken(Supplier));
+    merchantRepository = module.get(getRepositoryToken(Merchant));
 
     jest
       .spyOn(ErrorHandler, 'handleDatabaseError')
@@ -125,41 +145,85 @@ describe('SuppliersService', () => {
     jest.clearAllMocks();
   });
 
+  describe('getCompanyIdByMerchantId', () => {
+    it('should return companyId for a given merchantId', async () => {
+      const merchantId = 1;
+      const companyId = 10;
+      merchantRepository.findOne.mockResolvedValueOnce({
+        id: merchantId,
+        companyId,
+      } as any);
+
+      const result = await service.getCompanyIdByMerchantId(merchantId);
+
+      expect(merchantRepository.findOne).toHaveBeenCalledWith({
+        where: { id: merchantId },
+        select: ['companyId'],
+      });
+      expect(result).toBe(companyId);
+    });
+
+    it('should throw NotFoundException if merchant not found', async () => {
+      const merchantId = 999;
+      merchantRepository.findOne.mockResolvedValueOnce(null);
+
+      await expect(
+        async () => await service.getCompanyIdByMerchantId(merchantId),
+      ).rejects.toThrow(ErrorMessage.MERCHANT_NOT_FOUND);
+
+      expect(merchantRepository.findOne).toHaveBeenCalledWith({
+        where: { id: merchantId },
+        select: ['companyId'],
+      });
+    });
+  });
+
   describe('Create', () => {
-    const merchantId = mockMerchant.id;
+    const company_id = mockMerchant.id;
 
     it('should create a new Supplier successfully', async () => {
-      supplierRepository.findOne.mockResolvedValueOnce(null); // No active supplier with same name
-      supplierRepository.findOne.mockResolvedValueOnce(null); // No inactive supplier with same name
+      supplierRepository.findOne.mockResolvedValueOnce(null); // No isActive supplier with same name
+      supplierRepository.findOne.mockResolvedValueOnce(null); // No isActive supplier with same tax_id
+      supplierRepository.findOne.mockResolvedValueOnce(null); // No inisActive supplier with same name
       supplierRepository.findOne.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       ); // For the findOne call within the create method
-      supplierRepository.create.mockReturnValueOnce(mockSupplier as Supplier);
-      supplierRepository.save.mockResolvedValueOnce(mockSupplier as Supplier);
-      mockQueryBuilder.getOne.mockResolvedValueOnce(mockSupplier as Supplier); // findOne inside findOne method
+      supplierRepository.create.mockReturnValueOnce({ ...mockSupplier } as Supplier);
+      supplierRepository.save.mockResolvedValueOnce({ ...mockSupplier } as Supplier);
+      mockQueryBuilder.getOne.mockResolvedValueOnce({ ...mockSupplier } as Supplier); // findOne inside findOne method
 
-      const result = await service.create(merchantId, mockCreateSupplierDto);
+      const result = await service.create(company_id, mockCreateSupplierDto);
 
       expect(supplierRepository.findOne).toHaveBeenNthCalledWith(1, {
         where: {
           name: mockCreateSupplierDto.name,
-          merchantId: merchantId,
+          company_id: company_id,
           isActive: true,
         },
       });
       expect(supplierRepository.findOne).toHaveBeenNthCalledWith(2, {
         where: {
+          tax_id: mockCreateSupplierDto.tax_id,
+          company_id: company_id,
+          isActive: true,
+        },
+      });
+      expect(supplierRepository.findOne).toHaveBeenNthCalledWith(3, {
+        where: {
           name: mockCreateSupplierDto.name,
-          merchantId: merchantId,
+          company_id: company_id,
           isActive: false,
         },
       });
       expect(supplierRepository.create).toHaveBeenCalledWith({
         name: mockCreateSupplierDto.name,
-        contactInfo: mockCreateSupplierDto.contactInfo,
-        merchantId: merchantId,
+        tax_id: mockCreateSupplierDto.tax_id,
+        email: mockCreateSupplierDto.email,
+        phone: undefined,
+        address: undefined,
+        company_id: company_id,
       });
-      expect(supplierRepository.save).toHaveBeenCalledWith(mockSupplier);
+      expect(supplierRepository.save).toHaveBeenCalledWith({ ...mockSupplier });
 
       expect(result).toEqual({
         statusCode: 201,
@@ -168,37 +232,45 @@ describe('SuppliersService', () => {
       });
     });
 
-    it('should activate an existing inactive supplier', async () => {
-      const inactiveSupplier = {
+    it('should activate an existing inisActive supplier', async () => {
+      const inisActiveSupplier = {
         ...mockSupplier,
         isActive: false,
       } as Supplier;
-      const activeSupplier = { ...mockSupplier, isActive: true } as Supplier;
+      const isActiveSupplier = { ...mockSupplier, isActive: true } as Supplier;
 
-      supplierRepository.findOne.mockResolvedValueOnce(null); // No active supplier with same name
-      supplierRepository.findOne.mockResolvedValueOnce(inactiveSupplier); // Found inactive supplier
-      supplierRepository.findOne.mockResolvedValueOnce(activeSupplier); // For the findOne call within the create method
-      supplierRepository.save.mockResolvedValueOnce(activeSupplier);
-      mockQueryBuilder.getOne.mockResolvedValueOnce(activeSupplier); // findOne inside findOne method
+      supplierRepository.findOne.mockResolvedValueOnce(null); // No isActive supplier with same name
+      supplierRepository.findOne.mockResolvedValueOnce(null); // No isActive supplier with same tax_id
+      supplierRepository.findOne.mockResolvedValueOnce(inisActiveSupplier); // Found inisActive supplier
+      supplierRepository.findOne.mockResolvedValueOnce(isActiveSupplier); // For the findOne call within the create method
+      supplierRepository.save.mockResolvedValueOnce(isActiveSupplier);
+      mockQueryBuilder.getOne.mockResolvedValueOnce(isActiveSupplier); // findOne inside findOne method
 
-      const result = await service.create(merchantId, mockCreateSupplierDto);
+      const result = await service.create(company_id, mockCreateSupplierDto);
 
       expect(supplierRepository.findOne).toHaveBeenNthCalledWith(1, {
         where: {
           name: mockCreateSupplierDto.name,
-          merchantId: merchantId,
+          company_id: company_id,
           isActive: true,
         },
       });
       expect(supplierRepository.findOne).toHaveBeenNthCalledWith(2, {
         where: {
+          tax_id: mockCreateSupplierDto.tax_id,
+          company_id: company_id,
+          isActive: true,
+        },
+      });
+      expect(supplierRepository.findOne).toHaveBeenNthCalledWith(3, {
+        where: {
           name: mockCreateSupplierDto.name,
-          merchantId: merchantId,
+          company_id: company_id,
           isActive: false,
         },
       });
-      expect(inactiveSupplier.isActive).toBe(true);
-      expect(supplierRepository.save).toHaveBeenCalledWith(inactiveSupplier);
+      expect(inisActiveSupplier.isActive).toBe(true);
+      expect(supplierRepository.save).toHaveBeenCalledWith(inisActiveSupplier);
 
       expect(result).toEqual({
         statusCode: 201,
@@ -209,17 +281,17 @@ describe('SuppliersService', () => {
 
     it('should throw BadRequestException if supplier name already exists', async () => {
       supplierRepository.findOne.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       ); // Active supplier with same name exists
 
       await expect(
-        async () => await service.create(merchantId, mockCreateSupplierDto),
+        async () => await service.create(company_id, mockCreateSupplierDto),
       ).rejects.toThrow(ErrorMessage.SUPPLIER_NAME_EXISTS);
 
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
         where: {
           name: mockCreateSupplierDto.name,
-          merchantId: merchantId,
+          company_id: company_id,
           isActive: true,
         },
       });
@@ -227,36 +299,47 @@ describe('SuppliersService', () => {
       expect(supplierRepository.save).not.toHaveBeenCalled();
     });
 
+    it('should throw ConflictException if supplier tax_id already exists', async () => {
+      supplierRepository.findOne.mockResolvedValueOnce(null); // No active supplier with same name
+      supplierRepository.findOne.mockResolvedValueOnce(
+        { ...mockSupplier } as Supplier,
+      ); // Active supplier with same tax_id exists
+
+      await expect(
+        async () => await service.create(company_id, mockCreateSupplierDto),
+      ).rejects.toThrow(ErrorMessage.SUPPLIER_TAX_ID_EXISTS);
+
+      expect(supplierRepository.create).not.toHaveBeenCalled();
+      expect(supplierRepository.save).not.toHaveBeenCalled();
+    });
+
     it('should handle database errors during create', async () => {
       supplierRepository.findOne.mockResolvedValueOnce(null);
       supplierRepository.findOne.mockResolvedValueOnce(null);
-      supplierRepository.create.mockReturnValueOnce(mockSupplier as Supplier);
+      supplierRepository.findOne.mockResolvedValueOnce(null);
+      supplierRepository.create.mockReturnValueOnce({ ...mockSupplier } as Supplier);
       supplierRepository.save.mockRejectedValueOnce(
         new Error('Database error'),
       ); // Simulate DB error
 
       await expect(
-        async () => await service.create(merchantId, mockCreateSupplierDto),
+        async () => await service.create(company_id, mockCreateSupplierDto),
       ).rejects.toThrow('Database error');
     });
   });
 
   describe('FindAll', () => {
-    const merchantId = mockMerchant.id;
+    const company_id = mockMerchant.id;
     it('should return all Suppliers successfully', async () => {
-      const suppliers = [mockSupplier as Supplier];
+      const suppliers = [{ ...mockSupplier } as Supplier];
       mockQueryBuilder.getMany.mockResolvedValue(suppliers);
       mockQueryBuilder.getCount.mockResolvedValue(suppliers.length);
 
-      const result = await service.findAll(mockQuery, merchantId);
+      const result = await service.findAll(mockQuery, company_id);
 
-      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith(
-        'supplier.merchant',
-        'merchant',
-      );
       expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-        'supplier.merchantId = :merchantId',
-        { merchantId },
+        'supplier.company_id = :company_id',
+        { company_id },
       );
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
         'supplier.isActive = :isActive',
@@ -286,15 +369,11 @@ describe('SuppliersService', () => {
       mockQueryBuilder.getMany.mockResolvedValue([]);
       mockQueryBuilder.getCount.mockResolvedValue(0);
 
-      const result = await service.findAll(mockQuery, merchantId);
+      const result = await service.findAll(mockQuery, company_id);
 
-      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith(
-        'supplier.merchant',
-        'merchant',
-      );
       expect(mockQueryBuilder.where).toHaveBeenCalledWith(
-        'supplier.merchantId = :merchantId',
-        { merchantId },
+        'supplier.company_id = :company_id',
+        { company_id },
       );
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
         'supplier.isActive = :isActive',
@@ -317,11 +396,11 @@ describe('SuppliersService', () => {
         ...mockQuery,
         name: 'test',
       };
-      const suppliers = [mockSupplier as Supplier];
+      const suppliers = [{ ...mockSupplier } as Supplier];
       mockQueryBuilder.getMany.mockResolvedValue(suppliers);
       mockQueryBuilder.getCount.mockResolvedValue(suppliers.length);
 
-      await service.findAll(queryWithName, merchantId);
+      await service.findAll(queryWithName, company_id);
 
       expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
         'LOWER(supplier.name) LIKE LOWER(:name)',
@@ -331,19 +410,18 @@ describe('SuppliersService', () => {
   });
 
   describe('FindOne', () => {
-    const merchantId = mockMerchant.id;
+    const company_id = mockMerchant.id;
     const supplierId = mockSupplier.id!;
 
-    it('should return a Supplier successfully by ID and merchant ID', async () => {
+    it('should return a Supplier successfully by ID and company ID', async () => {
       supplierRepository.findOne.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       );
 
-      const result = await service.findOne(supplierId, merchantId);
+      const result = await service.findOne(supplierId, company_id);
 
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
-        where: { id: supplierId, merchantId: merchantId, isActive: true },
-        relations: ['merchant'],
+        where: { id: supplierId, company_id: company_id, isActive: true },
       });
       expect(result).toEqual({
         statusCode: 200,
@@ -352,16 +430,15 @@ describe('SuppliersService', () => {
       });
     });
 
-    it('should return a Supplier successfully by ID without merchant ID', async () => {
+    it('should return a Supplier successfully by ID without company ID', async () => {
       supplierRepository.findOne.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       );
 
       const result = await service.findOne(supplierId);
 
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
         where: { id: supplierId, isActive: true },
-        relations: ['merchant'],
       });
       expect(result).toEqual({
         statusCode: 200,
@@ -375,26 +452,25 @@ describe('SuppliersService', () => {
       supplierRepository.findOne.mockResolvedValueOnce(null);
 
       await expect(
-        async () => await service.findOne(id_not_found, merchantId),
+        async () => await service.findOne(id_not_found, company_id),
       ).rejects.toThrow(ErrorMessage.SUPPLIER_NOT_FOUND);
 
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
-        where: { id: id_not_found, merchantId: merchantId, isActive: true },
-        relations: ['merchant'],
+        where: { id: id_not_found, company_id: company_id, isActive: true },
       });
     });
 
     it('should throw BadRequestException if Supplier ID is incorrect', async () => {
       await expect(
-        async () => await service.findOne(0, merchantId),
+        async () => await service.findOne(0, company_id),
       ).rejects.toThrow('Supplier ID incorrect');
 
       await expect(
-        async () => await service.findOne(-1, merchantId),
+        async () => await service.findOne(-1, company_id),
       ).rejects.toThrow('Supplier ID incorrect');
 
       await expect(
-        async () => await service.findOne(null as any, merchantId),
+        async () => await service.findOne(null as any, company_id),
       ).rejects.toThrow('Supplier ID incorrect');
     });
 
@@ -402,36 +478,32 @@ describe('SuppliersService', () => {
       const deletedSupplier = { ...mockSupplier, isActive: false } as Supplier;
       supplierRepository.findOne.mockResolvedValueOnce(deletedSupplier);
 
-      const result = await service.findOne(supplierId, merchantId, 'Deleted');
+      const result = await service.findOne(supplierId, company_id, 'Deleted');
 
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
-        where: { id: supplierId, merchantId: merchantId, isActive: false },
-        relations: ['merchant'],
+        where: { id: supplierId, company_id: company_id, isActive: false },
       });
       expect(result).toEqual({
-        statusCode: 201, // Deleted status code
+        statusCode: 200,
         message: 'Supplier Deleted successfully',
-        data: {
-          ...mockSupplierResponseDto,
-          merchant: deletedSupplier.merchant,
-        },
+        data: mockSupplierResponseDto,
       });
     });
   });
 
   describe('Update', () => {
-    const merchantId = mockMerchant.id;
+    const company_id = mockMerchant.id;
     const supplierId = mockSupplier.id!;
 
     it('should update a Supplier successfully', async () => {
       const updatedSupplier = {
         ...mockSupplier,
         name: mockUpdateSupplierDto.name,
-        contactInfo: mockUpdateSupplierDto.contactInfo,
+        email: mockUpdateSupplierDto.email,
       } as Supplier;
 
       supplierRepository.findOneBy.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       );
       supplierRepository.findOne.mockResolvedValueOnce(null); // No existing supplier with same name
       supplierRepository.findOne.mockResolvedValueOnce(updatedSupplier); // For the findOne call within the update method
@@ -440,31 +512,31 @@ describe('SuppliersService', () => {
 
       const result = await service.update(
         supplierId,
-        merchantId,
+        company_id,
         mockUpdateSupplierDto,
       );
 
       expect(supplierRepository.findOneBy).toHaveBeenCalledWith({
         id: supplierId,
-        merchantId: merchantId,
+        company_id: company_id,
         isActive: true,
       });
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
         where: {
           name: mockUpdateSupplierDto.name,
-          merchantId: merchantId,
+          company_id: company_id,
           isActive: true,
         },
       });
       expect(supplierRepository.save).toHaveBeenCalledWith(updatedSupplier);
 
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Supplier Updated successfully',
         data: {
           ...mockSupplierResponseDto,
           name: updatedSupplier.name,
-          contactInfo: updatedSupplier.contactInfo,
+          email: updatedSupplier.email,
         },
       });
     });
@@ -474,12 +546,12 @@ describe('SuppliersService', () => {
 
       await expect(
         async () =>
-          await service.update(supplierId, merchantId, mockUpdateSupplierDto),
+          await service.update(supplierId, company_id, mockUpdateSupplierDto),
       ).rejects.toThrow(ErrorMessage.SUPPLIER_NOT_FOUND);
 
       expect(supplierRepository.findOneBy).toHaveBeenCalledWith({
         id: supplierId,
-        merchantId: merchantId,
+        company_id: company_id,
         isActive: true,
       });
       expect(supplierRepository.save).not.toHaveBeenCalled();
@@ -497,7 +569,7 @@ describe('SuppliersService', () => {
       };
 
       supplierRepository.findOneBy.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       );
       supplierRepository.findOne.mockResolvedValueOnce(
         existingSupplierWithNewName,
@@ -505,42 +577,63 @@ describe('SuppliersService', () => {
 
       await expect(
         async () =>
-          await service.update(supplierId, merchantId, dtoWithExistingName),
+          await service.update(supplierId, company_id, dtoWithExistingName),
       ).rejects.toThrow(ErrorMessage.SUPPLIER_NAME_EXISTS);
 
       expect(supplierRepository.findOneBy).toHaveBeenCalledWith({
         id: supplierId,
-        merchantId: merchantId,
+        company_id: company_id,
         isActive: true,
       });
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
         where: {
           name: dtoWithExistingName.name,
-          merchantId: merchantId,
+          company_id: company_id,
           isActive: true,
         },
       });
       expect(supplierRepository.save).not.toHaveBeenCalled();
     });
 
+    it('should throw ConflictException if new supplier tax_id already exists', async () => {
+      const dtoWithExistingTaxId: UpdateSupplierDto = {
+        tax_id: '99999999-9',
+      };
+
+      supplierRepository.findOneBy.mockResolvedValueOnce(
+        { ...mockSupplier } as Supplier,
+      );
+      // name not changing → no name check → skip to tax_id check
+      supplierRepository.findOne.mockResolvedValueOnce(
+        { ...mockSupplier, id: 2, tax_id: '99999999-9' } as Supplier,
+      ); // Supplier with same tax_id found
+
+      await expect(
+        async () =>
+          await service.update(supplierId, company_id, dtoWithExistingTaxId),
+      ).rejects.toThrow(ErrorMessage.SUPPLIER_TAX_ID_EXISTS);
+
+      expect(supplierRepository.save).not.toHaveBeenCalled();
+    });
+
     it('should throw BadRequestException if Supplier ID is incorrect', async () => {
       await expect(
-        async () => await service.update(0, merchantId, mockUpdateSupplierDto),
+        async () => await service.update(0, company_id, mockUpdateSupplierDto),
       ).rejects.toThrow('Supplier ID incorrect');
 
       await expect(
-        async () => await service.update(-1, merchantId, mockUpdateSupplierDto),
+        async () => await service.update(-1, company_id, mockUpdateSupplierDto),
       ).rejects.toThrow('Supplier ID incorrect');
 
       await expect(
         async () =>
-          await service.update(null as any, merchantId, mockUpdateSupplierDto),
+          await service.update(null as any, company_id, mockUpdateSupplierDto),
       ).rejects.toThrow('Supplier ID incorrect');
     });
 
     it('should handle database errors during update', async () => {
       supplierRepository.findOneBy.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       );
       supplierRepository.findOne.mockResolvedValueOnce(null);
       supplierRepository.save.mockRejectedValueOnce(
@@ -549,45 +642,39 @@ describe('SuppliersService', () => {
 
       await expect(
         async () =>
-          await service.update(supplierId, merchantId, mockUpdateSupplierDto),
+          await service.update(supplierId, company_id, mockUpdateSupplierDto),
       ).rejects.toThrow('Database error');
     });
   });
 
   describe('Remove', () => {
-    const merchantId = mockMerchant.id;
+    const company_id = mockMerchant.id;
     const supplierId = mockSupplier.id!;
 
     it('should soft remove a Supplier successfully', async () => {
-      const inactiveSupplier = {
+      const inisActiveSupplier = {
         ...mockSupplier,
         isActive: false,
       } as Supplier;
 
       supplierRepository.findOne.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       );
-      supplierRepository.findOne.mockResolvedValueOnce(inactiveSupplier); // For the findOne call within the remove method
-      supplierRepository.save.mockResolvedValueOnce(inactiveSupplier);
-      mockQueryBuilder.getOne.mockResolvedValueOnce(inactiveSupplier); // findOne inside findOne method
+      supplierRepository.findOne.mockResolvedValueOnce(inisActiveSupplier); // For the findOne call within the remove method
+      supplierRepository.save.mockResolvedValueOnce(inisActiveSupplier);
+      mockQueryBuilder.getOne.mockResolvedValueOnce(inisActiveSupplier); // findOne inside findOne method
 
-      const result = await service.remove(supplierId, merchantId);
+      const result = await service.remove(supplierId, company_id);
 
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
-        where: { id: supplierId, merchantId: merchantId, isActive: true },
-        relations: ['merchant'],
+        where: { id: supplierId, company_id: company_id, isActive: true },
       });
-      expect(supplierRepository.save).toHaveBeenCalledWith(inactiveSupplier);
+      expect(supplierRepository.save).toHaveBeenCalledWith(inisActiveSupplier);
 
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Supplier Deleted successfully',
-        data: {
-          id: inactiveSupplier.id,
-          name: inactiveSupplier.name,
-          contactInfo: inactiveSupplier.contactInfo,
-          merchant: mockSupplierResponseDto.merchant,
-        },
+        data: mockSupplierResponseDto,
       });
     });
 
@@ -595,40 +682,39 @@ describe('SuppliersService', () => {
       supplierRepository.findOne.mockResolvedValueOnce(null);
 
       await expect(
-        async () => await service.remove(supplierId, merchantId),
+        async () => await service.remove(supplierId, company_id),
       ).rejects.toThrow(ErrorMessage.SUPPLIER_NOT_FOUND);
 
       expect(supplierRepository.findOne).toHaveBeenCalledWith({
-        where: { id: supplierId, merchantId: merchantId, isActive: true },
-        relations: ['merchant'],
+        where: { id: supplierId, company_id: company_id, isActive: true },
       });
       expect(supplierRepository.save).not.toHaveBeenCalled();
     });
 
     it('should throw BadRequestException if Supplier ID is incorrect', async () => {
       await expect(
-        async () => await service.remove(0, merchantId),
+        async () => await service.remove(0, company_id),
       ).rejects.toThrow('Supplier ID incorrect');
 
       await expect(
-        async () => await service.remove(-1, merchantId),
+        async () => await service.remove(-1, company_id),
       ).rejects.toThrow('Supplier ID incorrect');
 
       await expect(
-        async () => await service.remove(null as any, merchantId),
+        async () => await service.remove(null as any, company_id),
       ).rejects.toThrow('Supplier ID incorrect');
     });
 
     it('should handle database errors during remove', async () => {
       supplierRepository.findOne.mockResolvedValueOnce(
-        mockSupplier as Supplier,
+        { ...mockSupplier } as Supplier,
       );
       supplierRepository.save.mockRejectedValueOnce(
         new Error('Database error'),
       ); // Simulate DB error
 
       await expect(
-        async () => await service.remove(supplierId, merchantId),
+        async () => await service.remove(supplierId, company_id),
       ).rejects.toThrow('Database error');
     });
   });

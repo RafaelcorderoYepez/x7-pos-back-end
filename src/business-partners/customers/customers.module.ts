@@ -4,9 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomersController } from './customers.controller';
 import { CustomersService } from './customers.service';
 import { Customer } from './entities/customer.entity';
-import { User } from '../users/entities/user.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
-import { Company } from '../companies/entities/company.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Company } from 'src/companies/entities/company.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Customer, User, Merchant, Company])],
@@ -14,4 +14,4 @@ import { Company } from '../companies/entities/company.entity';
   providers: [CustomersService],
   exports: [CustomersService],
 })
-export class CustomersModule {}
+export class CustomersModule { }

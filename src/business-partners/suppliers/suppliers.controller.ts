@@ -46,7 +46,7 @@ import { SupplierResponseDto } from './dto/supplier-response.dto';
 @Controller('suppliers')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class SuppliersController {
-  constructor(private readonly suppliersService: SuppliersService) {}
+  constructor(private readonly suppliersService: SuppliersService) { }
 
   @Post()
   @Roles(UserRole.MERCHANT_ADMIN)
@@ -76,12 +76,12 @@ export class SuppliersController {
   })
   @ApiBadRequestResponse({ description: 'Invalid input data' })
   @ApiConflictResponse({ description: 'Supplier already exists' })
-  create(
+  async create(
     @CurrentUser() user: AuthenticatedUser,
     @Body() createSupplierDto: CreateSupplierDto,
   ) {
-    const merchantId = user.merchant.id;
-    return this.suppliersService.create(merchantId, createSupplierDto);
+    const companyId = await this.suppliersService.getCompanyIdByMerchantId(user.merchant.id);
+    return this.suppliersService.create(companyId, createSupplierDto);
   }
 
   @Get()
@@ -128,7 +128,11 @@ export class SuppliersController {
           {
             id: 1,
             name: 'Coca-Cola',
-            contactInfo: '+123456789',
+            tax_id: '12345678-9',
+            email: 'supplier@example.com',
+            phone: '+123456789',
+            address: '123 Main St',
+            company_id: 1,
             merchant: {
               id: 1,
               name: 'Restaurant ABC',
@@ -203,8 +207,8 @@ export class SuppliersController {
     @CurrentUser() user: AuthenticatedUser,
     @Query() query: GetSuppliersQueryDto,
   ): Promise<AllPaginatedSuppliers> {
-    const merchantId = user.merchant.id;
-    return this.suppliersService.findAll(query, merchantId);
+    const companyId = await this.suppliersService.getCompanyIdByMerchantId(user.merchant.id);
+    return this.suppliersService.findAll(query, companyId);
   }
 
   @Get(':id')
@@ -245,12 +249,12 @@ export class SuppliersController {
       },
     },
   })
-  findOne(
+  async findOne(
     @CurrentUser() user: AuthenticatedUser,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    const merchantId = user.merchant.id;
-    return this.suppliersService.findOne(id, merchantId);
+    const companyId = await this.suppliersService.getCompanyIdByMerchantId(user.merchant.id);
+    return this.suppliersService.findOne(id, companyId);
   }
 
   @Patch(':id')
@@ -296,13 +300,13 @@ export class SuppliersController {
       },
     },
   })
-  update(
+  async update(
     @CurrentUser() user: AuthenticatedUser,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateSupplierDto: UpdateSupplierDto,
   ) {
-    const merchantId = user.merchant.id;
-    return this.suppliersService.update(id, merchantId, updateSupplierDto);
+    const companyId = await this.suppliersService.getCompanyIdByMerchantId(user.merchant.id);
+    return this.suppliersService.update(id, companyId, updateSupplierDto);
   }
 
   @Delete(':id')
@@ -344,11 +348,11 @@ export class SuppliersController {
       },
     },
   })
-  remove(
+  async remove(
     @CurrentUser() user: AuthenticatedUser,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    const merchantId = user.merchant.id;
-    return this.suppliersService.remove(id, merchantId);
+    const companyId = await this.suppliersService.getCompanyIdByMerchantId(user.merchant.id);
+    return this.suppliersService.remove(id, companyId);
   }
 }

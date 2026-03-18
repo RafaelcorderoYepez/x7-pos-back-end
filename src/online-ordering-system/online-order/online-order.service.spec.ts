@@ -10,7 +10,7 @@ import { OnlineOrderService } from './online-order.service';
 import { OnlineOrder } from './entities/online-order.entity';
 import { OnlineStore } from '../online-stores/entities/online-store.entity';
 import { Order } from '../../orders/entities/order.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateOnlineOrderDto } from './dto/create-online-order.dto';
 import { UpdateOnlineOrderDto } from './dto/update-online-order.dto';
 import { GetOnlineOrderQueryDto, OnlineOrderSortBy } from './dto/get-online-order-query.dto';

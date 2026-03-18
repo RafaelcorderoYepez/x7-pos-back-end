@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 import { ErrorMessage } from 'src/common/constants/error-messages';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { PurchaseOrderItem } from '../purchase-order-item/entities/purchase-order-item.entity';
 
@@ -27,7 +27,7 @@ export class PurchaseOrderService {
     private readonly supplierRepository: Repository<Supplier>,
     @InjectRepository(PurchaseOrderItem)
     private readonly purchaseOrderItemRepository: Repository<PurchaseOrderItem>,
-  ) {}
+  ) { }
 
   async create(
     merchant_id: number,
@@ -36,10 +36,17 @@ export class PurchaseOrderService {
     const { supplierId, ...purchaseOrderData } = createPurchaseOrderDto;
 
     const [supplier] = await Promise.all([
-      this.supplierRepository.findOneBy({
-        id: supplierId,
-        merchantId: merchant_id,
-      }),
+      (async () => {
+        const merchant = await this.merchantRepository.findOne({
+          where: { id: merchant_id },
+          select: ['companyId'],
+        });
+        if (!merchant) return null;
+        return this.supplierRepository.findOneBy({
+          id: supplierId,
+          company_id: merchant.companyId,
+        });
+      })(),
     ]);
 
     if (!supplier) ErrorHandler.notFound(ErrorMessage.SUPPLIER_NOT_FOUND);
@@ -109,16 +116,18 @@ export class PurchaseOrderService {
           orderDate: purchaseOrder.orderDate,
           merchant: purchaseOrder.merchant
             ? {
-                id: purchaseOrder.merchant.id,
-                name: purchaseOrder.merchant.name,
-              }
+              id: purchaseOrder.merchant.id,
+              name: purchaseOrder.merchant.name,
+            }
             : null,
           supplier: purchaseOrder.supplier
             ? {
-                id: purchaseOrder.supplier.id,
-                name: purchaseOrder.supplier.name,
-                contactInfo: purchaseOrder.supplier.contactInfo,
-              }
+              id: purchaseOrder.supplier.id,
+              name: purchaseOrder.supplier.name,
+              tax_id: purchaseOrder.supplier.tax_id,
+              email: purchaseOrder.supplier.email,
+              company_id: purchaseOrder.supplier.company_id,
+            }
             : null,
         };
         return result;
@@ -173,16 +182,18 @@ export class PurchaseOrderService {
       orderDate: purchaseOrder.orderDate,
       merchant: purchaseOrder.merchant
         ? {
-            id: purchaseOrder.merchant.id,
-            name: purchaseOrder.merchant.name,
-          }
+          id: purchaseOrder.merchant.id,
+          name: purchaseOrder.merchant.name,
+        }
         : null,
       supplier: purchaseOrder.supplier
         ? {
-            id: purchaseOrder.supplier.id,
-            name: purchaseOrder.supplier.name,
-            contactInfo: purchaseOrder.supplier.contactInfo,
-          }
+          id: purchaseOrder.supplier.id,
+          name: purchaseOrder.supplier.name,
+          tax_id: purchaseOrder.supplier.tax_id,
+          email: purchaseOrder.supplier.email,
+          company_id: purchaseOrder.supplier.company_id,
+        }
         : null,
     };
 
@@ -241,9 +252,15 @@ export class PurchaseOrderService {
       ErrorHandler.notFound(ErrorMessage.PURCHASE_ORDER_NOT_FOUND);
 
     if (supplierId && supplierId !== purchaseOrder.supplierId) {
+      const merchant = await this.merchantRepository.findOne({
+        where: { id: merchant_id },
+        select: ['companyId'],
+      });
+      if (!merchant) ErrorHandler.notFound(ErrorMessage.MERCHANT_NOT_FOUND);
+
       const supplier = await this.supplierRepository.findOneBy({
         id: supplierId,
-        merchantId: merchant_id,
+        company_id: merchant.companyId,
       });
       if (!supplier) ErrorHandler.notFound(ErrorMessage.SUPPLIER_NOT_FOUND);
     }

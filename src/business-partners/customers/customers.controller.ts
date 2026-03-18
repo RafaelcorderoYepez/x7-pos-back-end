@@ -23,12 +23,12 @@ import {
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dtos/create-customer.dto';
 import { UpdateCustomerDto } from './dtos/update-customer.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
-import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Customer } from './entities/customer.entity';
-import { ErrorResponse } from '../common/dtos/error-response.dto';
+import { ErrorResponse } from 'src/common/dtos/error-response.dto';
 
 @ApiTags('Customers')
 @ApiExtraModels(ErrorResponse)
@@ -36,7 +36,7 @@ import { ErrorResponse } from '../common/dtos/error-response.dto';
 @Controller('customers')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class CustomersController {
-  constructor(private readonly customersService: CustomersService) {}
+  constructor(private readonly customersService: CustomersService) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new customer' })

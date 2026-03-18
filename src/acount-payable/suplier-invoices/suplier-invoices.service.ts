@@ -19,7 +19,7 @@ import {
 } from './dto/suplier-invoice-response.dto';
 import { PaginatedSuplierInvoicesResponseDto } from './dto/paginated-suplier-invoices-response.dto';
 import { SupplierInvoiceStatus } from './constants/supplier-invoice-status.enum';
-import { Supplier } from '../../inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from '../../business-partners/suppliers/entities/supplier.entity';
 
 @Injectable()
 export class SuplierInvoicesService {
@@ -30,7 +30,7 @@ export class SuplierInvoicesService {
     private readonly companyRepo: Repository<Company>,
     @InjectRepository(Supplier)
     private readonly supplierRepo: Repository<Supplier>,
-  ) {}
+  ) { }
 
   private toResponseDto(inv: SuplierInvoice): SuplierInvoiceResponseDto {
     return {

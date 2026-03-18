@@ -13,7 +13,6 @@ import { CashTransactionsModule } from './cashdrawer/cash-transactions/cash-tran
 import { CashdrawerModule } from './cashdrawer/cashdrawer.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ConfigurationModule } from './configuration/configuration.module';
-import { CustomersModule } from './customers/customers.module';
 import { FeaturesModule } from './subscriptions/features/features.module';
 import { HrModule } from './hr/hr.module';
 import { InventoryModule } from './inventory/inventory.module';
@@ -62,9 +61,9 @@ import { QRMenuModule } from './qr-code/qr-menu/qr-menu.module';
 import { QRMenuSectionModule } from './qr-code/qr-menu-section/qr-menu-section.module';
 import { QROrderItemModule } from './qr-code/qr-order-item/qr-order-item.module';
 import { QrOrderModule } from './qr-code/qr-order/qr-order.module';
-import { ReceiptItemModule } from './inventory/billing-transactions/receipt-item/receipt-item.module';
-import { ReceiptTaxModule } from './inventory/billing-transactions/receipt-tax/receipt-tax.module';
-import { ReceiptsModule } from './inventory/billing-transactions/receipts/receipts.module';
+import { ReceiptItemModule } from './core/billing-transactions/receipt-item/receipt-item.module';
+import { ReceiptTaxModule } from './core/billing-transactions/receipt-tax/receipt-tax.module';
+import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.module';
 import { ShiftAssignmentsModule } from './shift-assignments/shift-assignments.module';
 import { ShiftsModule } from './shifts/shifts.module';
 import { SubscriptionApplicationModule } from './subscriptions/subscription-application/subscription-application.module';
@@ -91,7 +90,7 @@ import { Collaborator } from './hr/collaborators/entities/collaborator.entity';
 import { CollaboratorContract } from './hr/collaborator-contracts/entities/collaborator-contract.entity';
 import { Company } from './companies/entities/company.entity';
 import { Configuration } from './configuration/entity/configuration-entity';
-import { Customer } from './customers/entities/customer.entity';
+import { Customer } from './business-partners/customers/entities/customer.entity';
 import { FeatureEntity } from './subscriptions/features/entity/features.entity';
 import { Item } from './inventory/products-inventory/stocks/items/entities/item.entity';
 import { KitchenDisplayDevice } from './kitchen-display-system/kitchen-display-device/entities/kitchen-display-device.entity';
@@ -146,16 +145,16 @@ import { QRMenuItem } from './qr-code/qr-menu-item/entity/qr-menu-item.entity';
 import { QRMenuSection } from './qr-code/qr-menu-section/entity/qr-menu-section.entity';
 import { QROrder } from './qr-code/qr-order/entity/qr-order.entity';
 import { QROrderItem } from './qr-code/qr-order-item/entity/qr-order-item.entity';
-import { Receipt } from './inventory/billing-transactions/receipts/entities/receipt.entity';
-import { ReceiptItem } from './inventory/billing-transactions/receipt-item/entities/receipt-item.entity';
-import { ReceiptTax } from './inventory/billing-transactions/receipt-tax/entities/receipt-tax.entity';
+import { Receipt } from './core/billing-transactions/receipts/entities/receipt.entity';
+import { ReceiptItem } from './core/billing-transactions/receipt-item/entities/receipt-item.entity';
+import { ReceiptTax } from './core/billing-transactions/receipt-tax/entities/receipt-tax.entity';
 import { Shift } from './shifts/entities/shift.entity';
 import { ShiftAssignment } from './shift-assignments/entities/shift-assignment.entity';
 import { SubscriptionApplication } from './subscriptions/subscription-application/entity/subscription-application.entity';
 import { SubscriptionPayment } from './subscriptions/subscription-payments/entity/subscription-payments.entity';
 import { SubscriptionPlan } from './subscriptions/subscription-plan/entity/subscription-plan.entity';
 import { SuplierInvoice } from './acount-payable/suplier-invoices/entities/suplier-invoice.entity';
-import { Supplier } from './inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from './business-partners/suppliers/entities/supplier.entity';
 import { Table } from './tables/entities/table.entity';
 import { TableAssignment } from './table-assignments/entities/table-assignment.entity';
 import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.entity';
@@ -167,6 +166,8 @@ import { TipSettlement } from './tips/tip-settlements/entities/tip-settlement.en
 import { User } from './users/entities/user.entity';
 import { Variant } from './inventory/products-inventory/variants/entities/variant.entity';
 import { OnlineMenuItem } from './online-ordering-system/online-menu-item/entities/online-menu-item.entity';
+import { CoreModule } from './core/core.module';
+import { BusinessPartnersModule } from './business-partners/business-partners.module';
 
 @Module({
   imports: [
@@ -281,7 +282,6 @@ import { OnlineMenuItem } from './online-ordering-system/online-menu-item/entiti
     CashdrawerModule,
     CompaniesModule,
     ConfigurationModule,
-    CustomersModule,
     FeaturesModule,
     HrModule,
     InventoryModule,
@@ -347,6 +347,8 @@ import { OnlineMenuItem } from './online-ordering-system/online-menu-item/entiti
     TipsModule,
     UsersModule,
     CashTipMovementsModule,
+    CoreModule,
+    BusinessPartnersModule,
   ],
 })
 export class AppModule { }

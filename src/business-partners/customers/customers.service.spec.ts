@@ -8,12 +8,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { Customer } from './entities/customer.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
-import { User } from '../users/entities/user.entity';
-import { Company } from '../companies/entities/company.entity';
+import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Company } from 'src/companies/entities/company.entity';
 import { CreateCustomerDto } from './dtos/create-customer.dto';
 import { UpdateCustomerDto } from './dtos/update-customer.dto';
-import { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
+import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 
 describe('CustomersService', () => {
   let service: CustomersService;
@@ -87,6 +87,17 @@ describe('CustomersService', () => {
   const mockCompany = {
     id: 1,
     name: 'Test Company',
+    email: 'test@company.com',
+    phone: '1234567890',
+    rut: '12345678-9',
+    address: '123 Test St',
+    city: 'Test City',
+    state: 'Test State',
+    country: 'Test Country',
+    merchants: [],
+    customers: [],
+    configurations: [],
+    suppliers: [],
   };
 
   beforeEach(async () => {

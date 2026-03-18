@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { MarketingCampaign } from '../../marketing_campaing/entities/marketing_campaing.entity';
-import { Customer } from '../../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { MarketingCampaignAudienceStatus } from '../constants/marketing-campaign-audience-status.enum';
 
 @Entity('marketing_campaign_audience')

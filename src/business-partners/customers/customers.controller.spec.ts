@@ -7,7 +7,7 @@ import { CustomersController } from './customers.controller';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dtos/create-customer.dto';
 import { UpdateCustomerDto } from './dtos/update-customer.dto';
-import { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
+import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 
 describe('CustomersController', () => {
   let controller: CustomersController;
@@ -107,7 +107,21 @@ describe('CustomersController', () => {
       const customerWithCompany = {
         ...mockCustomer,
         companyId: 1,
-        company: { id: 1, name: 'Test Company' },
+        company: {
+          id: 1,
+          name: 'Test Company',
+          email: 'test@company.com',
+          phone: '1234567890',
+          rut: '12345678-9',
+          address: '123 Test St',
+          city: 'Test City',
+          state: 'Test State',
+          country: 'Test Country',
+          merchants: [],
+          customers: [],
+          configurations: [],
+          suppliers: [],
+        },
       };
 
       jest

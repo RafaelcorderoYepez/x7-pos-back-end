@@ -14,7 +14,7 @@ import {
 } from './dto/loyalty-customer-response.dto';
 import { LoyaltyCustomer } from './entities/loyalty-customer.entity';
 import { LoyaltyProgram } from '../loyalty-programs/entities/loyalty-program.entity';
-import { Customer } from 'src/customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { LoyaltyTier } from '../loyalty-tier/entities/loyalty-tier.entity';
 
 describe('LoyaltyCustomerController', () => {
