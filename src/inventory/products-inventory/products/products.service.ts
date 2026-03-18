@@ -45,11 +45,18 @@ export class ProductsService {
         merchantId: merchant_id,
         isActive: true,
       }),
-      this.supplierRepository.findOneBy({
-        id: supplierId,
-        merchantId: merchant_id,
-        isActive: true,
-      }),
+      (async () => {
+        const merchant = await this.merchantRepository.findOne({
+          where: { id: merchant_id },
+          select: ['companyId'],
+        });
+        if (!merchant) return null;
+        return this.supplierRepository.findOneBy({
+          id: supplierId,
+          company_id: merchant.companyId,
+          isActive: true,
+        });
+      })(),
     ]);
 
     if (!category) ErrorHandler.notFound(ErrorMessage.CATEGORY_NOT_FOUND);
@@ -182,7 +189,9 @@ export class ProductsService {
             ? {
               id: product.supplier.id,
               name: product.supplier.name,
-              contactInfo: product.supplier.contactInfo,
+              tax_id: product.supplier.tax_id,
+              email: product.supplier.email,
+              company_id: product.supplier.company_id,
             }
             : null,
         };
@@ -230,7 +239,6 @@ export class ProductsService {
         'category',
         'category.parent',
         'supplier',
-        'supplier.merchant',
       ],
     });
 
@@ -263,7 +271,9 @@ export class ProductsService {
         ? {
           id: product.supplier.id,
           name: product.supplier.name,
-          contactInfo: product.supplier.contactInfo,
+          tax_id: product.supplier.tax_id,
+          email: product.supplier.email,
+          company_id: product.supplier.company_id,
         }
         : null,
     };
@@ -330,9 +340,15 @@ export class ProductsService {
       if (!category) ErrorHandler.notFound(ErrorMessage.CATEGORY_NOT_FOUND);
     }
     if (supplierId && supplierId !== product.supplierId) {
+      const merchant = await this.merchantRepository.findOne({
+        where: { id: merchant_id },
+        select: ['companyId'],
+      });
+      if (!merchant) ErrorHandler.notFound(ErrorMessage.MERCHANT_NOT_FOUND);
+
       const supplier = await this.supplierRepository.findOneBy({
         id: supplierId,
-        merchantId: merchant_id,
+        company_id: merchant.companyId,
         isActive: true,
       });
       if (!supplier) ErrorHandler.notFound(ErrorMessage.SUPPLIER_NOT_FOUND);

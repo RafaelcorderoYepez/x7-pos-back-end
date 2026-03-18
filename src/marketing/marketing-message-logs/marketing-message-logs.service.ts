@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { MarketingMessageLog } from './entities/marketing-message-log.entity';
 import { MarketingCampaign } from '../marketing_campaing/entities/marketing_campaing.entity';
 import { MarketingAutomation } from '../marketing-automations/entities/marketing-automation.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateMarketingMessageLogDto } from './dto/create-marketing-message-log.dto';
 import { UpdateMarketingMessageLogDto } from './dto/update-marketing-message-log.dto';
 import {
@@ -29,7 +29,7 @@ export class MarketingMessageLogsService {
     private readonly marketingAutomationRepository: Repository<MarketingAutomation>,
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
-  ) {}
+  ) { }
 
   async create(
     createMarketingMessageLogDto: CreateMarketingMessageLogDto,

@@ -76,8 +76,32 @@ describe('SuplierInvoicesService', () => {
         updated_at: new Date(),
         deleted_at: null,
       };
-      mockCompanyRepo.findOne.mockResolvedValue({ id: 1 });
-      mockSupplierRepo.findOne.mockResolvedValue({ id: 1 });
+      mockCompanyRepo.findOne.mockResolvedValue({
+        id: 1,
+        name: 'Test Company',
+        email: 'test@company.com',
+        phone: '1234567890',
+        rut: '12345678-9',
+        address: '123 Test St',
+        city: 'Test City',
+        state: 'Test State',
+        country: 'Test Country',
+        merchants: [],
+        customers: [],
+        configurations: [],
+        suppliers: [],
+      });
+      mockSupplierRepo.findOne.mockResolvedValue({
+        id: 1,
+        name: 'Test Supplier',
+        company_id: 1,
+        isActive: true,
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: null as any,
+        products: [],
+        purchaseOrders: [],
+      });
       mockInvoiceRepo.create.mockReturnValue(saved);
       mockInvoiceRepo.save.mockResolvedValue(saved);
 

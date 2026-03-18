@@ -8,8 +8,8 @@ import {
 } from 'typeorm';
 import { Company } from '../../companies/entities/company.entity';
 import { User } from '../../users/entities/user.entity';
-import { Customer } from '../../customers/entities/customer.entity';
-import { CustomerSummaryDto } from '../../customers/dtos/customer-summary.dto';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
+import { CustomerSummaryDto } from 'src/business-partners/customers/dtos/customer-summary.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserSummaryDto } from 'src/users/dtos/user-summary.dto';
 import { Category } from 'src/inventory/products-inventory/category/entities/category.entity';
@@ -140,14 +140,6 @@ export class Merchant {
   @OneToMany(() => Product, (Product) => Product.merchant)
   products: Product[];
 
-  @ApiProperty({
-    type: () => Supplier,
-    isArray: true,
-    required: false,
-    description: 'List of suppliers associated with the merchant',
-  })
-  @OneToMany(() => Supplier, (supplier) => supplier.merchant)
-  suppliers: Supplier[];
 
   @ApiProperty({
     type: () => Movement,

@@ -60,7 +60,7 @@ export class PurchaseOrder {
   @Column({ type: 'decimal', precision: 10, scale: 2, name: 'total_amount' })
   totalAmount: number;
 
-  @ManyToOne(() => Supplier, (supplier) => supplier.products, {
+  @ManyToOne(() => Supplier, (supplier) => supplier.purchaseOrders, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     nullable: true,

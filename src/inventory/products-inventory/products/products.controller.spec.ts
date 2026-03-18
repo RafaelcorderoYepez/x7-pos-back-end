@@ -29,7 +29,7 @@ describe('ProductsController', () => {
     basePrice: 100,
     merchant: { id: 1, name: 'Test Merchant' },
     category: { id: 1, name: 'Test Category', parent: null },
-    supplier: { id: 1, name: 'Test Supplier', contactInfo: '123' },
+    supplier: { id: 1, name: 'Test Supplier', company_id: 1 },
     isActive: true,
   };
 

@@ -14,7 +14,7 @@ import { Merchant } from '../../merchants/entities/merchant.entity';
 import { Table } from '../../tables/entities/table.entity';
 import { Collaborator } from '../../hr/collaborators/entities/collaborator.entity';
 import { MerchantSubscription } from '../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { OrderStatus } from '../constants/order-status.enum';
 import { OrderBusinessStatus } from '../constants/order-business-status.enum';
 import { OrderType } from '../constants/order-type.enum';

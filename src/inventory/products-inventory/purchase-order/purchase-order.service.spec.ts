@@ -35,6 +35,7 @@ describe('PurchaseOrderService', () => {
   const mockMerchant = {
     id: 1,
     name: 'Test Merchant',
+    companyId: 1,
   };
 
   const mockCategory: Category = {
@@ -49,16 +50,19 @@ describe('PurchaseOrderService', () => {
     products: [],
   };
 
-  const mockSupplier: Supplier = {
+  const mockSupplier = {
     id: 1,
     name: 'Test Supplier',
-    contactInfo: 'Test Contact',
-    merchantId: mockMerchant.id,
-    merchant: mockMerchant as Merchant,
+    tax_id: '12345678-9',
+    email: 'supplier@example.com',
+    company_id: 1,
     isActive: true,
+    created_at: new Date(),
+    updated_at: new Date(),
+    company: null as any,
     products: [],
     purchaseOrders: [],
-  };
+  } as Supplier;
 
   const mockProduct: Product = {
     id: 1,
@@ -161,6 +165,7 @@ describe('PurchaseOrderService', () => {
     };
 
     const mockMerchantRepo = {
+      findOne: jest.fn().mockResolvedValue(mockMerchant as Merchant),
       findOneBy: jest.fn().mockResolvedValue(mockMerchant as Merchant),
     };
 
@@ -241,7 +246,7 @@ describe('PurchaseOrderService', () => {
 
       expect(supplierRepo.findOneBy).toHaveBeenCalledWith({
         id: mockCreatePurchaseOrderDto.supplierId,
-        merchantId: mockMerchant.id,
+        company_id: mockMerchant.companyId,
       });
       expect(purchaseOrderRepo.create).toHaveBeenCalledWith({
         status: mockCreatePurchaseOrderDto.status,
@@ -270,7 +275,9 @@ describe('PurchaseOrderService', () => {
           supplier: {
             id: mockSupplier.id,
             name: mockSupplier.name,
-            contactInfo: mockSupplier.contactInfo,
+            tax_id: mockSupplier.tax_id,
+            email: mockSupplier.email,
+            company_id: mockSupplier.company_id,
           },
         },
       });
@@ -286,7 +293,7 @@ describe('PurchaseOrderService', () => {
 
       expect(supplierRepo.findOneBy).toHaveBeenCalledWith({
         id: mockCreatePurchaseOrderDto.supplierId,
-        merchantId: mockMerchant.id,
+        company_id: mockMerchant.companyId,
       });
       expect(purchaseOrderRepo.create).not.toHaveBeenCalled();
       expect(purchaseOrderRepo.save).not.toHaveBeenCalled();
@@ -304,7 +311,7 @@ describe('PurchaseOrderService', () => {
 
       expect(supplierRepo.findOneBy).toHaveBeenCalledWith({
         id: mockCreatePurchaseOrderDto.supplierId,
-        merchantId: mockMerchant.id,
+        company_id: mockMerchant.companyId,
       });
       expect(purchaseOrderRepo.create).toHaveBeenCalledWith({
         status: mockCreatePurchaseOrderDto.status,
@@ -369,7 +376,9 @@ describe('PurchaseOrderService', () => {
             supplier: {
               id: mockSupplier.id,
               name: mockSupplier.name,
-              contactInfo: mockSupplier.contactInfo,
+              tax_id: mockSupplier.tax_id,
+              email: mockSupplier.email,
+              company_id: mockSupplier.company_id,
             },
           },
         ],
@@ -458,7 +467,9 @@ describe('PurchaseOrderService', () => {
           supplier: {
             id: mockSupplier.id,
             name: mockSupplier.name,
-            contactInfo: mockSupplier.contactInfo,
+            tax_id: mockSupplier.tax_id,
+            email: mockSupplier.email,
+            company_id: mockSupplier.company_id,
           },
         },
       });
@@ -549,23 +560,28 @@ describe('PurchaseOrderService', () => {
           supplier: {
             id: mockSupplier.id,
             name: mockSupplier.name,
-            contactInfo: mockSupplier.contactInfo,
+            tax_id: mockSupplier.tax_id,
+            email: mockSupplier.email,
+            company_id: mockSupplier.company_id,
           },
         },
       });
     });
 
     it('should update a PurchaseOrder and change supplier successfully', async () => {
-      const newMockSupplier: Supplier = {
+      const newMockSupplier = {
         id: 2,
         name: 'New Test Supplier',
-        contactInfo: 'New Contact Info',
-        merchantId: mockMerchant.id,
-        merchant: mockMerchant as Merchant,
+        tax_id: '11111111-1',
+        email: 'new@example.com',
+        company_id: 1,
         isActive: true,
+        created_at: new Date(),
+        updated_at: new Date(),
+        company: null as any,
         products: [],
         purchaseOrders: [],
-      };
+      } as Supplier;
       const updatedPurchaseOrderWithNewSupplier: PurchaseOrder = {
         ...mockPurchaseOrder,
         supplierId: newMockSupplier.id,
@@ -598,7 +614,7 @@ describe('PurchaseOrderService', () => {
       });
       expect(supplierRepo.findOneBy).toHaveBeenCalledWith({
         id: newMockSupplier.id,
-        merchantId: mockMerchant.id,
+        company_id: mockMerchant.companyId,
       });
       expect(purchaseOrderRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -626,7 +642,9 @@ describe('PurchaseOrderService', () => {
           supplier: {
             id: newMockSupplier.id,
             name: newMockSupplier.name,
-            contactInfo: newMockSupplier.contactInfo,
+            tax_id: newMockSupplier.tax_id,
+            email: newMockSupplier.email,
+            company_id: newMockSupplier.company_id,
           },
         },
       });
@@ -677,7 +695,7 @@ describe('PurchaseOrderService', () => {
       });
       expect(supplierRepo.findOneBy).toHaveBeenCalledWith({
         id: dtoWithInvalidSupplier.supplierId,
-        merchantId: mockMerchant.id,
+        company_id: mockMerchant.companyId,
       });
       expect(purchaseOrderRepo.save).not.toHaveBeenCalled();
     });
@@ -773,7 +791,9 @@ describe('PurchaseOrderService', () => {
           supplier: {
             id: mockSupplier.id,
             name: mockSupplier.name,
-            contactInfo: mockSupplier.contactInfo,
+            tax_id: mockSupplier.tax_id,
+            email: mockSupplier.email,
+            company_id: mockSupplier.company_id,
           },
         },
       });
@@ -861,7 +881,9 @@ describe('PurchaseOrderService', () => {
           supplier: {
             id: mockSupplier.id,
             name: mockSupplier.name,
-            contactInfo: mockSupplier.contactInfo,
+            tax_id: mockSupplier.tax_id,
+            email: mockSupplier.email,
+            company_id: mockSupplier.company_id,
           },
         },
       });

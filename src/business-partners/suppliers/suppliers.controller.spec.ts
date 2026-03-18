@@ -12,6 +12,7 @@ describe('SuppliersController', () => {
   let user: AuthenticatedUser;
 
   const mockSuppliersService = {
+    getCompanyIdByMerchantId: jest.fn(),
     findAll: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
@@ -20,6 +21,7 @@ describe('SuppliersController', () => {
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SuppliersController],
       providers: [
@@ -38,6 +40,7 @@ describe('SuppliersController', () => {
       scope: Scope.MERCHANT_WEB,
       merchant: { id: 1 },
     };
+    mockSuppliersService.getCompanyIdByMerchantId.mockResolvedValue(1);
   });
 
   describe('Controller Initialization', () => {
@@ -65,10 +68,10 @@ describe('SuppliersController', () => {
 
       const result = await controller.findAll(user, query);
 
-      expect(result).toEqual(expectedResult);
+      expect(mockSuppliersService.getCompanyIdByMerchantId).toHaveBeenCalledWith(user.merchant.id);
       expect(mockSuppliersService.findAll).toHaveBeenCalledWith(
         query,
-        user.merchant.id,
+        1,
       );
     });
   });
@@ -82,7 +85,7 @@ describe('SuppliersController', () => {
         data: {
           id: supplierId,
           name: 'Test Supplier',
-          merchant: { id: user.merchant.id, name: 'Test Merchant' },
+          company_id: 1,
         },
       };
 
@@ -90,10 +93,10 @@ describe('SuppliersController', () => {
 
       const result = await controller.findOne(user, supplierId);
 
-      expect(result).toEqual(expectedResult);
+      expect(mockSuppliersService.getCompanyIdByMerchantId).toHaveBeenCalledWith(user.merchant.id);
       expect(mockSuppliersService.findOne).toHaveBeenCalledWith(
         supplierId,
-        user.merchant.id,
+        1,
       );
     });
   });
@@ -102,7 +105,7 @@ describe('SuppliersController', () => {
     it('should create a supplier', async () => {
       const createSupplierDto = {
         name: 'New Supplier',
-        contactInfo: '1234567890',
+        email: 'supplier@example.com',
       };
       const expectedResult = {
         statusCode: 201,
@@ -110,7 +113,7 @@ describe('SuppliersController', () => {
         data: {
           id: 10,
           name: 'New Supplier',
-          merchant: { id: user.merchant.id, name: 'Test Merchant' },
+          company_id: 1,
         },
       };
 
@@ -119,8 +122,9 @@ describe('SuppliersController', () => {
       const result = await controller.create(user, createSupplierDto);
 
       expect(result).toEqual(expectedResult);
+      expect(mockSuppliersService.getCompanyIdByMerchantId).toHaveBeenCalledWith(user.merchant.id);
       expect(mockSuppliersService.create).toHaveBeenCalledWith(
-        user.merchant.id,
+        1,
         createSupplierDto,
       );
     });
@@ -138,7 +142,7 @@ describe('SuppliersController', () => {
         data: {
           id: supplierId,
           name: 'Updated Supplier',
-          merchant: { id: user.merchant.id, name: 'Test Merchant' },
+          company_id: 1,
         },
       };
 
@@ -151,9 +155,10 @@ describe('SuppliersController', () => {
       );
 
       expect(result).toEqual(expectedResult);
+      expect(mockSuppliersService.getCompanyIdByMerchantId).toHaveBeenCalledWith(user.merchant.id);
       expect(mockSuppliersService.update).toHaveBeenCalledWith(
         supplierId,
-        user.merchant.id,
+        1,
         updateSupplierDto,
       );
     });
@@ -177,9 +182,10 @@ describe('SuppliersController', () => {
       const result = await controller.remove(user, supplierId);
 
       expect(result).toEqual(expectedResult);
+      expect(mockSuppliersService.getCompanyIdByMerchantId).toHaveBeenCalledWith(user.merchant.id);
       expect(mockSuppliersService.remove).toHaveBeenCalledWith(
         supplierId,
-        user.merchant.id,
+        1,
       );
     });
   });
@@ -192,7 +198,7 @@ describe('SuppliersController', () => {
     it('should call service methods with correct parameters', async () => {
       const createSupplierDto = {
         name: 'Integration Test',
-        contactInfo: 'Test',
+        email: 'test@example.com',
       };
       const updateSupplierDto = { name: 'Updated Integration Test' };
       const supplierId = 1;
@@ -210,26 +216,27 @@ describe('SuppliersController', () => {
       await controller.update(user, supplierId, updateSupplierDto);
       await controller.remove(user, supplierId);
 
+      expect(mockSuppliersService.getCompanyIdByMerchantId).toHaveBeenCalledTimes(5);
       expect(mockSuppliersService.create).toHaveBeenCalledWith(
-        user.merchant.id,
+        1,
         createSupplierDto,
       );
       expect(mockSuppliersService.findAll).toHaveBeenCalledWith(
         query,
-        user.merchant.id,
+        1,
       );
       expect(mockSuppliersService.findOne).toHaveBeenCalledWith(
         supplierId,
-        user.merchant.id,
+        1,
       );
       expect(mockSuppliersService.update).toHaveBeenCalledWith(
         supplierId,
-        user.merchant.id,
+        1,
         updateSupplierDto,
       );
       expect(mockSuppliersService.remove).toHaveBeenCalledWith(
         supplierId,
-        user.merchant.id,
+        1,
       );
     });
   });

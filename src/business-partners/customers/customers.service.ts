@@ -7,12 +7,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from './entities/customer.entity';
-import { Company } from '../companies/entities/company.entity';
-import { User } from '../users/entities/user.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
+import { Company } from 'src/companies/entities/company.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { CreateCustomerDto } from './dtos/create-customer.dto';
 import { UpdateCustomerDto } from './dtos/update-customer.dto';
-import { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
+import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 
 @Injectable()
 export class CustomersService {
@@ -27,7 +27,7 @@ export class CustomersService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(Company)
     private readonly companyRepo: Repository<Company>,
-  ) {}
+  ) { }
 
   async create(dto: CreateCustomerDto, user: AuthenticatedUser) {
     const userData = await this.userRepo.findOneBy({ id: user.id });

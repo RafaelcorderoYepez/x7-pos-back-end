@@ -24,6 +24,7 @@ describe('CompaniesService', () => {
     country: 'Test Country',
     merchants: [],
     configurations: [],
+    suppliers: [],
   };
 
   const mockCreateCompanyDto: CreateCompanyDto = {

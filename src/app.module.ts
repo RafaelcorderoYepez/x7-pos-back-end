@@ -13,7 +13,6 @@ import { CashTransactionsModule } from './cashdrawer/cash-transactions/cash-tran
 import { CashdrawerModule } from './cashdrawer/cashdrawer.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ConfigurationModule } from './configuration/configuration.module';
-import { CustomersModule } from './customers/customers.module';
 import { FeaturesModule } from './subscriptions/features/features.module';
 import { HrModule } from './hr/hr.module';
 import { InventoryModule } from './inventory/inventory.module';
@@ -91,7 +90,7 @@ import { Collaborator } from './hr/collaborators/entities/collaborator.entity';
 import { CollaboratorContract } from './hr/collaborator-contracts/entities/collaborator-contract.entity';
 import { Company } from './companies/entities/company.entity';
 import { Configuration } from './configuration/entity/configuration-entity';
-import { Customer } from './customers/entities/customer.entity';
+import { Customer } from './business-partners/customers/entities/customer.entity';
 import { FeatureEntity } from './subscriptions/features/entity/features.entity';
 import { Item } from './inventory/products-inventory/stocks/items/entities/item.entity';
 import { KitchenDisplayDevice } from './kitchen-display-system/kitchen-display-device/entities/kitchen-display-device.entity';
@@ -283,7 +282,6 @@ import { BusinessPartnersModule } from './business-partners/business-partners.mo
     CashdrawerModule,
     CompaniesModule,
     ConfigurationModule,
-    CustomersModule,
     FeaturesModule,
     HrModule,
     InventoryModule,

@@ -57,13 +57,15 @@ describe('PurchaseOrderItemService', () => {
   const mockSupplier: Supplier = {
     id: 1,
     name: 'Test Supplier',
-    contactInfo: 'Test Contact',
-    merchantId: mockMerchant.id,
-    merchant: mockMerchant as Merchant,
+    email: 'test@example.com',
+    company_id: 1,
     isActive: true,
     products: [],
     purchaseOrders: [],
-  };
+    company: null as any,
+    created_at: new Date(),
+    updated_at: new Date(),
+  } as Supplier;
 
   const mockProduct: Product = {
     id: 1,

@@ -36,10 +36,17 @@ export class PurchaseOrderService {
     const { supplierId, ...purchaseOrderData } = createPurchaseOrderDto;
 
     const [supplier] = await Promise.all([
-      this.supplierRepository.findOneBy({
-        id: supplierId,
-        merchantId: merchant_id,
-      }),
+      (async () => {
+        const merchant = await this.merchantRepository.findOne({
+          where: { id: merchant_id },
+          select: ['companyId'],
+        });
+        if (!merchant) return null;
+        return this.supplierRepository.findOneBy({
+          id: supplierId,
+          company_id: merchant.companyId,
+        });
+      })(),
     ]);
 
     if (!supplier) ErrorHandler.notFound(ErrorMessage.SUPPLIER_NOT_FOUND);
@@ -117,7 +124,9 @@ export class PurchaseOrderService {
             ? {
               id: purchaseOrder.supplier.id,
               name: purchaseOrder.supplier.name,
-              contactInfo: purchaseOrder.supplier.contactInfo,
+              tax_id: purchaseOrder.supplier.tax_id,
+              email: purchaseOrder.supplier.email,
+              company_id: purchaseOrder.supplier.company_id,
             }
             : null,
         };
@@ -181,7 +190,9 @@ export class PurchaseOrderService {
         ? {
           id: purchaseOrder.supplier.id,
           name: purchaseOrder.supplier.name,
-          contactInfo: purchaseOrder.supplier.contactInfo,
+          tax_id: purchaseOrder.supplier.tax_id,
+          email: purchaseOrder.supplier.email,
+          company_id: purchaseOrder.supplier.company_id,
         }
         : null,
     };
@@ -241,9 +252,15 @@ export class PurchaseOrderService {
       ErrorHandler.notFound(ErrorMessage.PURCHASE_ORDER_NOT_FOUND);
 
     if (supplierId && supplierId !== purchaseOrder.supplierId) {
+      const merchant = await this.merchantRepository.findOne({
+        where: { id: merchant_id },
+        select: ['companyId'],
+      });
+      if (!merchant) ErrorHandler.notFound(ErrorMessage.MERCHANT_NOT_FOUND);
+
       const supplier = await this.supplierRepository.findOneBy({
         id: supplierId,
-        merchantId: merchant_id,
+        company_id: merchant.companyId,
       });
       if (!supplier) ErrorHandler.notFound(ErrorMessage.SUPPLIER_NOT_FOUND);
     }

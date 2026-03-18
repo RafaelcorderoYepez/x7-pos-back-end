@@ -12,7 +12,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Merchant } from '../../../merchants/entities/merchant.entity';
 import { OnlineStore } from '../../online-stores/entities/online-store.entity';
 import { Order } from '../../../orders/entities/order.entity';
-import { Customer } from '../../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { OnlineOrderStatus } from '../constants/online-order-status.enum';
 import { OnlineOrderType } from '../constants/online-order-type.enum';
 import { OnlineOrderPaymentStatus } from '../constants/online-order-payment-status.enum';
