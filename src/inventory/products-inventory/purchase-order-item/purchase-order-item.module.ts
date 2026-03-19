@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PurchaseOrder } from '../purchase-order/entities/purchase-order.entity';
 import { Product } from '../products/entities/product.entity';
 import { Variant } from '../variants/entities/variant.entity';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { PurchaseOrderItem } from './entities/purchase-order-item.entity';
 import { ProductsModule } from '../products/products.module';
@@ -29,4 +29,4 @@ import { VariantsModule } from '../variants/variants.module';
   providers: [PurchaseOrderItemService],
   exports: [PurchaseOrderItemService],
 })
-export class PurchaseOrderItemModule {}
+export class PurchaseOrderItemModule { }

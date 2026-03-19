@@ -34,6 +34,7 @@ describe('MerchantTipRuleService', () => {
       merchants: [],
       customers: [],
       configurations: [],
+      suppliers: [],
     } as Company,
     createdAt: new Date(),
     updatedAt: new Date(),

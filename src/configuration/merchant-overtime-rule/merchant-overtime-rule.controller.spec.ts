@@ -26,6 +26,7 @@ describe('MerchantOvertimeRuleController', () => {
     merchants: [],
     customers: [],
     configurations: [],
+    suppliers: [],
   } as Company;
 
   const mockUser = {

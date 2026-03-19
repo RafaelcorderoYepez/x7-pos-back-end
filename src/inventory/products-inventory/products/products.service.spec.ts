@@ -13,7 +13,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ModifiersService } from '../modifiers/modifiers.service';
 import { VariantsService } from '../variants/variants.service';
 import { Category } from '../category/entities/category.entity';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
 
 describe('ProductsService', () => {
   let service: ProductsService;
@@ -37,15 +37,21 @@ describe('ProductsService', () => {
   const mockMerchant = {
     id: 1,
     name: 'Test Merchant',
+    companyId: 1,
   };
 
   const mockSupplier = {
     id: 1,
     name: 'Test Supplier',
-    merchant: mockMerchant as Merchant,
-    merchantId: mockMerchant.id,
-    contactInfo: '123',
+    company_id: 1,
+    tax_id: '12345678-9',
+    email: 'test@example.com',
     isActive: true,
+    created_at: new Date(),
+    updated_at: new Date(),
+    company: null as any,
+    products: [],
+    purchaseOrders: [],
   };
 
   const mockCategory = {
@@ -86,7 +92,9 @@ describe('ProductsService', () => {
   const mockSupplierResponse = {
     id: mockSupplier.id,
     name: mockSupplier.name,
-    contactInfo: mockSupplier.contactInfo,
+    tax_id: mockSupplier.tax_id,
+    email: mockSupplier.email,
+    company_id: mockSupplier.company_id,
   };
 
   const mockCreateProductDto: CreateProductDto = {
@@ -203,7 +211,7 @@ describe('ProductsService', () => {
     variantsService = module.get(VariantsService);
 
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => { });
   });
 
   afterEach(() => {
@@ -316,7 +324,6 @@ describe('ProductsService', () => {
           'category',
           'category.parent',
           'supplier',
-          'supplier.merchant',
         ],
       });
 
@@ -354,7 +361,6 @@ describe('ProductsService', () => {
           'category',
           'category.parent',
           'supplier',
-          'supplier.merchant',
         ],
       });
     });
@@ -396,7 +402,7 @@ describe('ProductsService', () => {
       });
       expect(supplierRepo.findOneBy).toHaveBeenCalledWith({
         id: mockCreateProductDto.supplierId,
-        merchantId: mockMerchant.id,
+        company_id: mockMerchant.companyId,
         isActive: true,
       });
 
@@ -434,7 +440,6 @@ describe('ProductsService', () => {
           'category',
           'category.parent',
           'supplier',
-          'supplier.merchant',
         ],
       });
       expect(productRepo.create).toHaveBeenCalledWith({
@@ -622,7 +627,6 @@ describe('ProductsService', () => {
           'category',
           'category.parent',
           'supplier',
-          'supplier.merchant',
         ],
       });
       expect(productRepo.save).toHaveBeenCalledWith({
@@ -803,7 +807,6 @@ describe('ProductsService', () => {
           'category',
           'category.parent',
           'supplier',
-          'supplier.merchant',
         ],
       });
       expect(result).toEqual({
@@ -901,7 +904,6 @@ describe('ProductsService', () => {
           'category',
           'category.parent',
           'supplier',
-          'supplier.merchant',
         ],
       });
     });

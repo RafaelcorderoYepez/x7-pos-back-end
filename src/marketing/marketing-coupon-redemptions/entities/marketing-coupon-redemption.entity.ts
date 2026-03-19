@@ -11,7 +11,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { MarketingCoupon } from '../../marketing-coupons/entities/marketing-coupon.entity';
 import { Order } from '../../../orders/entities/order.entity';
-import { Customer } from '../../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { MarketingCouponRedemptionStatus } from '../constants/marketing-coupon-redemption-status.enum';
 
 @Entity('marketing_coupon_redemptions')

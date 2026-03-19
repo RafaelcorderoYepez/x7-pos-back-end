@@ -15,7 +15,7 @@ import { Merchant } from '../merchants/entities/merchant.entity';
 import { Table } from '../tables/entities/table.entity';
 import { Collaborator } from '../hr/collaborators/entities/collaborator.entity';
 import { MerchantSubscription } from '../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
-import { Customer } from '../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import {
   OneOrderResponseDto,
   PaginatedOrdersResponseDto,
@@ -37,7 +37,7 @@ export class OrdersService {
     private readonly subscriptionRepo: Repository<MerchantSubscription>,
     @InjectRepository(Customer)
     private readonly customerRepo: Repository<Customer>,
-  ) {}
+  ) { }
 
   async create(
     dto: CreateOrderDto,

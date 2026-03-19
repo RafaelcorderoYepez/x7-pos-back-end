@@ -10,7 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { PurchaseOrderStatus } from '../constants/purchase-order-status.enum';
-import { Supplier } from 'src/inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
 import { PurchaseOrderItem } from 'src/inventory/products-inventory/purchase-order-item/entities/purchase-order-item.entity';
 
 @Entity('purchase_order')
@@ -23,7 +23,7 @@ export class PurchaseOrder {
   @Column({ name: 'merchantId' })
   merchantId: number;
 
-  @ManyToOne(() => Merchant, (merchant) => merchant.products, {
+  @ManyToOne(() => Merchant, (merchant) => merchant.purchaseOrders, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
@@ -60,7 +60,7 @@ export class PurchaseOrder {
   @Column({ type: 'decimal', precision: 10, scale: 2, name: 'total_amount' })
   totalAmount: number;
 
-  @ManyToOne(() => Supplier, (supplier) => supplier.products, {
+  @ManyToOne(() => Supplier, (supplier) => supplier.purchaseOrders, {
     onDelete: 'SET NULL',
     onUpdate: 'CASCADE',
     nullable: true,

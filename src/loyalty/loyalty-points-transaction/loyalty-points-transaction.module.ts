@@ -3,9 +3,9 @@ import { LoyaltyPointsTransactionService } from './loyalty-points-transaction.se
 import { LoyaltyPointsTransactionController } from './loyalty-points-transaction.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from 'src/orders/entities/order.entity';
-import { CashTransaction } from 'src/cash-transactions/entities/cash-transaction.entity';
+import { CashTransaction } from 'src/cashdrawer/cash-transactions/entities/cash-transaction.entity';
 import { LoyaltyCustomer } from '../loyalty-customer/entities/loyalty-customer.entity';
-import { Customer } from 'src/customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { LoyaltyPointTransaction } from './entities/loyalty-points-transaction.entity';
 import { LoyaltyTier } from '../loyalty-tier/entities/loyalty-tier.entity';
 

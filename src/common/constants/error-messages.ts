@@ -78,6 +78,7 @@ export enum ErrorMessage {
   VARIANT_NAME_EXISTS = 'Variant name already exists',
   VARIANT_SKU_EXISTS = 'Variant with SKU already exists',
   SUPPLIER_NAME_EXISTS = 'Supplier name already exists',
+  SUPPLIER_TAX_ID_EXISTS = 'Supplier tax ID already exists',
   LOCATION_NAME_EXISTS = 'Location name already exists',
   LOCATION_ADDRESS_EXISTS = 'Location Address already exists',
   ITEM_EXISTS = 'Item already exists',

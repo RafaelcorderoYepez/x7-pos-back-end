@@ -69,7 +69,7 @@ describe('PurchaseOrderController', () => {
           supplier: {
             id: 1,
             name: 'Test Supplier',
-            contactInfo: '123-456-7890',
+            company_id: 1,
           },
         },
       };
@@ -173,7 +173,7 @@ describe('PurchaseOrderController', () => {
           supplier: {
             id: 1,
             name: 'Test Supplier',
-            contactInfo: '123-456-7890',
+            company_id: 1,
           },
         },
       };
@@ -224,7 +224,7 @@ describe('PurchaseOrderController', () => {
           supplier: {
             id: 1,
             name: 'Test Supplier',
-            contactInfo: '123-456-7890',
+            company_id: 1,
           },
         },
       };
@@ -285,7 +285,7 @@ describe('PurchaseOrderController', () => {
           supplier: {
             id: 1,
             name: 'Test Supplier',
-            contactInfo: '123-456-7890',
+            company_id: 1,
           },
         },
       };

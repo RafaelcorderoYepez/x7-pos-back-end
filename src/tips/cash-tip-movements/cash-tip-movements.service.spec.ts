@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CashTipMovementsService } from './cash-tip-movements.service';
 import { CashTipMovement } from './entities/cash-tip-movement.entity';
-import { CashDrawer } from '../../cash-drawers/entities/cash-drawer.entity';
+import { CashDrawer } from '../../cashdrawer/cash-drawers/entities/cash-drawer.entity';
 import { Tip } from '../tips/entities/tip.entity';
 import { CreateCashTipMovementDto } from './dto/create-cash-tip-movement.dto';
 import { UpdateCashTipMovementDto } from './dto/update-cash-tip-movement.dto';

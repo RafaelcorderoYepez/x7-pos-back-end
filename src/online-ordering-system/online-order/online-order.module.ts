@@ -5,7 +5,7 @@ import { OnlineOrderController } from './online-order.controller';
 import { OnlineOrder } from './entities/online-order.entity';
 import { OnlineStore } from '../online-stores/entities/online-store.entity';
 import { Order } from '../../orders/entities/order.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { Merchant } from '../../merchants/entities/merchant.entity';
 
 @Module({
@@ -16,4 +16,4 @@ import { Merchant } from '../../merchants/entities/merchant.entity';
   providers: [OnlineOrderService],
   exports: [OnlineOrderService],
 })
-export class OnlineOrderModule {}
+export class OnlineOrderModule { }

@@ -5,7 +5,7 @@ import { MarketingMessageLogsController } from './marketing-message-logs.control
 import { MarketingMessageLog } from './entities/marketing-message-log.entity';
 import { MarketingCampaign } from '../marketing_campaing/entities/marketing_campaing.entity';
 import { MarketingAutomation } from '../marketing-automations/entities/marketing-automation.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 
 @Module({
   imports: [

@@ -26,6 +26,8 @@ describe('CompaniesController', () => {
     country: 'Test Country',
     merchants: [],
     customers: [],
+    configurations: [],
+    suppliers: [],
   };
 
   const mockCreateCompanyDto: CreateCompanyDto = {

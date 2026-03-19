@@ -6,13 +6,13 @@ import {
   ProductResponseDto,
 } from './dto/product-response.dto';
 import { GetProductsQueryDto } from './dto/get-products-query.dto';
-import { AllPaginatedProducts } from './dto/all-paginated-purchase-orders.dto';
+import { AllPaginatedProducts } from './dto/all-paginated-products.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { Category } from '../category/entities/category.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
-import { Supplier } from '../suppliers/entities/supplier.entity';
+import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
 import { ModifiersService } from '../modifiers/modifiers.service';
 import { VariantsService } from '../variants/variants.service';
 import { CategoryLittleResponseDto } from '../category/dto/category-response.dto';
@@ -32,7 +32,7 @@ export class ProductsService {
     private readonly supplierRepository: Repository<Supplier>,
     private readonly modifiersService: ModifiersService,
     private readonly variantsService: VariantsService,
-  ) {}
+  ) { }
   async create(
     merchant_id: number,
     createProductDto: CreateProductDto,
@@ -45,11 +45,18 @@ export class ProductsService {
         merchantId: merchant_id,
         isActive: true,
       }),
-      this.supplierRepository.findOneBy({
-        id: supplierId,
-        merchantId: merchant_id,
-        isActive: true,
-      }),
+      (async () => {
+        const merchant = await this.merchantRepository.findOne({
+          where: { id: merchant_id },
+          select: ['companyId'],
+        });
+        if (!merchant) return null;
+        return this.supplierRepository.findOneBy({
+          id: supplierId,
+          company_id: merchant.companyId,
+          isActive: true,
+        });
+      })(),
     ]);
 
     if (!category) ErrorHandler.notFound(ErrorMessage.CATEGORY_NOT_FOUND);
@@ -75,7 +82,14 @@ export class ProductsService {
       });
 
       if (existingButIsNotActive) {
-        existingButIsNotActive.isActive = true;
+        Object.assign(existingButIsNotActive, {
+          name,
+          sku,
+          basePrice,
+          categoryId,
+          supplierId,
+          isActive: true,
+        });
         await this.productRepository.save(existingButIsNotActive);
         return this.findOne(existingButIsNotActive.id, merchant_id, 'Created');
       } else {
@@ -155,28 +169,30 @@ export class ProductsService {
           basePrice: product.basePrice,
           merchant: product.merchant
             ? {
-                id: product.merchant.id,
-                name: product.merchant.name,
-              }
+              id: product.merchant.id,
+              name: product.merchant.name,
+            }
             : null,
           category: product.category
             ? {
-                id: product.category.id,
-                name: product.category.name,
-                parent: product.category.parent
-                  ? ({
-                      id: product.category.parent.id,
-                      name: product.category.parent.name,
-                    } as CategoryLittleResponseDto)
-                  : null,
-              }
+              id: product.category.id,
+              name: product.category.name,
+              parent: product.category.parent
+                ? ({
+                  id: product.category.parent.id,
+                  name: product.category.parent.name,
+                } as CategoryLittleResponseDto)
+                : null,
+            }
             : null,
           supplier: product.supplier
             ? {
-                id: product.supplier.id,
-                name: product.supplier.name,
-                contactInfo: product.supplier.contactInfo,
-              }
+              id: product.supplier.id,
+              name: product.supplier.name,
+              tax_id: product.supplier.tax_id,
+              email: product.supplier.email,
+              company_id: product.supplier.company_id,
+            }
             : null,
         };
         return result;
@@ -223,7 +239,6 @@ export class ProductsService {
         'category',
         'category.parent',
         'supplier',
-        'supplier.merchant',
       ],
     });
 
@@ -236,28 +251,30 @@ export class ProductsService {
       basePrice: product.basePrice,
       merchant: product.merchant
         ? {
-            id: product.merchant.id,
-            name: product.merchant.name,
-          }
+          id: product.merchant.id,
+          name: product.merchant.name,
+        }
         : null,
       category: product.category
         ? {
-            id: product.category.id,
-            name: product.category.name,
-            parent: product.category.parent
-              ? ({
-                  id: product.category.parent.id,
-                  name: product.category.parent.name,
-                } as CategoryLittleResponseDto)
-              : null,
-          }
+          id: product.category.id,
+          name: product.category.name,
+          parent: product.category.parent
+            ? ({
+              id: product.category.parent.id,
+              name: product.category.parent.name,
+            } as CategoryLittleResponseDto)
+            : null,
+        }
         : null,
       supplier: product.supplier
         ? {
-            id: product.supplier.id,
-            name: product.supplier.name,
-            contactInfo: product.supplier.contactInfo,
-          }
+          id: product.supplier.id,
+          name: product.supplier.name,
+          tax_id: product.supplier.tax_id,
+          email: product.supplier.email,
+          company_id: product.supplier.company_id,
+        }
         : null,
     };
 
@@ -323,9 +340,15 @@ export class ProductsService {
       if (!category) ErrorHandler.notFound(ErrorMessage.CATEGORY_NOT_FOUND);
     }
     if (supplierId && supplierId !== product.supplierId) {
+      const merchant = await this.merchantRepository.findOne({
+        where: { id: merchant_id },
+        select: ['companyId'],
+      });
+      if (!merchant) ErrorHandler.notFound(ErrorMessage.MERCHANT_NOT_FOUND);
+
       const supplier = await this.supplierRepository.findOneBy({
         id: supplierId,
-        merchantId: merchant_id,
+        company_id: merchant.companyId,
         isActive: true,
       });
       if (!supplier) ErrorHandler.notFound(ErrorMessage.SUPPLIER_NOT_FOUND);
