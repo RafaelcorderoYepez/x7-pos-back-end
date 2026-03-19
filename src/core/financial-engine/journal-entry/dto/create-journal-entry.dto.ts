@@ -1,0 +1,86 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+    IsArray,
+    IsDateString,
+    IsEnum,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsPositive,
+    IsString,
+    MaxLength,
+    Min,
+    ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { JournalEntryStatus } from '../constants/journal-entry-status.enum';
+
+export class CreateJournalEntryLineDto {
+    @ApiProperty({ example: 1, description: 'Ledger Account ID' })
+    @IsNumber()
+    @IsPositive()
+    account_id: number;
+
+    @ApiProperty({ example: 1000.0, description: 'Debit amount (use 0 for credit lines)' })
+    @IsNumber()
+    @Min(0)
+    debit: number;
+
+    @ApiProperty({ example: 0.0, description: 'Credit amount (use 0 for debit lines)' })
+    @IsNumber()
+    @Min(0)
+    credit: number;
+
+    @ApiPropertyOptional({ example: 'Cash payment received', description: 'Line description' })
+    @IsOptional()
+    @IsString()
+    description?: string;
+}
+
+export class CreateJournalEntryDto {
+    @ApiProperty({ example: 'JE-2024-0001', description: 'Unique entry number' })
+    @IsString()
+    @IsNotEmpty()
+    @MaxLength(100)
+    entry_number: string;
+
+    @ApiProperty({ example: '2024-01-15', description: 'Entry date (YYYY-MM-DD)' })
+    @IsDateString()
+    @IsNotEmpty()
+    entry_date: string;
+
+    @ApiPropertyOptional({ example: 'Monthly payroll expense', description: 'Entry description' })
+    @IsOptional()
+    @IsString()
+    description?: string;
+
+    @ApiPropertyOptional({
+        example: JournalEntryStatus.DRAFT,
+        enum: JournalEntryStatus,
+        description: 'Entry status (default: draft)',
+    })
+    @IsOptional()
+    @IsEnum(JournalEntryStatus)
+    status?: JournalEntryStatus;
+
+    @ApiPropertyOptional({ example: 'ORDER', description: 'Reference type (ORDER, PAYMENT, PAYROLL, etc.)' })
+    @IsOptional()
+    @IsString()
+    @MaxLength(50)
+    reference_type?: string;
+
+    @ApiPropertyOptional({ example: 42, description: 'ID of the referenced object' })
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    reference_id?: number;
+
+    @ApiProperty({
+        type: [CreateJournalEntryLineDto],
+        description: 'Journal entry lines (must balance: sum(debit) === sum(credit))',
+    })
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => CreateJournalEntryLineDto)
+    lines: CreateJournalEntryLineDto[];
+}
