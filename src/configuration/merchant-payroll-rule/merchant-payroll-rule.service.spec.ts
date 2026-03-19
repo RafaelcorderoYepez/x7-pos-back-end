@@ -30,6 +30,7 @@ describe('MerchantPayrollRuleService', () => {
       city: 'Test City',
       state: 'Test State',
       country: 'Test Country',
+      suppliers: [],
       merchants: [],
       customers: [],
       configurations: [],
