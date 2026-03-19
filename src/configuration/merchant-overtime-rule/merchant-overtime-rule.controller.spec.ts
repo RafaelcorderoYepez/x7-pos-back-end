@@ -8,7 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { OvertimeCalculationType } from '../constants/overtime-calculation-type.enum';
 import { OvertimeRateType } from '../constants/overtime-rate-type.enum';
 
-describe('MerchantTipRuleController', () => {
+describe('MerchantOvertimeRuleController', () => {
   let controller: MerchantOvertimeRuleController;
   let service: MerchantOvertimeRuleService;
 
@@ -143,7 +143,7 @@ describe('MerchantTipRuleController', () => {
     it('should be defined', () => {
       expect(controller).toBeDefined();
     });
-    it('should have QrOrderService defined', () => {
+    it('should have Merchant Overtime Rule Service defined', () => {
       expect(service).toBeDefined();
     });
   });
@@ -269,7 +269,7 @@ describe('MerchantTipRuleController', () => {
   //--------------------------------------------------------------
   // PATCH /merchant-overtime-rule/:id
   //--------------------------------------------------------------
-  describe('PATCH /merchant-tip-rule/:id', () => {
+  describe('PATCH /merchant-overtime-rule/:id', () => {
     it('should update a merchant overtime rule successfully', async () => {
       const updatedResponse = {
         statusCode: 200,

@@ -5,7 +5,7 @@ import { MerchantOvertimeRuleResponseDto } from './merchant-overtime-rule-respon
 
 export class PaginatedMerchantOvertimeRuleResponseDto extends SuccessResponse {
   @ApiProperty({
-    description: 'List of Merchant Tip Rules',
+    description: 'List of Merchant Overtime Rules',
     type: [MerchantOvertimeRuleResponseDto],
   })
   data: MerchantOvertimeRuleResponseDto[];

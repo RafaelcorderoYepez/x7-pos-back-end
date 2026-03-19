@@ -155,6 +155,8 @@ import { InventoryModule } from './inventory/inventory.module';
 import { ReceiptsModule } from './inventory/billing-transactions/receipts/receipts.module';
 import { MerchantOvertimeRule } from './configuration/merchant-overtime-rule/entity/merchant-overtime-rule.entity';
 import { MerchantOvertimeRuleModule } from './configuration/merchant-overtime-rule/merchant-overtime-rule.module';
+import { MerchantPayrollRuleModule } from './configuration/merchant-payroll-rule/merchant-payroll-rule.module';
+import { MerchantPayrollRule } from './configuration/merchant-payroll-rule/entity/merchant-payroll-rule.entity';
 
 @Module({
   imports: [
@@ -257,6 +259,7 @@ import { MerchantOvertimeRuleModule } from './configuration/merchant-overtime-ru
           CollaboratorContract,
           TimeEntry,
           MerchantOvertimeRule,
+          MerchantPayrollRule,
         ],
         synchronize: true,
       }),
@@ -341,6 +344,7 @@ import { MerchantOvertimeRuleModule } from './configuration/merchant-overtime-ru
     QROrderItemModule,
     ConfigurationModule,
     MerchantOvertimeRuleModule,
+    MerchantPayrollRuleModule,
   ],
 })
 export class AppModule {}
