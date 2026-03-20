@@ -1,16 +1,15 @@
-//src/configuration/merchant-overtime-rule/merchant-overtime-rule.controller.spec.ts
+//src/configuration/merchant-payroll-rule/merchant-payroll-rule.controller.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
-import { MerchantOvertimeRuleController } from './merchant-overtime-rule.controller';
-import { MerchantOvertimeRuleService } from './merchant-overtime-rule.service';
-import { MerchantOvertimeRule } from './entity/merchant-overtime-rule.entity';
+import { MerchantPayrollRuleController } from './merchant-payroll-rule.controller';
+import { MerchantPayrollRuleService } from './merchant-payroll-rule.service';
+import { MerchantPayrollRule } from './entity/merchant-payroll-rule.entity';
 import { Company } from 'src/companies/entities/company.entity';
 import { User } from 'src/users/entities/user.entity';
-import { OvertimeCalculationType } from '../constants/overtime-calculation-type.enum';
-import { OvertimeRateType } from '../constants/overtime-rate-type.enum';
+import { PayrollFrequency } from '../constants/payroll-frequency.enum';
 
-describe('MerchantOvertimeRuleController', () => {
-  let controller: MerchantOvertimeRuleController;
-  let service: MerchantOvertimeRuleService;
+describe('MerchantPayrollRuleController', () => {
+  let controller: MerchantPayrollRuleController;
+  let service: MerchantPayrollRuleService;
 
   // Mock data
   const mockCompany: Company = {
@@ -26,14 +25,13 @@ describe('MerchantOvertimeRuleController', () => {
     merchants: [],
     customers: [],
     configurations: [],
-    suppliers: [],
   } as Company;
 
   const mockUser = {
     id: 1,
   } as User;
 
-  const mockMerchantOvertimeRule: MerchantOvertimeRule = {
+  const mockMerchantPayrollRule: MerchantPayrollRule = {
     id: 1,
     company: mockCompany,
     createdAt: new Date(),
@@ -41,19 +39,18 @@ describe('MerchantOvertimeRuleController', () => {
     createdBy: mockUser,
     updatedBy: mockUser,
     status: 'active',
-    name: 'Test Merchant Overtime Rule',
-    description: 'Description of the Overtime Rule',
-    calculationMethod: OvertimeCalculationType.DAILY,
-    rateMethod: OvertimeRateType.MULTIPLIER,
-    thresholdHours: 8,
-    maxHours: 10,
-    rateValue: 200,
-    appliesOnHolidays: true,
-    appliesOnWeekends: true,
-    priority: 10,
+    name: 'Test Merchant Payroll Rule',
+    frequencyPayroll: PayrollFrequency.CUSTOM,
+    payDayOfWeek: 2,
+    payDayOfMonth: 23,
+    allowNegativePayroll: true,
+    roundingPrecision: 2,
+    currency: 'CLP',
+    autoApprovePayroll: true,
+    requiresManagerApproval: true,
   };
 
-  const mockCreateMerchantOvertimeRuleDto = {
+  const mockCreateMerchantPayrollRuleDto = {
     id: 1,
     companyId: mockCompany.id,
     createdAt: new Date(),
@@ -61,16 +58,15 @@ describe('MerchantOvertimeRuleController', () => {
     createdById: mockUser.id,
     updatedById: mockUser.id,
     status: 'active',
-    name: 'Test Merchant Overtime Rule',
-    description: 'Description of the Overtime Rule',
-    calculationMethod: OvertimeCalculationType.DAILY,
-    rateMethod: OvertimeRateType.MULTIPLIER,
-    thresholdHours: 8,
-    maxHours: 10,
-    rateValue: 200,
-    appliesOnHolidays: true,
-    appliesOnWeekends: true,
-    priority: 10,
+    name: 'Test Merchant Payroll Rule',
+    frequencyPayroll: PayrollFrequency.CUSTOM,
+    payDayOfWeek: 2,
+    payDayOfMonth: 23,
+    allowNegativePayroll: true,
+    roundingPrecision: 2,
+    currency: 'CLP',
+    autoApprovePayroll: true,
+    requiresManagerApproval: true,
   };
 
   const mockPagination = {
@@ -82,18 +78,18 @@ describe('MerchantOvertimeRuleController', () => {
 
   const mockPaginatedResponse = {
     statusCode: 200,
-    message: 'Merchant Overtime rules retrieved successfully',
-    data: [mockMerchantOvertimeRule],
+    message: 'Merchant Payroll rules retrieved successfully',
+    data: [mockMerchantPayrollRule],
     pagination: mockPagination,
   };
 
-  const mockOneMerchantOvertimeRuleResponseDto = {
+  const mockOneMerchantPayrollRuleResponseDto = {
     statusCode: 200,
-    message: 'Merchant Overtime rule retrieved successfully',
-    data: mockMerchantOvertimeRule,
+    message: 'Merchant Payroll rule retrieved successfully',
+    data: mockMerchantPayrollRule,
   };
 
-  const mockUpdateMerchantOvertimeRuleDto = {
+  const mockUpdateMerchantPayrollRuleDto = {
     id: 1,
     company: mockCompany,
     createdAt: new Date(),
@@ -101,20 +97,19 @@ describe('MerchantOvertimeRuleController', () => {
     createdBy: 'Test User 2',
     updatedBy: 'Test User 2',
     status: 'inactive',
-    name: 'Update Merchant Overtime Rule',
-    description: 'Description of the Overtime Rule 2',
-    calculationMethod: OvertimeCalculationType.SPECIAL_DAY,
-    rateMethod: OvertimeRateType.FIXED_AMOUNT,
-    thresholdHours: 16,
-    maxHours: 20,
-    rateValue: 200,
-    appliesOnHolidays: true,
-    appliesOnWeekends: true,
-    priority: 5,
+    name: 'Update Merchant Payroll Rule',
+    frequencyPayroll: PayrollFrequency.MONTHLY,
+    payDayOfWeek: 7,
+    payDayOfMonth: 31,
+    allowNegativePayroll: false,
+    roundingPrecision: 1,
+    currency: 'USD',
+    autoApprovePayroll: true,
+    requiresManagerApproval: true,
   };
 
   beforeEach(async () => {
-    const mockMerchantOvertimeRule = {
+    const mockMerchantPayrollRule = {
       create: jest.fn(),
       findAll: jest.fn(),
       findOne: jest.fn(),
@@ -123,20 +118,20 @@ describe('MerchantOvertimeRuleController', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [MerchantOvertimeRuleController],
+      controllers: [MerchantPayrollRuleController],
       providers: [
         {
-          provide: MerchantOvertimeRuleService,
-          useValue: mockMerchantOvertimeRule,
+          provide: MerchantPayrollRuleService,
+          useValue: mockMerchantPayrollRule,
         },
       ],
     }).compile();
 
-    controller = module.get<MerchantOvertimeRuleController>(
-      MerchantOvertimeRuleController,
+    controller = module.get<MerchantPayrollRuleController>(
+      MerchantPayrollRuleController,
     );
-    service = module.get<MerchantOvertimeRuleService>(
-      MerchantOvertimeRuleService,
+    service = module.get<MerchantPayrollRuleService>(
+      MerchantPayrollRuleService,
     );
   });
 
@@ -144,20 +139,20 @@ describe('MerchantOvertimeRuleController', () => {
     it('should be defined', () => {
       expect(controller).toBeDefined();
     });
-    it('should have Merchant Overtime Rule Service defined', () => {
+    it('should have Merchant Payroll Rule Service defined', () => {
       expect(service).toBeDefined();
     });
   });
 
   //--------------------------------------------------------------
-  // POST /merchant-overtime-rule
+  // POST /merchant-payroll-rule
   //--------------------------------------------------------------
-  describe('POST /merchant-overtime-rule', () => {
-    it('should create a merchant overtime rule successfully', async () => {
+  describe('POST /merchant-payroll-rule', () => {
+    it('should create a merchant payroll rule successfully', async () => {
       const expectedResponse = {
         statusCode: 201,
-        message: 'Merchant overtime rule created successfully',
-        data: mockMerchantOvertimeRule,
+        message: 'Merchant payroll rule created successfully',
+        data: mockMerchantPayrollRule,
       };
 
       const createSpy = jest
@@ -165,31 +160,31 @@ describe('MerchantOvertimeRuleController', () => {
         .mockResolvedValue(expectedResponse);
       createSpy.mockResolvedValue(expectedResponse);
 
-      const result = await controller.create(mockCreateMerchantOvertimeRuleDto);
+      const result = await controller.create(mockCreateMerchantPayrollRuleDto);
 
-      expect(createSpy).toHaveBeenCalledWith(mockCreateMerchantOvertimeRuleDto);
+      expect(createSpy).toHaveBeenCalledWith(mockCreateMerchantPayrollRuleDto);
       expect(result).toEqual(expectedResponse);
     });
 
     it('should handle errors during creation', async () => {
-      const errorMessage = 'Failed to create Merchant Overtime Rule';
+      const errorMessage = 'Failed to create Merchant Payroll Rule';
       const createSpy = jest
         .spyOn(service, 'create')
         .mockRejectedValue(new Error(errorMessage));
       createSpy.mockRejectedValue(new Error(errorMessage));
 
       await expect(
-        controller.create(mockCreateMerchantOvertimeRuleDto),
+        controller.create(mockCreateMerchantPayrollRuleDto),
       ).rejects.toThrow(errorMessage);
 
-      expect(createSpy).toHaveBeenCalledWith(mockCreateMerchantOvertimeRuleDto);
+      expect(createSpy).toHaveBeenCalledWith(mockCreateMerchantPayrollRuleDto);
     });
   });
   //--------------------------------------------------------------
-  // GET /merchant-overtime-rule
+  // GET /merchant-payroll-rule
   //--------------------------------------------------------------
-  describe('GET /merchant-overtime-rule', () => {
-    it('should retrieve all merchant overtime rules successfully', async () => {
+  describe('GET /merchant-payroll-rule', () => {
+    it('should retrieve all merchant payroll rules successfully', async () => {
       const findAllSpy = jest
         .spyOn(service, 'findAll')
         .mockResolvedValue(mockPaginatedResponse);
@@ -204,7 +199,7 @@ describe('MerchantOvertimeRuleController', () => {
     it('should return empty list with pagination', async () => {
       const emptyPaginatedResponse = {
         statusCode: 200,
-        message: 'Merchant overtime rules retrieved successfully',
+        message: 'Merchant payroll rules retrieved successfully',
         data: [],
         pagination: {
           total: 0,
@@ -226,7 +221,7 @@ describe('MerchantOvertimeRuleController', () => {
     });
 
     it('should handle service errors in findAll', async () => {
-      const errorMessage = 'Failed to retrieve Merchant Overtime Rules';
+      const errorMessage = 'Failed to retrieve Merchant Payroll Rules';
       const findAllSpy = jest
         .spyOn(service, 'findAll')
         .mockRejectedValue(new Error(errorMessage));
@@ -240,23 +235,23 @@ describe('MerchantOvertimeRuleController', () => {
     });
   });
   //--------------------------------------------------------------
-  // GET /merchant-overtime-rule/:id
+  // GET /merchant-payroll-rule/:id
   //--------------------------------------------------------------
-  describe('GET /merchant-overtime-rule/:id', () => {
-    it('should retrieve a merchant overtime rule by id successfully', async () => {
+  describe('GET /merchant-payroll-rule/:id', () => {
+    it('should retrieve a merchant payroll rule by id successfully', async () => {
       const findOneSpy = jest
         .spyOn(service, 'findOne')
-        .mockResolvedValue(mockOneMerchantOvertimeRuleResponseDto);
-      findOneSpy.mockResolvedValue(mockOneMerchantOvertimeRuleResponseDto);
+        .mockResolvedValue(mockOneMerchantPayrollRuleResponseDto);
+      findOneSpy.mockResolvedValue(mockOneMerchantPayrollRuleResponseDto);
 
       const result = await controller.findOne(1);
 
       expect(findOneSpy).toHaveBeenCalledWith(1);
-      expect(result).toEqual(mockOneMerchantOvertimeRuleResponseDto);
+      expect(result).toEqual(mockOneMerchantPayrollRuleResponseDto);
     });
 
     it('should handle errors when retrieving by ID', async () => {
-      const errorMessage = 'Failed to retrieve Merchant Overtime Rule';
+      const errorMessage = 'Failed to retrieve Merchant Payroll Rule';
       const findOneSpy = jest
         .spyOn(service, 'findOne')
         .mockRejectedValue(new Error(errorMessage));
@@ -268,14 +263,14 @@ describe('MerchantOvertimeRuleController', () => {
     });
   });
   //--------------------------------------------------------------
-  // PATCH /merchant-overtime-rule/:id
+  // PATCH /merchant-payroll-rule/:id
   //--------------------------------------------------------------
-  describe('PATCH /merchant-overtime-rule/:id', () => {
-    it('should update a merchant overtime rule successfully', async () => {
+  describe('PATCH /merchant-payroll-rule/:id', () => {
+    it('should update a merchant payroll rule successfully', async () => {
       const updatedResponse = {
         statusCode: 200,
-        message: 'Merchant Overtime Rule updated successfully',
-        data: mockMerchantOvertimeRule,
+        message: 'Merchant Payroll Rule updated successfully',
+        data: mockMerchantPayrollRule,
       };
       const updateSpy = jest
         .spyOn(service, 'update')
@@ -284,42 +279,42 @@ describe('MerchantOvertimeRuleController', () => {
 
       const result = await controller.update(
         1,
-        mockUpdateMerchantOvertimeRuleDto,
+        mockUpdateMerchantPayrollRuleDto,
       );
 
       expect(updateSpy).toHaveBeenCalledWith(
         1,
-        mockUpdateMerchantOvertimeRuleDto,
+        mockUpdateMerchantPayrollRuleDto,
       );
       expect(result).toEqual(updatedResponse);
     });
 
     it('should handle errors during update', async () => {
-      const errorMessage = 'Failed to update Merchant Overtime Rule';
+      const errorMessage = 'Failed to update Merchant Payroll Rule';
       const updateSpy = jest
         .spyOn(service, 'update')
         .mockRejectedValue(new Error(errorMessage));
       updateSpy.mockRejectedValue(new Error(errorMessage));
 
       await expect(
-        controller.update(1, mockUpdateMerchantOvertimeRuleDto),
+        controller.update(1, mockUpdateMerchantPayrollRuleDto),
       ).rejects.toThrow(errorMessage);
 
       expect(updateSpy).toHaveBeenCalledWith(
         1,
-        mockUpdateMerchantOvertimeRuleDto,
+        mockUpdateMerchantPayrollRuleDto,
       );
     });
   });
   //--------------------------------------------------------------
-  // DELETE /merchant-overtime-rule/:id
+  // DELETE /merchant-payroll-rule/:id
   //--------------------------------------------------------------
-  describe('DELETE /merchant-overtime-rule/:id', () => {
-    it('should delete a merchant overtime rule successfully', async () => {
+  describe('DELETE /merchant-payroll-rule/:id', () => {
+    it('should delete a merchant payroll rule successfully', async () => {
       const deleteResponse = {
         statusCode: 200,
-        message: 'Merchant Overtime Rule deleted successfully',
-        data: mockOneMerchantOvertimeRuleResponseDto.data,
+        message: 'Merchant Payroll Rule deleted successfully',
+        data: mockOneMerchantPayrollRuleResponseDto.data,
       };
       const removeSpy = jest
         .spyOn(service, 'remove')
@@ -333,7 +328,7 @@ describe('MerchantOvertimeRuleController', () => {
     });
 
     it('should handle errors during deletion', async () => {
-      const errorMessage = 'Failed to delete Merchant Overtime Rule';
+      const errorMessage = 'Failed to delete Merchant Payroll Rule';
       const removeSpy = jest
         .spyOn(service, 'remove')
         .mockRejectedValue(new Error(errorMessage));

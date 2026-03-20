@@ -141,7 +141,7 @@ describe('MerchantTipRuleController', () => {
     it('should be defined', () => {
       expect(controller).toBeDefined();
     });
-    it('should have QrOrderService defined', () => {
+    it('should have Merchant Tip Rule Service defined', () => {
       expect(service).toBeDefined();
     });
   });

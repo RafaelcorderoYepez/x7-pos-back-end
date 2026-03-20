@@ -23,7 +23,7 @@ export class CreateMerchantOvertimeRuleDto {
 
   @ApiProperty({
     example: '26-09-2023',
-    description: 'Date when the merchant tip rule was created',
+    description: 'Date when the merchant overtime rule was created',
   })
   @Type(() => Date)
   @IsDate()
@@ -32,7 +32,7 @@ export class CreateMerchantOvertimeRuleDto {
 
   @ApiProperty({
     example: '26-09-2023',
-    description: 'Date when the merchant tip rule was last updated',
+    description: 'Date when the merchant overtime rule was last updated',
   })
   @Type(() => Date)
   @IsDate()

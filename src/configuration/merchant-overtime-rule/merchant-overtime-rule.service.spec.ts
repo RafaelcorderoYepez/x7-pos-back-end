@@ -446,7 +446,7 @@ describe('MerchantOvertimeRuleService', () => {
   });
 
   describe('Remove Merchant Overtime Rule', () => {
-    it('should remove a merchant  rule successfully', async () => {
+    it('should remove a merchant overtime rule successfully', async () => {
       const findOneSpy = jest.spyOn(merchantOvertimeRuleRepository, 'findOne');
       const saveSpy = jest.spyOn(merchantOvertimeRuleRepository, 'save');
 
