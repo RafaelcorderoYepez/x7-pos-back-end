@@ -1,7 +1,7 @@
 export enum AccountType {
-    ASSET = 'asset',
-    LIABILITY = 'liability',
-    EQUITY = 'equity',
-    REVENUE = 'revenue',
-    EXPENSE = 'expense',
+    ASSET = 'ASSET',
+    LIABILITY = 'LIABILITY',
+    EQUITY = 'EQUITY',
+    REVENUE = 'REVENUE',
+    EXPENSE = 'EXPENSE',
 }

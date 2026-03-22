@@ -4,14 +4,17 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    Index,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
 import { AccountType } from '../constants/account-type.enum';
 
 @Entity('ledger_accounts')
+@Index(['company_id', 'code'], { unique: true })
 export class LedgerAccount {
     @ApiProperty({ example: 1, description: 'Ledger Account ID' })
     @PrimaryGeneratedColumn()
@@ -61,4 +64,11 @@ export class LedgerAccount {
     @ManyToOne(() => Company)
     @JoinColumn({ name: 'company_id' })
     company: Company;
+
+    @ManyToOne(() => LedgerAccount, (account) => account.children)
+    @JoinColumn({ name: 'parent_account_id' })
+    parent: LedgerAccount;
+
+    @OneToMany(() => LedgerAccount, (account) => account.parent)
+    children: LedgerAccount[];
 }

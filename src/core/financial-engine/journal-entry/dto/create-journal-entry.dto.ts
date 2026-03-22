@@ -10,10 +10,12 @@ import {
     IsString,
     MaxLength,
     Min,
+    ValidateIf,
     ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { JournalEntryStatus } from '../constants/journal-entry-status.enum';
+import { JournalEntryReferenceType } from '../constants/journal-entry-reference-type.enum';
 
 export class CreateJournalEntryLineDto {
     @ApiProperty({ example: 1, description: 'Ledger Account ID' })
@@ -63,14 +65,18 @@ export class CreateJournalEntryDto {
     @IsEnum(JournalEntryStatus)
     status?: JournalEntryStatus;
 
-    @ApiPropertyOptional({ example: 'ORDER', description: 'Reference type (ORDER, PAYMENT, PAYROLL, etc.)' })
+    @ApiPropertyOptional({
+        example: JournalEntryReferenceType.ORDER,
+        enum: JournalEntryReferenceType,
+        description: 'Reference type (ORDER, PAYMENT, PAYROLL, etc.)',
+    })
     @IsOptional()
-    @IsString()
-    @MaxLength(50)
-    reference_type?: string;
+    @IsEnum(JournalEntryReferenceType)
+    reference_type?: JournalEntryReferenceType;
 
     @ApiPropertyOptional({ example: 42, description: 'ID of the referenced object' })
-    @IsOptional()
+    @ValidateIf((o) => o.reference_type && o.reference_type !== JournalEntryReferenceType.MANUAL)
+    @IsNotEmpty({ message: 'reference_id is required when reference_type is provided and is not MANUAL' })
     @IsNumber()
     @IsPositive()
     reference_id?: number;

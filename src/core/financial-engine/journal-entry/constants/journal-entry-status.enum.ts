@@ -1,5 +1,5 @@
 export enum JournalEntryStatus {
-    DRAFT = 'draft',
-    POSTED = 'posted',
-    REVERSED = 'reversed',
+    DRAFT = 'DRAFT',
+    POSTED = 'POSTED',
+    VOIDED = 'VOIDED',
 }

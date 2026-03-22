@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { JournalEntryService } from './journal-entry.service';
 import { JournalEntryController } from './journal-entry.controller';
 import { JournalEntry } from './entities/journal-entry.entity';
-import { JournalEntryLine } from './entities/journal-entry-line.entity';
+import { JournalEntryLine } from 'src/core/financial-engine/journal-entry-line/entities/journal-entry-line.entity';
+
+
 import { LedgerAccount } from '../ledger-accounts/entities/ledger-account.entity';
 import { Company } from 'src/companies/entities/company.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';

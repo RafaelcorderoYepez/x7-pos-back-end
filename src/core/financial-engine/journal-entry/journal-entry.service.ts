@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JournalEntry } from './entities/journal-entry.entity';
-import { JournalEntryLine } from './entities/journal-entry-line.entity';
+import { JournalEntryLine } from 'src/core/financial-engine/journal-entry-line/entities/journal-entry-line.entity';
+
+
 import { LedgerAccount } from '../ledger-accounts/entities/ledger-account.entity';
 import { Company } from 'src/companies/entities/company.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
@@ -18,6 +20,8 @@ import {
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 import { ErrorMessage } from 'src/common/constants/error-messages';
 import { JournalEntryStatus } from './constants/journal-entry-status.enum';
+import { JournalEntryReferenceType } from './constants/journal-entry-reference-type.enum';
+import { SuccessResponse } from 'src/common/dtos/success-response.dto';
 
 @Injectable()
 export class JournalEntryService {
@@ -48,7 +52,6 @@ export class JournalEntryService {
   private toLineResponseDto(line: JournalEntryLine): JournalEntryLineResponseDto {
     return {
       id: line.id,
-      account_id: line.account_id,
       account: line.account
         ? { id: line.account.id, code: line.account.code, name: line.account.name }
         : null,
@@ -67,9 +70,11 @@ export class JournalEntryService {
       status: entry.status,
       total_debit: Number(entry.total_debit),
       total_credit: Number(entry.total_credit),
+      is_balanced: Math.abs(Number(entry.total_debit) - Number(entry.total_credit)) < 0.001,
       reference_type: entry.reference_type ?? null,
       reference_id: entry.reference_id ?? null,
       created_at: entry.created_at,
+      updated_at: entry.updated_at,
       company: entry.company
         ? { id: entry.company.id, name: entry.company.name }
         : null,
@@ -97,14 +102,14 @@ export class JournalEntryService {
   private async fetchOne(
     id: number,
     company_id: number,
-    createdUpdateDelete?: string,
+    action?: string,
   ): Promise<OneJournalEntryResponse> {
     const entry = await this.journalEntryRepository.findOne({
-      where: { id, company_id },
+      where: { id, company_id, is_active: true },
       relations: ['company', 'lines', 'lines.account'],
     });
     if (!entry) ErrorHandler.notFound('Journal Entry not found');
-    return this.buildResponse(entry, createdUpdateDelete);
+    return this.buildResponse(entry, action);
   }
 
   // ─── CRUD público ──────────────────────────────────────────────────────────
@@ -120,7 +125,7 @@ export class JournalEntryService {
 
     // Validar entry_number único dentro de la empresa
     const existing = await this.journalEntryRepository.findOne({
-      where: { entry_number: dto.entry_number, company_id },
+      where: { entry_number: dto.entry_number, company_id, is_active: true },
     });
     if (existing)
       ErrorHandler.exists(`Journal entry with number '${dto.entry_number}' already exists`);
@@ -191,7 +196,8 @@ export class JournalEntryService {
       .leftJoinAndSelect('entry.company', 'company')
       .leftJoinAndSelect('entry.lines', 'lines')
       .leftJoinAndSelect('lines.account', 'account')
-      .where('entry.company_id = :company_id', { company_id });
+      .where('entry.company_id = :company_id', { company_id })
+      .andWhere('entry.is_active = :is_active', { is_active: true });
 
     if (query.status) {
       qb.andWhere('entry.status = :status', { status: query.status });
@@ -242,18 +248,18 @@ export class JournalEntryService {
     const company_id = await this.getCompanyId(merchantId);
 
     const entry = await this.journalEntryRepository.findOne({
-      where: { id, company_id },
+      where: { id, company_id, is_active: true },
       relations: ['lines'],
     });
     if (!entry) ErrorHandler.notFound('Journal Entry not found');
 
     // Solo se pueden editar entradas en DRAFT
     if (entry.status !== JournalEntryStatus.DRAFT)
-      ErrorHandler.badRequest('Only draft journal entries can be updated');
+      ErrorHandler.badRequest('Only DRAFT journal entries can be updated');
 
     if (dto.entry_number && dto.entry_number !== entry.entry_number) {
       const existing = await this.journalEntryRepository.findOne({
-        where: { entry_number: dto.entry_number, company_id },
+        where: { entry_number: dto.entry_number, company_id, is_active: true },
       });
       if (existing && existing.id !== id)
         ErrorHandler.exists(`Journal entry with number '${dto.entry_number}' already exists`);
@@ -282,8 +288,11 @@ export class JournalEntryService {
           ErrorHandler.notFound(`Ledger account with ID ${line.account_id} not found or inactive`);
       }
 
-      // Eliminar líneas anteriores y reemplazar (cascade)
-      await this.journalEntryLineRepository.delete({ journal_entry_id: id });
+      // Marcar líneas anteriores como inactivas (borrado lógico)
+      await this.journalEntryLineRepository.update(
+        { journal_entry_id: id },
+        { is_active: false },
+      );
 
       entry.lines = dto.lines.map((l) =>
         this.journalEntryLineRepository.create({
@@ -315,34 +324,92 @@ export class JournalEntryService {
     }
   }
 
-  async remove(id: number, merchantId: number): Promise<OneJournalEntryResponse> {
+  async remove(id: number, merchantId: number): Promise<SuccessResponse> {
+    if (!id || id <= 0) ErrorHandler.invalidId('Journal Entry ID is incorrect');
+
+    const company_id = await this.getCompanyId(merchantId);
+    const entry = await this.journalEntryRepository.findOne({
+      where: { id, company_id, is_active: true },
+    });
+
+    if (!entry) ErrorHandler.notFound('Journal Entry not found');
+
+    if (entry.status !== JournalEntryStatus.DRAFT) {
+      ErrorHandler.badRequest('Only DRAFT journal entries can be deleted');
+    }
+
+    try {
+      entry.is_active = false;
+      await this.journalEntryRepository.save(entry);
+
+      return {
+        statusCode: 200,
+        message: 'Journal Entry deleted successfully',
+      };
+    } catch (error) {
+      ErrorHandler.handleDatabaseError(error);
+    }
+  }
+
+  async post(id: number, merchantId: number): Promise<OneJournalEntryResponse> {
     if (!id || id <= 0) ErrorHandler.invalidId('Journal Entry ID is incorrect');
 
     const company_id = await this.getCompanyId(merchantId);
 
     const entry = await this.journalEntryRepository.findOne({
-      where: { id, company_id },
-      relations: ['lines', 'company'],
+      where: { id, company_id, is_active: true },
+      relations: ['lines'],
     });
+
     if (!entry) ErrorHandler.notFound('Journal Entry not found');
 
-    // Solo se pueden eliminar entradas en DRAFT
-    if (entry.status !== JournalEntryStatus.DRAFT)
-      ErrorHandler.badRequest('Only draft journal entries can be deleted');
+    if (entry.status === JournalEntryStatus.POSTED) {
+      ErrorHandler.badRequest('Journal entry is already posted');
+    }
+
+    if (!entry.lines || entry.lines.length === 0) {
+      ErrorHandler.badRequest('Cannot post an entry without lines');
+    }
+
+    // Re-validar balanceo antes de postear (defensa en profundidad)
+    const totalDebit = entry.lines.reduce((sum, l) => sum + Number(l.debit), 0);
+    const totalCredit = entry.lines.reduce((sum, l) => sum + Number(l.credit), 0);
+
+    if (Math.abs(totalDebit - totalCredit) > 0.001) {
+      ErrorHandler.badRequest(
+        `Cannot post unbalanced journal entry: total debit (${totalDebit}) ≠ total credit (${totalCredit})`,
+      );
+    }
+
+    entry.status = JournalEntryStatus.POSTED;
 
     try {
-      // Las líneas se eliminan por CASCADE en la BD
-      await this.journalEntryRepository.remove(entry);
+      await this.journalEntryRepository.save(entry);
+      return this.fetchOne(id, company_id, 'Updated');
+    } catch (error) {
+      ErrorHandler.handleDatabaseError(error);
+    }
+  }
 
-      // Construir respuesta sin fetchOne (ya fue eliminado de la BD)
-      return {
-        statusCode: 201,
-        message: 'Journal Entry Deleted successfully',
-        data: {
-          ...this.toResponseDto({ ...entry, id }),
-          lines: [],
-        },
-      };
+  async void(id: number, merchantId: number): Promise<OneJournalEntryResponse> {
+    if (!id || id <= 0) ErrorHandler.invalidId('Journal Entry ID is incorrect');
+
+    const company_id = await this.getCompanyId(merchantId);
+    const entry = await this.journalEntryRepository.findOne({
+      where: { id, company_id, is_active: true },
+    });
+
+    if (!entry) ErrorHandler.notFound('Journal Entry not found');
+
+    if (entry.status === JournalEntryStatus.VOIDED) {
+      ErrorHandler.badRequest('Journal Entry is already voided');
+    }
+
+    entry.status = JournalEntryStatus.VOIDED;
+
+    try {
+      await this.journalEntryRepository.save(entry);
+      return this.fetchOne(id, company_id, 'Voided');
     } catch (error) {
       ErrorHandler.handleDatabaseError(error);
     }

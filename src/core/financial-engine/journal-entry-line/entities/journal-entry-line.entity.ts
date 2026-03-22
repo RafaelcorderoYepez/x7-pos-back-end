@@ -6,7 +6,7 @@ import {
     ManyToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import { JournalEntry } from './journal-entry.entity';
+import { JournalEntry } from '../../journal-entry/entities/journal-entry.entity';
 import { LedgerAccount } from '../../ledger-accounts/entities/ledger-account.entity';
 
 @Entity('journal_entry_lines')
@@ -46,4 +46,7 @@ export class JournalEntryLine {
     })
     @Column({ type: 'text', nullable: true })
     description?: string;
+
+    @Column({ type: 'boolean', default: true })
+    is_active: boolean;
 }

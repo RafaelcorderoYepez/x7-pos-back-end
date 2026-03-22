@@ -61,9 +61,6 @@ import { QRMenuModule } from './qr-code/qr-menu/qr-menu.module';
 import { QRMenuSectionModule } from './qr-code/qr-menu-section/qr-menu-section.module';
 import { QROrderItemModule } from './qr-code/qr-order-item/qr-order-item.module';
 import { QrOrderModule } from './qr-code/qr-order/qr-order.module';
-import { ReceiptItemModule } from './core/billing-transactions/receipt-item/receipt-item.module';
-import { ReceiptTaxModule } from './core/billing-transactions/receipt-tax/receipt-tax.module';
-import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.module';
 import { ShiftAssignmentsModule } from './shift-assignments/shift-assignments.module';
 import { ShiftsModule } from './shifts/shifts.module';
 import { SubscriptionApplicationModule } from './subscriptions/subscription-application/subscription-application.module';
@@ -168,6 +165,10 @@ import { Variant } from './inventory/products-inventory/variants/entities/varian
 import { OnlineMenuItem } from './online-ordering-system/online-menu-item/entities/online-menu-item.entity';
 import { CoreModule } from './core/core.module';
 import { BusinessPartnersModule } from './business-partners/business-partners.module';
+import { LedgerAccount } from './core/financial-engine/ledger-accounts/entities/ledger-account.entity';
+import { JournalEntry } from './core/financial-engine/journal-entry/entities/journal-entry.entity';
+import { JournalEntryLine } from './core/financial-engine/journal-entry-line/entities/journal-entry-line.entity';
+
 
 @Module({
   imports: [
@@ -201,6 +202,9 @@ import { BusinessPartnersModule } from './business-partners/business-partners.mo
           KitchenOrder,
           KitchenOrderItem,
           KitchenStation,
+          LedgerAccount,
+          JournalEntry,
+          JournalEntryLine,
           Location,
           LoyaltyCoupon,
           LoyaltyCustomer,
@@ -330,9 +334,6 @@ import { BusinessPartnersModule } from './business-partners/business-partners.mo
     QRMenuSectionModule,
     QROrderItemModule,
     QrOrderModule,
-    ReceiptItemModule,
-    ReceiptTaxModule,
-    ReceiptsModule,
     ShiftAssignmentsModule,
     ShiftsModule,
     SubscriptionApplicationModule,

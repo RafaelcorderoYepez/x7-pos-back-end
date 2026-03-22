@@ -3,16 +3,21 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    Index,
     JoinColumn,
     ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 import { Company } from 'src/companies/entities/company.entity';
-import { JournalEntryLine } from './journal-entry-line.entity';
+import { JournalEntryLine } from 'src/core/financial-engine/journal-entry-line/entities/journal-entry-line.entity';
+
 import { JournalEntryStatus } from '../constants/journal-entry-status.enum';
+import { JournalEntryReferenceType } from '../constants/journal-entry-reference-type.enum';
 
 @Entity('journal_entries')
+@Index(['company_id', 'entry_number'], { unique: true })
 export class JournalEntry {
     @ApiProperty({ example: 1, description: 'Journal Entry ID' })
     @PrimaryGeneratedColumn()
@@ -61,13 +66,18 @@ export class JournalEntry {
     total_credit: number;
 
     @ApiProperty({
-        example: 'ORDER',
+        example: JournalEntryReferenceType.ORDER,
         description: 'Reference type (e.g. ORDER, PAYMENT, PAYROLL)',
+        enum: JournalEntryReferenceType,
         required: false,
         nullable: true,
     })
-    @Column({ type: 'varchar', length: 50, nullable: true })
-    reference_type?: string;
+    @Column({
+        type: 'enum',
+        enum: JournalEntryReferenceType,
+        nullable: true,
+    })
+    reference_type?: JournalEntryReferenceType;
 
     @ApiProperty({
         example: 42,
@@ -82,12 +92,17 @@ export class JournalEntry {
     @CreateDateColumn()
     created_at: Date;
 
+    @ApiProperty({ example: '2024-01-01T00:00:00Z', description: 'Last update date' })
+    @UpdateDateColumn()
+    updated_at: Date;
+
+    @Column({ type: 'boolean', default: true })
+    is_active: boolean;
+
     @ManyToOne(() => Company)
     @JoinColumn({ name: 'company_id' })
     company: Company;
 
-    @OneToMany(() => JournalEntryLine, (line) => line.journal_entry, {
-        cascade: true,
-    })
+    @OneToMany(() => JournalEntryLine, (line) => line.journal_entry, { cascade: true })
     lines: JournalEntryLine[];
 }

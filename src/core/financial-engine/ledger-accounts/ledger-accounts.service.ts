@@ -60,7 +60,6 @@ export class LedgerAccountsService {
       code: account.code,
       name: account.name,
       type: account.type,
-      is_active: account.is_active,
       parent_account_id: account.parent_account_id ?? null,
       created_at: account.created_at,
       updated_at: account.updated_at,
@@ -207,7 +206,11 @@ export class LedgerAccountsService {
         ErrorHandler.exists(`Ledger account with code '${dto.code}' already exists`);
     }
 
-    if (dto.parent_account_id && dto.parent_account_id !== account.parent_account_id) {
+    if (dto.parent_account_id) {
+      if (dto.parent_account_id === id) {
+        ErrorHandler.badRequest('A ledger account cannot be its own parent');
+      }
+
       const parent = await this.ledgerAccountRepository.findOneBy({
         id: dto.parent_account_id,
         company_id,

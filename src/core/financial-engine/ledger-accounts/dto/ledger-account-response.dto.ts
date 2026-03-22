@@ -15,9 +15,6 @@ export class LedgerAccountResponseDto {
     @ApiProperty({ example: AccountType.ASSET, enum: AccountType, description: 'Account type' })
     type: AccountType;
 
-    @ApiProperty({ example: true, description: 'Whether the account is active' })
-    is_active: boolean;
-
     @ApiProperty({ example: null, nullable: true, description: 'Parent account ID' })
     parent_account_id: number | null;
 
@@ -27,10 +24,6 @@ export class LedgerAccountResponseDto {
     @ApiProperty({ example: '2024-01-01T00:00:00Z', description: 'Last update date' })
     updated_at: Date;
 
-    @ApiProperty({
-        example: { id: 1, name: 'Acme Corp' },
-        description: 'Associated company',
-    })
     company: { id: number; name: string } | null;
 }
 

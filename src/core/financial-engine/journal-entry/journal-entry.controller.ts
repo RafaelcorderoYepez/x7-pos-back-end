@@ -187,4 +187,58 @@ export class JournalEntryController {
     const merchantId = user.merchant.id;
     return this.journalEntryService.remove(id, merchantId);
   }
+
+  @Post(':id/post')
+  @Roles(UserRole.MERCHANT_ADMIN)
+  @Scopes(
+    Scope.ADMIN_PORTAL,
+    Scope.MERCHANT_WEB,
+    Scope.MERCHANT_ANDROID,
+    Scope.MERCHANT_IOS,
+    Scope.MERCHANT_CLOVER,
+  )
+  @ApiOperation({
+    summary: 'Post a journal entry (change status from DRAFT to POSTED)',
+    description:
+      'Validates and posts a journal entry. Once posted, it cannot be modified or deleted.',
+  })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiOkResponse({ description: 'Journal entry posted successfully' })
+  @ApiNotFoundResponse({ description: 'Journal entry not found' })
+  @ApiBadRequestResponse({ description: 'Journal entry is already posted or unbalanced' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  post(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const merchantId = user.merchant.id;
+    return this.journalEntryService.post(id, merchantId);
+  }
+
+  @Post(':id/void')
+  @Roles(UserRole.MERCHANT_ADMIN)
+  @Scopes(
+    Scope.ADMIN_PORTAL,
+    Scope.MERCHANT_WEB,
+    Scope.MERCHANT_ANDROID,
+    Scope.MERCHANT_IOS,
+    Scope.MERCHANT_CLOVER,
+  )
+  @ApiOperation({
+    summary: 'Void a posted journal entry (change status from POSTED to VOIDED)',
+    description:
+      'Voids a journal entry. Only posted entries can be voided. This is used for audit purposes instead of deleting records.',
+  })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiOkResponse({ description: 'Journal entry voided successfully' })
+  @ApiNotFoundResponse({ description: 'Journal entry not found' })
+  @ApiBadRequestResponse({ description: 'Only posted entries can be voided' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  void(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const merchantId = user.merchant.id;
+    return this.journalEntryService.void(id, merchantId);
+  }
 }
