@@ -66,6 +66,7 @@ export enum ErrorMessage {
   MERCHANT_TIP_RULE_NOT_FOUND = 'Merchant Tip Rule not found',
   MERCHANT_OVERTIME_RULE_NOT_FOUND = 'Merchant Overtime Rule not found',
   MERCHANT_PAYROLL_RULE_NOT_FOUND = 'Merchant Payroll Rule not found',
+  MERCHANT_TAX_RULE_NOT_FOUND = 'Merchant Tax Rule not found',
 
   // 409 Conflict
   EMAIL_ALREADY_EXISTS = 'Email address is already registered',

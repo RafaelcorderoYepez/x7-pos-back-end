@@ -6,7 +6,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { CustomerSummaryDto } from 'src/business-partners/customers/dtos/customer-summary.dto';
 import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
-import { Configuration } from 'src/configuration/entity/configuration-entity';
+import { Configuration } from 'src/core/configuration/entity/configuration-entity';
 
 @Entity()
 export class Company {

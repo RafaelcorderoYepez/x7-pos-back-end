@@ -138,14 +138,14 @@ import { QROrder } from './qr-code/qr-order/entity/qr-order.entity';
 import { QROrderItem } from './qr-code/qr-order-item/entity/qr-order-item.entity';
 import { LoyaltyRewardsRedemtion } from './loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyCoupon } from './loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
-import { ConfigurationModule } from './configuration/configuration.module';
-import { Configuration } from './configuration/entity/configuration-entity';
-import { MerchantTipRule } from './configuration/merchant-tip-rule/entity/merchant-tip-rule-entity';
+import { ConfigurationModule } from './core/configuration/configuration.module';
+import { Configuration } from './core/configuration/entity/configuration-entity';
+import { MerchantTipRule } from './core/configuration/merchant-tip-rule/entity/merchant-tip-rule-entity';
 import { InventoryModule } from './inventory/inventory.module';
-import { MerchantOvertimeRule } from './configuration/merchant-overtime-rule/entity/merchant-overtime-rule.entity';
-import { MerchantOvertimeRuleModule } from './configuration/merchant-overtime-rule/merchant-overtime-rule.module';
-import { MerchantPayrollRuleModule } from './configuration/merchant-payroll-rule/merchant-payroll-rule.module';
-import { MerchantPayrollRule } from './configuration/merchant-payroll-rule/entity/merchant-payroll-rule.entity';
+import { MerchantOvertimeRule } from './core/configuration/merchant-overtime-rule/entity/merchant-overtime-rule.entity';
+import { MerchantOvertimeRuleModule } from './core/configuration/merchant-overtime-rule/merchant-overtime-rule.module';
+import { MerchantPayrollRuleModule } from './core/configuration/merchant-payroll-rule/merchant-payroll-rule.module';
+import { MerchantPayrollRule } from './core/configuration/merchant-payroll-rule/entity/merchant-payroll-rule.entity';
 import { Receipt } from './core/billing-transactions/receipts/entities/receipt.entity';
 import { ReceiptItem } from './core/billing-transactions/receipt-item/entities/receipt-item.entity';
 import { ReceiptTax } from './core/billing-transactions/receipt-tax/entities/receipt-tax.entity';
@@ -170,6 +170,8 @@ import { OnlineMenuItem } from './online-ordering-system/online-menu-item/entiti
 import { CoreModule } from './core/core.module';
 import { BusinessPartnersModule } from './business-partners/business-partners.module';
 import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.module';
+import { MerchantTaxRuleModule } from './core/configuration/merchant-tax-rule/merchant-tax-rule.module';
+import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/merchant-tax-rule.entity';
 
 @Module({
   imports: [
@@ -276,6 +278,7 @@ import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.mo
           MerchantPayrollRule,
           User,
           Variant,
+          MerchantTaxRule,
         ],
         synchronize: true,
       }),
@@ -357,6 +360,7 @@ import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.mo
     CashTipMovementsModule,
     CoreModule,
     BusinessPartnersModule,
+    MerchantTaxRuleModule,
   ],
 })
 export class AppModule {}
