@@ -169,6 +169,10 @@ import { Variant } from './inventory/products-inventory/variants/entities/varian
 import { OnlineMenuItem } from './online-ordering-system/online-menu-item/entities/online-menu-item.entity';
 import { CoreModule } from './core/core.module';
 import { BusinessPartnersModule } from './business-partners/business-partners.module';
+import { LedgerAccount } from './core/financial-engine/ledger-accounts/entities/ledger-account.entity';
+import { JournalEntry } from './core/financial-engine/journal-entry/entities/journal-entry.entity';
+import { JournalEntryLine } from './core/financial-engine/journal-entry-line/entities/journal-entry-line.entity';
+
 import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.module';
 import { MerchantTaxRuleModule } from './core/configuration/merchant-tax-rule/merchant-tax-rule.module';
 import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/merchant-tax-rule.entity';
@@ -205,6 +209,9 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
           KitchenOrder,
           KitchenOrderItem,
           KitchenStation,
+          LedgerAccount,
+          JournalEntry,
+          JournalEntryLine,
           Location,
           LoyaltyCoupon,
           LoyaltyCustomer,
@@ -341,9 +348,6 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
     QRMenuSectionModule,
     QROrderItemModule,
     QrOrderModule,
-    ReceiptItemModule,
-    ReceiptTaxModule,
-    ReceiptsModule,
     ShiftAssignmentsModule,
     ShiftsModule,
     SubscriptionApplicationModule,
