@@ -12,10 +12,8 @@ import { CashDrawersModule } from './cashdrawer/cash-drawers/cash-drawers.module
 import { CashTransactionsModule } from './cashdrawer/cash-transactions/cash-transactions.module';
 import { CashdrawerModule } from './cashdrawer/cashdrawer.module';
 import { CompaniesModule } from './companies/companies.module';
-import { ConfigurationModule } from './configuration/configuration.module';
 import { FeaturesModule } from './subscriptions/features/features.module';
 import { HrModule } from './hr/hr.module';
-import { InventoryModule } from './inventory/inventory.module';
 import { KitchenDisplayDeviceModule } from './kitchen-display-system/kitchen-display-device/kitchen-display-device.module';
 import { KitchenEventLogModule } from './kitchen-display-system/kitchen-event-log/kitchen-event-log.module';
 import { KitchenOrderModule } from './kitchen-display-system/kitchen-order/kitchen-order.module';
@@ -32,7 +30,6 @@ import { MarketingCouponsModule } from './marketing/marketing-coupons/marketing-
 import { MarketingMessageLogsModule } from './marketing/marketing-message-logs/marketing-message-logs.module';
 import { MarketingSegmentRulesModule } from './marketing/marketing-segment-rules/marketing-segment-rules.module';
 import { MarketingSegmentsModule } from './marketing/marketing-segments/marketing-segments.module';
-import { MerchantOvertimeRuleModule } from './configuration/merchant-overtime-rule/merchant-overtime-rule.module';
 import { MerchantSubscriptionModule } from './subscriptions/merchant-subscriptions/merchant-subscription.module';
 import { MerchantsModule } from './merchants/merchants.module';
 import { OnlineDeliveryInfoModule } from './online-ordering-system/online-delivery-info/online-delivery-info.module';
@@ -61,6 +58,8 @@ import { QRMenuModule } from './qr-code/qr-menu/qr-menu.module';
 import { QRMenuSectionModule } from './qr-code/qr-menu-section/qr-menu-section.module';
 import { QROrderItemModule } from './qr-code/qr-order-item/qr-order-item.module';
 import { QrOrderModule } from './qr-code/qr-order/qr-order.module';
+import { ReceiptItemModule } from './core/billing-transactions/receipt-item/receipt-item.module';
+import { ReceiptTaxModule } from './core/billing-transactions/receipt-tax/receipt-tax.module';
 import { ShiftAssignmentsModule } from './shift-assignments/shift-assignments.module';
 import { ShiftsModule } from './shifts/shifts.module';
 import { SubscriptionApplicationModule } from './subscriptions/subscription-application/subscription-application.module';
@@ -86,7 +85,6 @@ import { Category } from './inventory/products-inventory/category/entities/categ
 import { Collaborator } from './hr/collaborators/entities/collaborator.entity';
 import { CollaboratorContract } from './hr/collaborator-contracts/entities/collaborator-contract.entity';
 import { Company } from './companies/entities/company.entity';
-import { Configuration } from './configuration/entity/configuration-entity';
 import { Customer } from './business-partners/customers/entities/customer.entity';
 import { FeatureEntity } from './subscriptions/features/entity/features.entity';
 import { Item } from './inventory/products-inventory/stocks/items/entities/item.entity';
@@ -96,12 +94,10 @@ import { KitchenOrder } from './kitchen-display-system/kitchen-order/entities/ki
 import { KitchenOrderItem } from './kitchen-display-system/kitchen-order-item/entities/kitchen-order-item.entity';
 import { KitchenStation } from './kitchen-display-system/kitchen-station/entities/kitchen-station.entity';
 import { Location } from './inventory/products-inventory/stocks/locations/entities/location.entity';
-import { LoyaltyCoupon } from './loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
 import { LoyaltyCustomer } from './loyalty/loyalty-customer/entities/loyalty-customer.entity';
 import { LoyaltyPointTransaction } from './loyalty/loyalty-points-transaction/entities/loyalty-points-transaction.entity';
 import { LoyaltyProgram } from './loyalty/loyalty-programs/entities/loyalty-program.entity';
 import { LoyaltyReward } from './loyalty/loyalty-reward/entities/loyalty-reward.entity';
-import { LoyaltyRewardsRedemtion } from './loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyTier } from './loyalty/loyalty-tier/entities/loyalty-tier.entity';
 import { MarketingAutomation } from './marketing/marketing-automations/entities/marketing-automation.entity';
 import { MarketingAutomationAction } from './marketing/marketing-automation-actions/entities/marketing-automation-action.entity';
@@ -113,9 +109,7 @@ import { MarketingMessageLog } from './marketing/marketing-message-logs/entities
 import { MarketingSegment } from './marketing/marketing-segments/entities/marketing-segment.entity';
 import { MarketingSegmentRule } from './marketing/marketing-segment-rules/entities/marketing-segment-rule.entity';
 import { Merchant } from './merchants/entities/merchant.entity';
-import { MerchantOvertimeRule } from './configuration/merchant-overtime-rule/entity/merchant-overtime-rule.entity';
 import { MerchantSubscription } from './subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
-import { MerchantTipRule } from './configuration/merchant-tip-rule/entity/merchant-tip-rule-entity';
 import { Modifier } from './inventory/products-inventory/modifiers/entities/modifier.entity';
 import { Movement } from './inventory/products-inventory/stocks/movements/entities/movement.entity';
 import { OnlineDeliveryInfo } from './online-ordering-system/online-delivery-info/entities/online-delivery-info.entity';
@@ -142,6 +136,16 @@ import { QRMenuItem } from './qr-code/qr-menu-item/entity/qr-menu-item.entity';
 import { QRMenuSection } from './qr-code/qr-menu-section/entity/qr-menu-section.entity';
 import { QROrder } from './qr-code/qr-order/entity/qr-order.entity';
 import { QROrderItem } from './qr-code/qr-order-item/entity/qr-order-item.entity';
+import { LoyaltyRewardsRedemtion } from './loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
+import { LoyaltyCoupon } from './loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
+import { ConfigurationModule } from './core/configuration/configuration.module';
+import { Configuration } from './core/configuration/entity/configuration-entity';
+import { MerchantTipRule } from './core/configuration/merchant-tip-rule/entity/merchant-tip-rule-entity';
+import { InventoryModule } from './inventory/inventory.module';
+import { MerchantOvertimeRule } from './core/configuration/merchant-overtime-rule/entity/merchant-overtime-rule.entity';
+import { MerchantOvertimeRuleModule } from './core/configuration/merchant-overtime-rule/merchant-overtime-rule.module';
+import { MerchantPayrollRuleModule } from './core/configuration/merchant-payroll-rule/merchant-payroll-rule.module';
+import { MerchantPayrollRule } from './core/configuration/merchant-payroll-rule/entity/merchant-payroll-rule.entity';
 import { Receipt } from './core/billing-transactions/receipts/entities/receipt.entity';
 import { ReceiptItem } from './core/billing-transactions/receipt-item/entities/receipt-item.entity';
 import { ReceiptTax } from './core/billing-transactions/receipt-tax/entities/receipt-tax.entity';
@@ -169,6 +173,9 @@ import { LedgerAccount } from './core/financial-engine/ledger-accounts/entities/
 import { JournalEntry } from './core/financial-engine/journal-entry/entities/journal-entry.entity';
 import { JournalEntryLine } from './core/financial-engine/journal-entry-line/entities/journal-entry-line.entity';
 
+import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.module';
+import { MerchantTaxRuleModule } from './core/configuration/merchant-tax-rule/merchant-tax-rule.module';
+import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/merchant-tax-rule.entity';
 
 @Module({
   imports: [
@@ -271,8 +278,14 @@ import { JournalEntryLine } from './core/financial-engine/journal-entry-line/ent
           TipPool,
           TipPoolMember,
           TipSettlement,
+          CashTipMovement,
+          CollaboratorContract,
+          TimeEntry,
+          MerchantOvertimeRule,
+          MerchantPayrollRule,
           User,
           Variant,
+          MerchantTaxRule,
         ],
         synchronize: true,
       }),
@@ -306,6 +319,7 @@ import { JournalEntryLine } from './core/financial-engine/journal-entry-line/ent
     MarketingSegmentRulesModule,
     MarketingSegmentsModule,
     MerchantOvertimeRuleModule,
+    MerchantPayrollRuleModule,
     MerchantSubscriptionModule,
     MerchantsModule,
     OnlineDeliveryInfoModule,
@@ -350,6 +364,7 @@ import { JournalEntryLine } from './core/financial-engine/journal-entry-line/ent
     CashTipMovementsModule,
     CoreModule,
     BusinessPartnersModule,
+    MerchantTaxRuleModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
