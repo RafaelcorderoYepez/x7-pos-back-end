@@ -9,7 +9,7 @@ import { NotFoundException, ForbiddenException, BadRequestException, ConflictExc
 import { MarketingCampaingAudienceService } from './marketing-campaing-audience.service';
 import { MarketingCampaignAudience } from './entities/marketing-campaing-audience.entity';
 import { MarketingCampaign } from '../marketing_campaing/entities/marketing_campaing.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateMarketingCampaignAudienceDto } from './dto/create-marketing-campaing-audience.dto';
 import { UpdateMarketingCampaignAudienceDto } from './dto/update-marketing-campaing-audience.dto';
 import { GetMarketingCampaignAudienceQueryDto, MarketingCampaignAudienceSortBy } from './dto/get-marketing-campaign-audience-query.dto';

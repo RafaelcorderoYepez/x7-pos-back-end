@@ -3,9 +3,10 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Merchant } from '../../merchants/entities/merchant.entity';
 import { MerchantSummaryDto } from '../../merchants/dtos/merchant-summary.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { CustomerSummaryDto } from 'src/customers/dtos/customer-summary.dto';
-import { Customer } from 'src/customers/entities/customer.entity';
-import { Configuration } from 'src/configuration/entity/configuration-entity';
+import { CustomerSummaryDto } from 'src/business-partners/customers/dtos/customer-summary.dto';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
+import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
+import { Configuration } from 'src/core/configuration/entity/configuration-entity';
 
 @Entity()
 export class Company {
@@ -93,4 +94,7 @@ export class Company {
   })
   @OneToMany(() => Configuration, (configuration) => configuration.company)
   configurations: Configuration[];
+
+  @OneToMany(() => Supplier, (supplier) => supplier.company)
+  suppliers: Supplier[];
 }

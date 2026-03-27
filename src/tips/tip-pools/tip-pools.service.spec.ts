@@ -12,7 +12,21 @@ import { TipPoolDistributionType } from './constants/tip-pool-distribution-type.
 import { TipPoolStatus } from './constants/tip-pool-status.enum';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 
-const mockCompany = { id: 1, name: 'Acme' };
+const mockCompany = {
+  id: 1,
+  name: 'Acme',
+  email: 'test@company.com',
+  phone: '1234567890',
+  rut: '12345678-9',
+  address: '123 Test St',
+  city: 'Test City',
+  state: 'Test State',
+  country: 'Test Country',
+  merchants: [],
+  customers: [],
+  configurations: [],
+  suppliers: [],
+};
 const mockMerchant = { id: 1, name: 'Store', companyId: 1 };
 const mockShift = { id: 1, merchantId: 1, startTime: new Date() };
 const mockTipPool = {

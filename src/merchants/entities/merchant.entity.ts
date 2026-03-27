@@ -8,15 +8,15 @@ import {
 } from 'typeorm';
 import { Company } from '../../companies/entities/company.entity';
 import { User } from '../../users/entities/user.entity';
-import { Customer } from '../../customers/entities/customer.entity';
-import { CustomerSummaryDto } from '../../customers/dtos/customer-summary.dto';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
+import { CustomerSummaryDto } from 'src/business-partners/customers/dtos/customer-summary.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserSummaryDto } from 'src/users/dtos/user-summary.dto';
 import { Category } from 'src/inventory/products-inventory/category/entities/category.entity';
 import { Table } from 'src/tables/entities/table.entity';
 import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity';
 import { Product } from 'src/inventory/products-inventory/products/entities/product.entity';
-import { Supplier } from 'src/inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
 import { Shift } from 'src/shifts/entities/shift.entity';
 import { ShiftAssignment } from 'src/shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from 'src/table-assignments/entities/table-assignment.entity';
@@ -140,14 +140,6 @@ export class Merchant {
   @OneToMany(() => Product, (Product) => Product.merchant)
   products: Product[];
 
-  @ApiProperty({
-    type: () => Supplier,
-    isArray: true,
-    required: false,
-    description: 'List of suppliers associated with the merchant',
-  })
-  @OneToMany(() => Supplier, (supplier) => supplier.merchant)
-  suppliers: Supplier[];
 
   @ApiProperty({
     type: () => Movement,

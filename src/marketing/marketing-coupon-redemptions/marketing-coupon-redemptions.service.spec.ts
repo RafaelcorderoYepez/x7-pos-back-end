@@ -5,7 +5,7 @@ import { MarketingCouponRedemptionsService } from './marketing-coupon-redemption
 import { MarketingCouponRedemption } from './entities/marketing-coupon-redemption.entity';
 import { MarketingCoupon } from '../marketing-coupons/entities/marketing-coupon.entity';
 import { Order } from '../../orders/entities/order.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateMarketingCouponRedemptionDto } from './dto/create-marketing-coupon-redemption.dto';
 import { UpdateMarketingCouponRedemptionDto } from './dto/update-marketing-coupon-redemption.dto';
 import { MarketingCouponRedemptionStatus } from './constants/marketing-coupon-redemption-status.enum';

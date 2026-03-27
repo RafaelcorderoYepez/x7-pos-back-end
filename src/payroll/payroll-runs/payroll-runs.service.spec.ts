@@ -63,8 +63,35 @@ describe('PayrollRunsService', () => {
         approved_at: null,
         deleted_at: null,
       };
-      mockCompanyRepo.findOne.mockResolvedValue({ id: 1 });
-      mockMerchantRepo.findOne.mockResolvedValue({ id: 1 });
+      mockCompanyRepo.findOne.mockResolvedValue({
+        id: 1,
+        name: 'Test Company',
+        email: 'test@company.com',
+        phone: '1234567890',
+        rut: '12345678-9',
+        address: '123 Test St',
+        city: 'Test City',
+        state: 'Test State',
+        country: 'Test Country',
+        merchants: [],
+        customers: [],
+        configurations: [],
+        suppliers: [],
+      });
+      mockMerchantRepo.findOne.mockResolvedValue({
+        id: 1,
+        name: 'Test Merchant',
+        merchantId: 'M-001',
+        companyId: 1,
+        company: null as any,
+        users: [],
+        customers: [],
+        products: [],
+        purchaseOrders: [],
+        inventoryTransactions: [],
+        billingTransactions: [],
+        configurations: [],
+      });
       mockRunRepo.create.mockReturnValue(saved);
       mockRunRepo.save.mockResolvedValue(saved);
 

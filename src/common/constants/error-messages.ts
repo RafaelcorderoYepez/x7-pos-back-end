@@ -65,6 +65,8 @@ export enum ErrorMessage {
   QR_ORDER_ITEM_NOT_FOUND = 'QR Order Item not found',
   MERCHANT_TIP_RULE_NOT_FOUND = 'Merchant Tip Rule not found',
   MERCHANT_OVERTIME_RULE_NOT_FOUND = 'Merchant Overtime Rule not found',
+  MERCHANT_PAYROLL_RULE_NOT_FOUND = 'Merchant Payroll Rule not found',
+  MERCHANT_TAX_RULE_NOT_FOUND = 'Merchant Tax Rule not found',
 
   // 409 Conflict
   EMAIL_ALREADY_EXISTS = 'Email address is already registered',
@@ -77,6 +79,7 @@ export enum ErrorMessage {
   VARIANT_NAME_EXISTS = 'Variant name already exists',
   VARIANT_SKU_EXISTS = 'Variant with SKU already exists',
   SUPPLIER_NAME_EXISTS = 'Supplier name already exists',
+  SUPPLIER_TAX_ID_EXISTS = 'Supplier tax ID already exists',
   LOCATION_NAME_EXISTS = 'Location name already exists',
   LOCATION_ADDRESS_EXISTS = 'Location Address already exists',
   ITEM_EXISTS = 'Item already exists',

@@ -201,6 +201,18 @@ export class ErrorHandler {
     throw new NotFoundException(message);
   }
 
+  static merchantPayrollRuleNotFound(
+    message: string = ErrorMessage.MERCHANT_PAYROLL_RULE_NOT_FOUND,
+  ): never {
+    throw new NotFoundException(message);
+  }
+
+  static merchantTaxRuleNotFound(
+    message: string = ErrorMessage.MERCHANT_TAX_RULE_NOT_FOUND,
+  ): never {
+    throw new NotFoundException(message);
+  }
+
   static userNotFound(message: string = ErrorMessage.USER_NOT_FOUND): never {
     throw new NotFoundException(message);
   }
