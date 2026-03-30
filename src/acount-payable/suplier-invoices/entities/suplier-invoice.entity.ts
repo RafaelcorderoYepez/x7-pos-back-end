@@ -6,11 +6,13 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
 import { Company } from 'src/companies/entities/company.entity';
 import { SupplierInvoiceStatus } from '../constants/supplier-invoice-status.enum';
+import { SuplierInvoiceItem } from '../../suplier-invoice-item/entities/suplier-invoice-item.entity';
 
 @Entity('supplier_invoices')
 export class SuplierInvoice {
@@ -87,4 +89,7 @@ export class SuplierInvoice {
   @ApiProperty({ description: 'Logical delete timestamp (null = active)', nullable: true })
   @Column({ type: 'timestamp', name: 'deleted_at', nullable: true })
   deleted_at: Date | null;
+
+  @OneToMany(() => SuplierInvoiceItem, (item) => item.invoice)
+  items: SuplierInvoiceItem[];
 }

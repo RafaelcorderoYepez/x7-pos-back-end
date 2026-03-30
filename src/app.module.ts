@@ -12,6 +12,21 @@ import { CashDrawersModule } from './cashdrawer/cash-drawers/cash-drawers.module
 import { CashTransactionsModule } from './cashdrawer/cash-transactions/cash-transactions.module';
 import { CashdrawerModule } from './cashdrawer/cashdrawer.module';
 import { CompaniesModule } from './companies/companies.module';
+import { MerchantsModule } from './merchants/merchants.module';
+import { UsersModule } from './users/users.module';
+import { CustomersModule } from './customers/customers.module';
+import { TablesModule } from './tables/tables.module';
+import { HrModule } from './hr/hr.module';
+import { ShiftsModule } from './shifts/shifts.module';
+import { ShiftAssignmentsModule } from './shift-assignments/shift-assignments.module';
+import { TableAssignmentsModule } from './table-assignments/table-assignments.module';
+import { OrdersModule } from './orders/orders.module';
+import { OrderItemModule } from './order-item/order-item.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { MerchantSubscriptionModule } from './subscriptions/merchant-subscriptions/merchant-subscription.module';
+import { ApplicationsModule } from './subscriptions/applications/applications.module';
+import { PlanApplicationsModule } from './subscriptions/plan-applications/plan-applications.module';
+import { SubscriptionApplicationModule } from './subscriptions/subscription-application/subscription-application.module';
 import { FeaturesModule } from './subscriptions/features/features.module';
 import { HrModule } from './hr/hr.module';
 import { KitchenDisplayDeviceModule } from './kitchen-display-system/kitchen-display-device/kitchen-display-device.module';
@@ -81,6 +96,31 @@ import { CashDrawer } from './cashdrawer/cash-drawers/entities/cash-drawer.entit
 import { CashDrawerHistory } from './cashdrawer/cash-drawer-history/entities/cash-drawer-history.entity';
 import { CashTipMovement } from './tips/cash-tip-movements/entities/cash-tip-movement.entity';
 import { CashTransaction } from './cashdrawer/cash-transactions/entities/cash-transaction.entity';
+import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './order-item/entities/order-item.entity';
+import { SubscriptionPlan } from './subscriptions/subscription-plan/entity/subscription-plan.entity';
+import { MerchantSubscription } from './subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { ApplicationEntity } from './subscriptions/applications/entity/application-entity';
+import { PlanApplication } from './subscriptions/plan-applications/entity/plan-applications.entity';
+import { SubscriptionApplication } from './subscriptions/subscription-application/entity/subscription-application.entity';
+import { FeatureEntity } from './subscriptions/features/entity/features.entity';
+import { PlanFeature } from './subscriptions/plan-features/entity/plan-features.entity';
+import { SubscriptionPayment } from './subscriptions/subscription-payments/entity/subscription-payments.entity';
+import { Category } from './inventory/products-inventory/category/entities/category.entity';
+import { Product } from './inventory/products-inventory/products/entities/product.entity';
+import { Supplier } from './inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Variant } from './inventory/products-inventory/variants/entities/variant.entity';
+import { Modifier } from './inventory/products-inventory/modifiers/entities/modifier.entity';
+import { Location } from './inventory/products-inventory/stocks/locations/entities/location.entity';
+import { Item } from './inventory/products-inventory/stocks/items/entities/item.entity';
+import { Movement } from './inventory/products-inventory/stocks/movements/entities/movement.entity';
+import { CashDrawerHistory } from './cashdrawer/cash-drawer-history/entities/cash-drawer-history.entity';
+import { PurchaseOrder } from './inventory/products-inventory/purchase-order/entities/purchase-order.entity';
+import { PurchaseOrderItem } from './inventory/products-inventory/purchase-order-item/entities/purchase-order-item.entity';
+import { Receipt } from './inventory/billing-transactions/receipts/entities/receipt.entity';
+import { ReceiptItem } from './inventory/billing-transactions/receipt-item/entities/receipt-item.entity';
+import { ReceiptTax } from './inventory/billing-transactions/receipt-tax/entities/receipt-tax.entity';
+import { KitchenStation } from './kitchen-display-system/kitchen-station/entities/kitchen-station.entity';
 import { Category } from './inventory/products-inventory/category/entities/category.entity';
 import { Collaborator } from './hr/collaborators/entities/collaborator.entity';
 import { CollaboratorContract } from './hr/collaborator-contracts/entities/collaborator-contract.entity';
@@ -164,6 +204,27 @@ import { TipAllocation } from './tips/tip-allocations/entities/tip-allocation.en
 import { TipPool } from './tips/tip-pools/entities/tip-pool.entity';
 import { TipPoolMember } from './tips/tip-pool-members/entities/tip-pool-member.entity';
 import { TipSettlement } from './tips/tip-settlements/entities/tip-settlement.entity';
+import { CashTipMovement } from './tips/cash-tip-movements/entities/cash-tip-movement.entity';
+import { PayrollAdjustmentsModule } from './payroll/payroll-adjustments/payroll-adjustments.module';
+import { PayrollEntriesModule } from './payroll/payroll-entries/payroll-entries.module';
+import { PayrollRunsModule } from './payroll/payroll-runs/payroll-runs.module';
+import { PayrollEntry } from './payroll/payroll-entries/entities/payroll-entry.entity';
+import { PayrollRun } from './payroll/payroll-runs/entities/payroll-run.entity';
+import { PayrollAdjustment } from './payroll/payroll-adjustments/entities/payroll-adjustment.entity';
+import { PayrollTaxDetail } from './payroll/payroll-tax-details/entities/payroll-tax-detail.entity';
+import { PayrollTaxDetailsModule } from './payroll/payroll-tax-details/payroll-tax-details.module';
+import { AcountPayableModule } from './acount-payable/acount-payable.module';
+import { SuplierInvoice } from './acount-payable/suplier-invoices/entities/suplier-invoice.entity';
+import { SupplierPayment } from './acount-payable/supplier-payments/entities/supplier-payment.entity';
+import { SupplierPaymentItem } from './acount-payable/supplier-payment-items/entities/supplier-payment-item.entity';
+import { SuplierInvoiceItem } from './acount-payable/suplier-invoice-item/entities/suplier-invoice-item.entity';
+import { SupplierPaymentAllocation } from './acount-payable/supplier_payment_allocations/entities/supplier_payment_allocation.entity';
+import { SupplierCreditNote } from './acount-payable/supplier-credit-notes/entities/supplier-credit-note.entity';
+import { ConfigurationModule } from './configuration/configuration.module';
+import { Configuration } from './configuration/entity/configuration-entity';
+import { MerchantTipRule } from './configuration/merchant-tip-rule/entity/merchant-tip-rule-entity';
+import { MerchantOvertimeRule } from './configuration/merchant-overtime-rule/entity/merchant-overtime-rule.entity';
+import { MerchantOvertimeRuleModule } from './configuration/merchant-overtime-rule/merchant-overtime-rule.module';
 import { User } from './users/entities/user.entity';
 import { Variant } from './inventory/products-inventory/variants/entities/variant.entity';
 import { OnlineMenuItem } from './online-ordering-system/online-menu-item/entities/online-menu-item.entity';
@@ -197,6 +258,17 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
           CashTipMovement,
           CashTransaction,
           Category,
+          Variant,
+          Modifier,
+          Location,
+          Item,
+          Movement,
+          PurchaseOrder,
+          PurchaseOrderItem,
+          Receipt,
+          ReceiptItem,
+          ReceiptTax,
+          KitchenStation,
           Collaborator,
           CollaboratorContract,
           Company,
@@ -279,6 +351,16 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
           TipPoolMember,
           TipSettlement,
           CashTipMovement,
+          PayrollEntry,
+          PayrollRun,
+          PayrollAdjustment,
+          PayrollTaxDetail,
+          SuplierInvoice,
+          SuplierInvoiceItem,
+          SupplierPayment,
+          SupplierPaymentItem,
+          SupplierPaymentAllocation,
+          SupplierCreditNote,
           CollaboratorContract,
           TimeEntry,
           MerchantOvertimeRule,
@@ -293,6 +375,35 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
     AcountPayableModule,
     ApplicationsModule,
     AuthModule,
+    MailModule,
+    CompaniesModule,
+    MerchantsModule,
+    UsersModule,
+    CustomersModule,
+    TablesModule,
+    HrModule,
+    ShiftsModule,
+    ShiftAssignmentsModule,
+    TableAssignmentsModule,
+    OrdersModule,
+    OrderItemModule,
+    SubscriptionsModule,
+    MerchantSubscriptionModule,
+    ApplicationsModule,
+    PlanApplicationsModule,
+    SubscriptionApplicationModule,
+    CashdrawerModule,
+    ReceiptsModule,
+    PurchaseOrderModule,
+    PurchaseOrderItemModule,
+    FeaturesModule,
+    PlanFeaturesModule,
+    SubscriptionPaymentsModule,
+    InventoryModule,
+    ProductsInventoryModule,
+    ReceiptItemModule,
+    ReceiptTaxModule,
+    KitchenStationModule,
     CashDrawerHistoryModule,
     CashDrawersModule,
     CashTransactionsModule,
@@ -306,6 +417,16 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
     KitchenEventLogModule,
     KitchenOrderModule,
     KitchenOrderItemModule,
+    KitchenEventLogModule,
+    OnlineStoresModule,
+    QRCodeModule,
+    QRMenuModule,
+    QRMenuSectionModule,
+    QRMenuItemModule,
+    QRLocationModule,
+    QrOrderModule,
+    QROrderItemModule,
+    OnlineMenuModule,
     KitchenStationModule,
     LoyaltyModule,
     MailModule,
@@ -329,6 +450,17 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
     OnlineOrderModule,
     OnlineOrderItemModule,
     OnlinePaymentModule,
+    LoyaltyModule,
+    MarketingCampaignModule,
+    MarketingCampaingAudienceModule,
+    MarketingSegmentsModule,
+    MarketingSegmentRulesModule,
+    MarketingCouponsModule,
+    MarketingCouponRedemptionsModule,
+    MarketingAutomationsModule,
+    MarketingAutomationActionsModule,
+    MarketingMessageLogsModule,
+    TipsModule,
     OnlineStoresModule,
     OrderItemModule,
     OrdersModule,
@@ -362,6 +494,13 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
     TipsModule,
     UsersModule,
     CashTipMovementsModule,
+    PayrollAdjustmentsModule,
+    PayrollEntriesModule,
+    PayrollRunsModule,
+    PayrollTaxDetailsModule,
+    AcountPayableModule,
+    ConfigurationModule,
+    MerchantOvertimeRuleModule,
     CoreModule,
     BusinessPartnersModule,
     MerchantTaxRuleModule,
