@@ -9,7 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Supplier } from '../../../inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
 import { Company } from '../../../companies/entities/company.entity';
 import { SupplierPaymentStatus } from '../constants/supplier-payment-status.enum';
 import { SupplierPaymentItem } from '../../supplier-payment-items/entities/supplier-payment-item.entity';

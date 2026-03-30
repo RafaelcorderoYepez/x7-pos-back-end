@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { SupplierPaymentAllocation } from '../../supplier_payment_allocations/entities/supplier_payment_allocation.entity';
-import { Supplier } from '../../../inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
 import { Company } from '../../../companies/entities/company.entity';
 
 export enum SupplierCreditNoteStatus {

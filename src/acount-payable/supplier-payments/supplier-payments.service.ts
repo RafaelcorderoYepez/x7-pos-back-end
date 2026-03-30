@@ -9,7 +9,7 @@ import { CreateSupplierPaymentDto } from './dto/create-supplier-payment.dto';
 import { UpdateSupplierPaymentDto } from './dto/update-supplier-payment.dto';
 import { SupplierPayment } from './entities/supplier-payment.entity';
 import { Company } from '../../companies/entities/company.entity';
-import { Supplier } from '../../inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from '../../business-partners/suppliers/entities/supplier.entity';
 import {
   GetSupplierPaymentsQueryDto,
   SupplierPaymentSortBy,
