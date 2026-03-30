@@ -5,7 +5,7 @@ import { MarketingCouponRedemptionsController } from './marketing-coupon-redempt
 import { MarketingCouponRedemption } from './entities/marketing-coupon-redemption.entity';
 import { MarketingCoupon } from '../marketing-coupons/entities/marketing-coupon.entity';
 import { Order } from '../../orders/entities/order.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 
 @Module({
   imports: [

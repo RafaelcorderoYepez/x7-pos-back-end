@@ -14,7 +14,7 @@ import {
 import { GetLoyaltyCustomersQueryDto } from './dto/get-loyalty-customers-query.dto';
 import { AllPaginatedLoyaltyCustomerDto } from './dto/all-paginated-loyalty-customer.dto';
 import { LoyaltyTier } from '../loyalty-tier/entities/loyalty-tier.entity';
-import { Customer } from 'src/customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { findOrCreateAvailableTier, evaluateTierUpgrade } from '../loyalty-tier/loyalty-tier.helpers';
 
 @Injectable()

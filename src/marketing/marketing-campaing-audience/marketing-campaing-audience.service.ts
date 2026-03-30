@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MarketingCampaignAudience } from './entities/marketing-campaing-audience.entity';
 import { MarketingCampaign } from '../marketing_campaing/entities/marketing_campaing.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateMarketingCampaignAudienceDto } from './dto/create-marketing-campaing-audience.dto';
 import { UpdateMarketingCampaignAudienceDto } from './dto/update-marketing-campaing-audience.dto';
 import { GetMarketingCampaignAudienceQueryDto, MarketingCampaignAudienceSortBy } from './dto/get-marketing-campaign-audience-query.dto';
@@ -21,7 +21,7 @@ export class MarketingCampaingAudienceService {
     private readonly marketingCampaignRepository: Repository<MarketingCampaign>,
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
-  ) {}
+  ) { }
 
   async create(createMarketingCampaignAudienceDto: CreateMarketingCampaignAudienceDto, authenticatedUserMerchantId: number): Promise<OneMarketingCampaignAudienceResponseDto> {
     // Validate user permissions - must be associated with a merchant
@@ -151,12 +151,12 @@ export class MarketingCampaingAudienceService {
     // Build order conditions
     if (query.sortBy) {
       const sortField = query.sortBy === MarketingCampaignAudienceSortBy.CREATED_AT ? 'audience.created_at' :
-                       query.sortBy === MarketingCampaignAudienceSortBy.UPDATED_AT ? 'audience.updated_at' :
-                       query.sortBy === MarketingCampaignAudienceSortBy.SENT_AT ? 'audience.sent_at' :
-                       query.sortBy === MarketingCampaignAudienceSortBy.DELIVERED_AT ? 'audience.delivered_at' :
-                       query.sortBy === MarketingCampaignAudienceSortBy.OPENED_AT ? 'audience.opened_at' :
-                       query.sortBy === MarketingCampaignAudienceSortBy.CLICKED_AT ? 'audience.clicked_at' :
-                       query.sortBy === MarketingCampaignAudienceSortBy.STATUS ? 'audience.status' : 'audience.id';
+        query.sortBy === MarketingCampaignAudienceSortBy.UPDATED_AT ? 'audience.updated_at' :
+          query.sortBy === MarketingCampaignAudienceSortBy.SENT_AT ? 'audience.sent_at' :
+            query.sortBy === MarketingCampaignAudienceSortBy.DELIVERED_AT ? 'audience.delivered_at' :
+              query.sortBy === MarketingCampaignAudienceSortBy.OPENED_AT ? 'audience.opened_at' :
+                query.sortBy === MarketingCampaignAudienceSortBy.CLICKED_AT ? 'audience.clicked_at' :
+                  query.sortBy === MarketingCampaignAudienceSortBy.STATUS ? 'audience.status' : 'audience.id';
       queryBuilder.orderBy(sortField, query.sortOrder || 'DESC');
     } else {
       queryBuilder.orderBy('audience.created_at', 'DESC');

@@ -18,6 +18,16 @@ describe('MerchantsService', () => {
     id: 1,
     name: 'Test Company',
     email: 'test@company.com',
+    phone: '1234567890',
+    rut: '12345678-9',
+    address: '123 Test St',
+    city: 'Test City',
+    state: 'Test State',
+    country: 'Test Country',
+    merchants: [],
+    customers: [],
+    configurations: [],
+    suppliers: [],
   };
 
   const mockMerchant: Partial<Merchant> = {

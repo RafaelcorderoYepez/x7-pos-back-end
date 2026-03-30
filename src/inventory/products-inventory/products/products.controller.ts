@@ -14,7 +14,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { GetProductsQueryDto } from './dto/get-products-query.dto';
-import { AllPaginatedProducts } from './dto/all-paginated-purchase-orders.dto';
+import { AllPaginatedProducts } from './dto/all-paginated-products.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import {
@@ -46,7 +46,7 @@ import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interf
 @Controller('products')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @Post()
   @Roles(UserRole.MERCHANT_ADMIN)

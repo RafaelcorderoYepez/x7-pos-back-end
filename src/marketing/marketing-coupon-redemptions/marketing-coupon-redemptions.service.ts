@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { MarketingCouponRedemption } from './entities/marketing-coupon-redemption.entity';
 import { MarketingCoupon } from '../marketing-coupons/entities/marketing-coupon.entity';
 import { Order } from '../../orders/entities/order.entity';
-import { Customer } from '../../customers/entities/customer.entity';
+import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateMarketingCouponRedemptionDto } from './dto/create-marketing-coupon-redemption.dto';
 import { UpdateMarketingCouponRedemptionDto } from './dto/update-marketing-coupon-redemption.dto';
 import { GetMarketingCouponRedemptionQueryDto, MarketingCouponRedemptionSortBy } from './dto/get-marketing-coupon-redemption-query.dto';
@@ -22,7 +22,7 @@ export class MarketingCouponRedemptionsService {
     private readonly orderRepository: Repository<Order>,
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
-  ) {}
+  ) { }
 
   async create(createMarketingCouponRedemptionDto: CreateMarketingCouponRedemptionDto, authenticatedUserMerchantId: number | null | undefined): Promise<OneMarketingCouponRedemptionResponseDto> {
     // Validate user permissions - must be associated with a merchant
@@ -73,8 +73,8 @@ export class MarketingCouponRedemptionsService {
     marketingCouponRedemption.coupon_id = createMarketingCouponRedemptionDto.couponId;
     marketingCouponRedemption.order_id = createMarketingCouponRedemptionDto.orderId;
     marketingCouponRedemption.customer_id = createMarketingCouponRedemptionDto.customerId;
-    marketingCouponRedemption.redeemed_at = createMarketingCouponRedemptionDto.redeemedAt 
-      ? new Date(createMarketingCouponRedemptionDto.redeemedAt) 
+    marketingCouponRedemption.redeemed_at = createMarketingCouponRedemptionDto.redeemedAt
+      ? new Date(createMarketingCouponRedemptionDto.redeemedAt)
       : new Date();
     marketingCouponRedemption.discount_applied = createMarketingCouponRedemptionDto.discountApplied;
     marketingCouponRedemption.status = MarketingCouponRedemptionStatus.ACTIVE;
@@ -175,9 +175,9 @@ export class MarketingCouponRedemptionsService {
     // Build order conditions
     if (query.sortBy) {
       const sortField = query.sortBy === MarketingCouponRedemptionSortBy.REDEEMED_AT ? 'redemption.redeemed_at' :
-                       query.sortBy === MarketingCouponRedemptionSortBy.DISCOUNT_APPLIED ? 'redemption.discount_applied' :
-                       query.sortBy === MarketingCouponRedemptionSortBy.CREATED_AT ? 'redemption.created_at' :
-                       query.sortBy === MarketingCouponRedemptionSortBy.UPDATED_AT ? 'redemption.updated_at' : 'redemption.id';
+        query.sortBy === MarketingCouponRedemptionSortBy.DISCOUNT_APPLIED ? 'redemption.discount_applied' :
+          query.sortBy === MarketingCouponRedemptionSortBy.CREATED_AT ? 'redemption.created_at' :
+            query.sortBy === MarketingCouponRedemptionSortBy.UPDATED_AT ? 'redemption.updated_at' : 'redemption.id';
       queryBuilder.orderBy(sortField, query.sortOrder || 'DESC');
     } else {
       queryBuilder.orderBy('redemption.redeemed_at', 'DESC');

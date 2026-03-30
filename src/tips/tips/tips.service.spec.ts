@@ -16,7 +16,21 @@ import { NotFoundException, BadRequestException, ForbiddenException, ConflictExc
 describe('TipsService', () => {
   let service: TipsService;
 
-  const mockCompany = { id: 1, name: 'Acme Corp' };
+  const mockCompany = {
+    id: 1,
+    name: 'Acme Corp',
+    email: 'test@company.com',
+    phone: '1234567890',
+    rut: '12345678-9',
+    address: '123 Test St',
+    city: 'Test City',
+    state: 'Test State',
+    country: 'Test Country',
+    merchants: [],
+    customers: [],
+    configurations: [],
+    suppliers: [],
+  };
   const mockMerchant = { id: 1, name: 'Main Store', companyId: 1, company: mockCompany };
   const mockOrder = { id: 1, merchant_id: 1 };
 
