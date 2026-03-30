@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { SupplierCreditNotesService } from './supplier-credit-notes.service';
 import { SupplierCreditNote } from './entities/supplier-credit-note.entity';
 import { Company } from '../../companies/entities/company.entity';
-import { Supplier } from '../../inventory/products-inventory/suppliers/entities/supplier.entity';
+import { Supplier } from '../../business-partners/suppliers/entities/supplier.entity';
 
 describe('SupplierCreditNotesService', () => {
   let service: SupplierCreditNotesService;
