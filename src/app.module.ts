@@ -214,6 +214,7 @@ import { PayrollAdjustment } from './payroll/payroll-adjustments/entities/payrol
 import { PayrollTaxDetail } from './payroll/payroll-tax-details/entities/payroll-tax-detail.entity';
 import { PayrollTaxDetailsModule } from './payroll/payroll-tax-details/payroll-tax-details.module';
 import { AcountPayableModule } from './acount-payable/acount-payable.module';
+import { RestaurantOperationsModule } from './restaurant-operations/restaurant-operations.module';
 import { SuplierInvoice } from './acount-payable/suplier-invoices/entities/suplier-invoice.entity';
 import { SupplierPayment } from './acount-payable/supplier-payments/entities/supplier-payment.entity';
 import { SupplierPaymentItem } from './acount-payable/supplier-payment-items/entities/supplier-payment-item.entity';
@@ -499,6 +500,7 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
     PayrollRunsModule,
     PayrollTaxDetailsModule,
     AcountPayableModule,
+    RestaurantOperationsModule,
     ConfigurationModule,
     MerchantOvertimeRuleModule,
     CoreModule,
