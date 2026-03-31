@@ -9,10 +9,10 @@ import { JwtService } from '@nestjs/jwt';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
-import { User } from '../users/entities/user.entity';
-import { Company } from '../companies/entities/company.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
-import { UsersService } from '../users/users.service';
+import { User } from '../platform-saas/users/entities/user.entity';
+import { Company } from '../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../platform-saas/merchants/entities/merchant.entity';
+import { UsersService } from '../platform-saas/users/users.service';
 import { MailService } from '../mail/mail.service';
 import { LoginDto } from './dto/login.dto';
 

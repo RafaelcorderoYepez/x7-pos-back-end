@@ -3,13 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MerchantTaxRuleService } from './merchant-tax-rule.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MerchantTaxRule } from './entity/merchant-tax-rule.entity';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import { TaxType } from '../constants/tax-type.enum';
 import { CreateMerchantTaxRuleDto } from './dto/create-merchant-tax-rule.dto';
 import { UpdateMerchantTaxRuleDto } from './dto/update-merchant-tax-rule.dto';
 import { SelectQueryBuilder } from 'typeorm';
 import { Repository, In } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 
 describe('MerchantTaxRuleService', () => {
   let service: MerchantTaxRuleService;

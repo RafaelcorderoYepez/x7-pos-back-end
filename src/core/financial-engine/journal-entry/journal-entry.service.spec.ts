@@ -7,8 +7,8 @@ import { JournalEntryLine } from 'src/core/financial-engine/journal-entry-line/e
 
 
 import { LedgerAccount } from '../ledger-accounts/entities/ledger-account.entity';
-import { Company } from 'src/companies/entities/company.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { AccountType } from '../ledger-accounts/constants/account-type.enum';
 import { JournalEntryStatus } from './constants/journal-entry-status.enum';
 import { CreateJournalEntryDto } from './dto/create-journal-entry.dto';

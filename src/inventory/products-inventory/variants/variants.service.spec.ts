@@ -11,7 +11,7 @@ import { CreateVariantDto } from './dto/create-variant.dto';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { GetVariantsQueryDto } from './dto/get-variants-query.dto';
 import { VariantResponseDto } from './dto/variant-response.dto';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 
 describe('VariantsService', () => {
   let service: VariantsService;

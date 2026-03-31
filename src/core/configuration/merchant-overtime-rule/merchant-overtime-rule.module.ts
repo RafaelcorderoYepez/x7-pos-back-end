@@ -3,10 +3,10 @@ import { Module } from '@nestjs/common';
 import { MerchantOvertimeRuleController } from './merchant-overtime-rule.controller';
 import { MerchantOvertimeRuleService } from './merchant-overtime-rule.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import { MerchantOvertimeRule } from './entity/merchant-overtime-rule.entity';
 import { Configuration } from '../entity/configuration-entity';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 
 @Module({
   imports: [

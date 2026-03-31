@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Shift } from '../../shifts/entities/shift.entity';
+import { Shift } from '../../restaurant-operations/shift/shifts/entities/shift.entity';
 import { Table } from '../../tables/entities/table.entity';
 import { Collaborator } from '../../hr/collaborators/entities/collaborator.entity';
 

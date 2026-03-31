@@ -12,11 +12,11 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
+import { Merchant } from '../platform-saas/merchants/entities/merchant.entity';
 import { Table } from '../tables/entities/table.entity';
 import { Collaborator } from '../hr/collaborators/entities/collaborator.entity';
-import { MerchantSubscription } from '../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
-import { Customer } from 'src/business-partners/customers/entities/customer.entity';
+import { MerchantSubscription } from '../platform-saas/subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { Customer } from 'src/core/business-partners/customers/entities/customer.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { GetOrdersQueryDto, OrderSortBy } from './dto/get-orders-query.dto';

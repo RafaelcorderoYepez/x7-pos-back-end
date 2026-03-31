@@ -2,8 +2,8 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { SupplierCreditNote, SupplierCreditNoteStatus } from './entities/supplier-credit-note.entity';
-import { Company } from '../../companies/entities/company.entity';
-import { Supplier } from '../../business-partners/suppliers/entities/supplier.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Supplier } from '../../core/business-partners/suppliers/entities/supplier.entity';
 import { CreateSupplierCreditNoteDto } from './dto/create-supplier-credit-note.dto';
 import { UpdateSupplierCreditNoteDto } from './dto/update-supplier-credit-note.dto';
 import {

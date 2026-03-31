@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PayrollRunsService } from './payroll-runs.service';
 import { PayrollRunsController } from './payroll-runs.controller';
 import { PayrollRun } from './entities/payroll-run.entity';
-import { Company } from '../../companies/entities/company.entity';
-import { Merchant } from '../../merchants/entities/merchant.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../../platform-saas/merchants/entities/merchant.entity';
 
 @Module({
   imports: [

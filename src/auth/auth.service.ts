@@ -7,14 +7,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '../platform-saas/users/users.service';
 import { MailService } from '../mail/mail.service';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../users/entities/user.entity';
-import { Company } from '../companies/entities/company.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
+import { User } from '../platform-saas/users/entities/user.entity';
+import { Company } from '../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../platform-saas/merchants/entities/merchant.entity';
 import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from 'src/auth/interfaces/JwtPayload.interface';
 

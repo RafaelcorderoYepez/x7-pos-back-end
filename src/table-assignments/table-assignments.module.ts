@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TableAssignmentsService } from './table-assignments.service';
 import { TableAssignmentsController } from './table-assignments.controller';
 import { TableAssignment } from './entities/table-assignment.entity';
-import { Shift } from '../shifts/entities/shift.entity';
+import { Shift } from '../restaurant-operations/shift/shifts/entities/shift.entity';
 import { Table } from '../tables/entities/table.entity';
 import { Collaborator } from '../hr/collaborators/entities/collaborator.entity';
 

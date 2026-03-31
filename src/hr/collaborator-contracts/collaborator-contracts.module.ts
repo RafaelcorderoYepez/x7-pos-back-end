@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CollaboratorContract } from './entities/collaborator-contract.entity';
 import { CollaboratorContractsService } from './collaborator-contracts.service';
 import { CollaboratorContractsController } from './collaborator-contracts.controller';
-import { Company } from '../../companies/entities/company.entity';
-import { Merchant } from '../../merchants/entities/merchant.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../../platform-saas/merchants/entities/merchant.entity';
 import { Collaborator } from '../collaborators/entities/collaborator.entity';
 
 @Module({

@@ -8,7 +8,7 @@ import { AllPaginatedLocations } from './dto/all-paginated-locations.dto';
 import { Location } from './entities/location.entity';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 import { ErrorMessage } from 'src/common/constants/error-messages';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import {
   LocationResponseDto,
   OneLocationResponse,

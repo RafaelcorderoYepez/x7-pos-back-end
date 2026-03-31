@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CollaboratorContractsService } from './collaborator-contracts.service';
 import { CollaboratorContract } from './entities/collaborator-contract.entity';
-import { Company } from '../../companies/entities/company.entity';
-import { Merchant } from '../../merchants/entities/merchant.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../../platform-saas/merchants/entities/merchant.entity';
 import { Collaborator } from '../collaborators/entities/collaborator.entity';
 
 const mockRepository = {

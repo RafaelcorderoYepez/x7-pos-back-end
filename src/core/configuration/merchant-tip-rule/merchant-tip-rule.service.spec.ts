@@ -3,14 +3,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MerchantTipRuleService } from './merchant-tip-rule.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MerchantTipRule } from './entity/merchant-tip-rule-entity';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import { TipCalculationMethod } from '../constants/tip-calculation-method.enum';
 import { TipDistributionMethod } from '../constants/tip-distribution-method.enum';
 import { CreateMerchantTipRuleDto } from './dto/create-merchant-tip-rule.dto';
 import { UpdateMerchantTipRuleDto } from './dto/update-merchant-tip-rule.dto';
 import { SelectQueryBuilder } from 'typeorm';
 import { Repository, In } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 
 describe('MerchantTipRuleService', () => {
   let service: MerchantTipRuleService;

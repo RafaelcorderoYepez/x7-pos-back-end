@@ -35,8 +35,8 @@ import { OrderItemResponseDto, OneOrderItemResponseDto } from './dto/order-item-
 import { GetOrderItemQueryDto } from './dto/get-order-item-query.dto';
 import { PaginatedOrderItemResponseDto } from './dto/paginated-order-item-response.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';

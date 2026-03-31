@@ -11,7 +11,7 @@ import { CreateModifierDto } from './dto/create-modifier.dto';
 import { UpdateModifierDto } from './dto/update-modifier.dto';
 import { GetModifiersQueryDto } from './dto/get-modifiers-query.dto';
 import { ModifierResponseDto } from './dto/modifier-response.dto';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 
 describe('ModifiersService', () => {
   let service: ModifiersService;

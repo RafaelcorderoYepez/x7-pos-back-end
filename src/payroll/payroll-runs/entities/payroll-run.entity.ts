@@ -7,8 +7,8 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Company } from '../../../companies/entities/company.entity';
-import { Merchant } from '../../../merchants/entities/merchant.entity';
+import { Company } from '../../../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../../../platform-saas/merchants/entities/merchant.entity';
 import { PayrollRunStatus } from '../constants/payroll-run-status.enum';
 
 @Entity('payroll_runs')

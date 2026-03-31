@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SupplierPaymentsService } from './supplier-payments.service';
 import { SupplierPaymentsController } from './supplier-payments.controller';
 import { SupplierPayment } from './entities/supplier-payment.entity';
-import { Company } from '../../companies/entities/company.entity';
-import { Supplier } from '../../business-partners/suppliers/entities/supplier.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Supplier } from '../../core/business-partners/suppliers/entities/supplier.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SupplierPayment, Company, Supplier])],

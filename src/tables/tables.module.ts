@@ -3,7 +3,7 @@ import { TablesService } from './tables.service';
 import { TablesController } from './tables.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Table } from './entities/table.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
+import { Merchant } from '../platform-saas/merchants/entities/merchant.entity';
 import { IsUniqueField } from 'src/validators/is-unique-field.validator';
 
 @Module({

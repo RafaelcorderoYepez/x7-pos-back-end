@@ -6,8 +6,8 @@ import { AllPaginatedModifiers } from './dto/all-paginated-modifiers.dto';
 import { CreateModifierDto } from './dto/create-modifier.dto';
 import { UpdateModifierDto } from './dto/update-modifier.dto';
 import { OneModifierResponse } from './dto/modifier-response.dto';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 
 describe('ModifiersController', () => {

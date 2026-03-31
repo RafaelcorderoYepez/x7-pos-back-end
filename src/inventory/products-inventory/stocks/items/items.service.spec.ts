@@ -13,7 +13,7 @@ import { GetItemsQueryDto } from './dto/get-items-query.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Product } from '../../products/entities/product.entity';
 import { Variant } from '../../variants/entities/variant.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 
 describe('ItemsService', () => {

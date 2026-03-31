@@ -13,7 +13,7 @@ import { UpdateTableDto } from './dto/update-table.dto';
 import { TableResponseDto, OneTableResponseDto } from './dto/table-response.dto';
 import { GetTablesQueryDto } from './dto/get-tables-query.dto';
 import { PaginatedTablesResponseDto } from './dto/paginated-tables-response.dto';
-import { Merchant } from '../merchants/entities/merchant.entity';
+import { Merchant } from '../platform-saas/merchants/entities/merchant.entity';
 // import { IsUniqueField } from '../validators/is-unique-field.validator';
 @Injectable()
 export class TablesService {

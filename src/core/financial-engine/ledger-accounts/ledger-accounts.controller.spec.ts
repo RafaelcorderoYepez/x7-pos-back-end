@@ -7,8 +7,8 @@ import { CreateLedgerAccountDto } from './dto/create-ledger-account.dto';
 import { UpdateLedgerAccountDto } from './dto/update-ledger-account.dto';
 import { GetLedgerAccountsQueryDto } from './dto/get-ledger-accounts-query.dto';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 
 describe('LedgerAccountsController', () => {
   let controller: LedgerAccountsController;

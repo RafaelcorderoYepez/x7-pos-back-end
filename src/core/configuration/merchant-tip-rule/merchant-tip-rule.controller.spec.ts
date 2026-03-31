@@ -3,10 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MerchantTipRuleController } from './merchant-tip-rule.controller';
 import { MerchantTipRuleService } from './merchant-tip-rule.service';
 import { MerchantTipRule } from './entity/merchant-tip-rule-entity';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import { TipCalculationMethod } from '../constants/tip-calculation-method.enum';
 import { TipDistributionMethod } from '../constants/tip-distribution-method.enum';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 
 describe('MerchantTipRuleController', () => {
   let controller: MerchantTipRuleController;

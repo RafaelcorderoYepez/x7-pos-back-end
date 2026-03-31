@@ -12,8 +12,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 import { ErrorMessage } from 'src/common/constants/error-messages';
-import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Supplier } from '../../../core/business-partners/suppliers/entities/supplier.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { PurchaseOrderItem } from '../purchase-order-item/entities/purchase-order-item.entity';
 
 @Injectable()
