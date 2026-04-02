@@ -10,10 +10,11 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Order } from '../../orders/entities/order.entity';
-import { Product } from '../../inventory/products-inventory/products/entities/product.entity';
-import { Variant } from '../../inventory/products-inventory/variants/entities/variant.entity';
-import { Modifier } from '../../inventory/products-inventory/modifiers/entities/modifier.entity';
+import { Product } from '../../../../inventory/products-inventory/products/entities/product.entity';
+import { Variant } from '../../../../inventory/products-inventory/variants/entities/variant.entity';
+import { Modifier } from '../../../../inventory/products-inventory/modifiers/entities/modifier.entity';
 import { OrderItemStatus } from '../constants/order-item-status.enum';
+import { KitchenStatus } from '../../orders/constants/kitchen-status.enum';
 
 @Entity('order_item')
 @Index(['order_id', 'status', 'created_at'])
@@ -33,7 +34,7 @@ export class OrderItem {
     type: () => Order,
     description: 'Order associated with this item',
   })
-  @ManyToOne(() => Order, (order) => order.id, {
+  @ManyToOne(() => Order, (order) => order.orderItems, {
     nullable: false,
   })
   @JoinColumn({ name: 'order_id' })
@@ -134,6 +135,19 @@ export class OrderItem {
     default: OrderItemStatus.ACTIVE,
   })
   status: OrderItemStatus;
+
+  @ApiProperty({
+    example: KitchenStatus.PENDING,
+    enum: KitchenStatus,
+    description: 'Kitchen workflow status for this line',
+  })
+  @Column({
+    type: 'enum',
+    enum: KitchenStatus,
+    default: KitchenStatus.PENDING,
+    name: 'kitchen_status',
+  })
+  kitchen_status: KitchenStatus;
 
   @ApiProperty({
     example: '2023-10-01T12:00:00Z',

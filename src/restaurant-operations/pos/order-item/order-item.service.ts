@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, In } from 'typeorm';
 import { OrderItem } from './entities/order-item.entity';
 import { Order } from '../orders/entities/order.entity';
-import { Product } from '../inventory/products-inventory/products/entities/product.entity';
-import { Variant } from '../inventory/products-inventory/variants/entities/variant.entity';
-import { Modifier } from '../inventory/products-inventory/modifiers/entities/modifier.entity';
+import { Product } from '../../../inventory/products-inventory/products/entities/product.entity';
+import { Variant } from '../../../inventory/products-inventory/variants/entities/variant.entity';
+import { Modifier } from '../../../inventory/products-inventory/modifiers/entities/modifier.entity';
 import { CreateOrderItemDto } from './dto/create-order-item.dto';
 import { UpdateOrderItemDto } from './dto/update-order-item.dto';
 import { GetOrderItemQueryDto, OrderItemSortBy } from './dto/get-order-item-query.dto';
@@ -13,6 +13,7 @@ import { OrderItemResponseDto, OneOrderItemResponseDto } from './dto/order-item-
 import { PaginatedOrderItemResponseDto } from './dto/paginated-order-item-response.dto';
 import { OrderItemStatus } from './constants/order-item-status.enum';
 import { OrderStatus } from '../orders/constants/order-status.enum';
+import { OrdersService } from '../orders/orders.service';
 
 @Injectable()
 export class OrderItemService {
@@ -27,6 +28,7 @@ export class OrderItemService {
     private readonly variantRepository: Repository<Variant>,
     @InjectRepository(Modifier)
     private readonly modifierRepository: Repository<Modifier>,
+    private readonly ordersService: OrdersService,
   ) {}
 
   async create(createOrderItemDto: CreateOrderItemDto, authenticatedUserMerchantId: number): Promise<OneOrderItemResponseDto> {
@@ -148,6 +150,8 @@ export class OrderItemService {
     if (!completeOrderItem) {
       throw new NotFoundException('Order item not found after creation');
     }
+
+    await this.ordersService.syncOrderAggregates(createOrderItemDto.orderId);
 
     return {
       statusCode: 201,
@@ -475,6 +479,9 @@ export class OrderItemService {
     if (updateOrderItemDto.discount !== undefined) updateData.discount = updateOrderItemDto.discount;
     if (updateOrderItemDto.modifierId !== undefined) updateData.modifier_id = updateOrderItemDto.modifierId;
     if (updateOrderItemDto.notes !== undefined) updateData.notes = updateOrderItemDto.notes || null;
+    if (updateOrderItemDto.kitchenStatus !== undefined) {
+      updateData.kitchen_status = updateOrderItemDto.kitchenStatus;
+    }
 
     await this.orderItemRepository.update(id, updateData);
 
@@ -487,6 +494,8 @@ export class OrderItemService {
     if (!updatedOrderItem) {
       throw new NotFoundException('Order item not found after update');
     }
+
+    await this.ordersService.syncOrderAggregates(updatedOrderItem.order_id);
 
     return {
       statusCode: 200,
@@ -534,6 +543,8 @@ export class OrderItemService {
     existingOrderItem.status = OrderItemStatus.DELETED;
     await this.orderItemRepository.save(existingOrderItem);
 
+    await this.ordersService.syncOrderAggregates(existingOrderItem.order_id);
+
     return {
       statusCode: 200,
       message: 'Order item deleted successfully',
@@ -575,6 +586,7 @@ export class OrderItemService {
       } : null,
       notes: orderItem.notes,
       status: orderItem.status,
+      kitchenStatus: orderItem.kitchen_status,
       createdAt: orderItem.created_at,
       updatedAt: orderItem.updated_at,
     };

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { KitchenOrder } from './entities/kitchen-order.entity';
 import { Merchant } from '../../merchants/entities/merchant.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 import { OnlineOrder } from '../../online-ordering-system/online-order/entities/online-order.entity';
 import { KitchenStation } from '../kitchen-station/entities/kitchen-station.entity';
 import { CreateKitchenOrderDto } from './dto/create-kitchen-order.dto';
@@ -15,7 +15,7 @@ import { KitchenOrderStatus } from './constants/kitchen-order-status.enum';
 import { KitchenOrderBusinessStatus } from './constants/kitchen-order-business-status.enum';
 import { KitchenStationStatus } from '../kitchen-station/constants/kitchen-station-status.enum';
 import { OnlineOrderStatus } from '../../online-ordering-system/online-order/constants/online-order-status.enum';
-import { OrderStatus } from '../../orders/constants/order-status.enum';
+import { OrderStatus } from '../../restaurant-operations/pos/orders/constants/order-status.enum';
 
 @Injectable()
 export class KitchenOrderService {

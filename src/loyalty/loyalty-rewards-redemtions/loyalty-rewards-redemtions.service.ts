@@ -6,7 +6,7 @@ import { UpdateLoyaltyRewardsRedemtionDto } from './dto/update-loyalty-rewards-r
 import { LoyaltyRewardsRedemtion } from './entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyCustomer } from '../loyalty-customer/entities/loyalty-customer.entity';
 import { LoyaltyReward } from '../loyalty-reward/entities/loyalty-reward.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 import { GetLoyaltyRewardsRedemtionsQueryDto } from './dto/get-loyalty-rewards-redemtions-query.dto';
 import {
   LoyaltyRewardsRedemtionResponseDto,

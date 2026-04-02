@@ -9,7 +9,7 @@ import { NotFoundException, ForbiddenException, BadRequestException, ConflictExc
 import { OnlineOrderService } from './online-order.service';
 import { OnlineOrder } from './entities/online-order.entity';
 import { OnlineStore } from '../online-stores/entities/online-store.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateOnlineOrderDto } from './dto/create-online-order.dto';
 import { UpdateOnlineOrderDto } from './dto/update-online-order.dto';

@@ -5,7 +5,7 @@ import { CashTransactionsController } from './cash-transactions.controller';
 import { CashTransaction } from './entities/cash-transaction.entity';
 import { CashDrawer } from '../cash-drawers/entities/cash-drawer.entity';
 import { Collaborator } from '../../hr/collaborators/entities/collaborator.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 import { CashDrawerHistoryModule } from '../cash-drawer-history/cash-drawer-history.module';
 
 @Module({

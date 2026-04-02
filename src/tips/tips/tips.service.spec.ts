@@ -5,7 +5,7 @@ import { TipsService } from './tips.service';
 import { Tip } from './entities/tip.entity';
 import { Company } from '../../companies/entities/company.entity';
 import { Merchant } from '../../merchants/entities/merchant.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 import { CreateTipDto } from './dto/create-tip.dto';
 import { UpdateTipDto } from './dto/update-tip.dto';
 import { TipRecordStatus } from './constants/tip-record-status.enum';

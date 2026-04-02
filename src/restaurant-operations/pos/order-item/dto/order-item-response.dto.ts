@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { SuccessResponse } from '../../common/dtos/success-response.dto';
+import { SuccessResponse } from '../../../../common/dtos/success-response.dto';
 import { OrderItemStatus } from '../constants/order-item-status.enum';
+import { KitchenStatus } from '../../orders/constants/kitchen-status.enum';
 
 export class OrderItemResponseDto {
   @ApiProperty({ example: 1, description: 'Unique identifier of the Order Item' })
@@ -120,6 +121,13 @@ export class OrderItemResponseDto {
     description: 'Logical status for deletion (active, deleted)',
   })
   status: OrderItemStatus;
+
+  @ApiProperty({
+    example: KitchenStatus.PENDING,
+    enum: KitchenStatus,
+    description: 'Kitchen workflow status for this line',
+  })
+  kitchenStatus: KitchenStatus;
 
   @ApiProperty({
     example: '2023-10-01T12:00:00Z',

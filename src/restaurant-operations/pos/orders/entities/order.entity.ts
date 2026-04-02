@@ -9,23 +9,28 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { Merchant } from '../../merchants/entities/merchant.entity';
-import { Table } from '../../tables/entities/table.entity';
-import { Collaborator } from '../../hr/collaborators/entities/collaborator.entity';
-import { MerchantSubscription } from '../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Merchant } from '../../../../merchants/entities/merchant.entity';
+import { Table } from '../../../../tables/entities/table.entity';
+import { Collaborator } from '../../../../hr/collaborators/entities/collaborator.entity';
+import { MerchantSubscription } from '../../../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
 import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { OrderStatus } from '../constants/order-status.enum';
 import { OrderBusinessStatus } from '../constants/order-business-status.enum';
 import { OrderType } from '../constants/order-type.enum';
-import { CashTransaction } from '../../cashdrawer/cash-transactions/entities/cash-transaction.entity';
+import { CashTransaction } from '../../../../cashdrawer/cash-transactions/entities/cash-transaction.entity';
 import { LoyaltyPointTransaction } from 'src/loyalty/loyalty-points-transaction/entities/loyalty-points-transaction.entity';
 import { LoyaltyRewardsRedemtion } from 'src/loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyCoupon } from 'src/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
 import { Receipt } from 'src/core/billing-transactions/receipts/entities/receipt.entity';
+import { OrderItem } from '../../order-item/entities/order-item.entity';
+import { OrderSource } from '../constants/order-source.enum';
+import { DeliveryStatus } from '../constants/delivery-status.enum';
+import { KitchenStatus } from '../constants/kitchen-status.enum';
 
 @Entity('orders')
 @Index(['merchant_id', 'status', 'created_at'])
+@Index(['merchant_id', 'order_number'], { unique: true })
 export class Order {
   @ApiProperty({ example: 1, description: 'Unique identifier of the Order' })
   @PrimaryGeneratedColumn()
@@ -129,6 +134,95 @@ export class Order {
     name: 'logical_status',
   })
   logical_status: OrderStatus;
+
+  @ApiProperty({ example: '000001', description: 'Unique order number within the merchant' })
+  @Column({ type: 'varchar', length: 20 })
+  order_number: string;
+
+  @ApiProperty({ enum: OrderSource, default: OrderSource.POS })
+  @Column({
+    type: 'enum',
+    enum: OrderSource,
+    default: OrderSource.POS,
+  })
+  source: OrderSource;
+
+  @ApiProperty({ example: 1, description: 'Number of guests' })
+  @Column({ type: 'int', default: 1 })
+  guest_count: number;
+
+  @ApiProperty({ example: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  subtotal: number;
+
+  @ApiProperty({ example: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  tax_total: number;
+
+  @ApiProperty({ example: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  discount_total: number;
+
+  @ApiProperty({ example: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  tip_total: number;
+
+  @ApiProperty({ example: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  total: number;
+
+  @ApiProperty({ example: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  paid_total: number;
+
+  @ApiProperty({ example: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  balance_due: number;
+
+  @ApiProperty({ example: false })
+  @Column({ type: 'boolean', default: false })
+  is_paid: boolean;
+
+  @ApiPropertyOptional({ description: 'Delivery address' })
+  @Column({ type: 'varchar', nullable: true })
+  delivery_address: string | null;
+
+  @ApiPropertyOptional({ description: 'Delivery zone identifier' })
+  @Column({ name: 'delivery_zone_id', type: 'int', nullable: true })
+  delivery_zone_id: number | null;
+
+  @ApiProperty({ example: 0 })
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  delivery_fee: number;
+
+  @ApiProperty({ enum: DeliveryStatus })
+  @Column({
+    type: 'enum',
+    enum: DeliveryStatus,
+    default: DeliveryStatus.UNASSIGNED,
+    name: 'delivery_status',
+  })
+  delivery_status: DeliveryStatus;
+
+  @ApiProperty({ enum: KitchenStatus })
+  @Column({
+    type: 'enum',
+    enum: KitchenStatus,
+    default: KitchenStatus.PENDING,
+    name: 'kitchen_status',
+  })
+  kitchen_status: KitchenStatus;
+
+  @ApiPropertyOptional()
+  @Column({ type: 'timestamp', name: 'ready_at', nullable: true })
+  ready_at: Date | null;
+
+  @ApiPropertyOptional()
+  @Column({ type: 'timestamp', name: 'preparing_at', nullable: true })
+  preparing_at: Date | null;
+
+  @OneToMany(() => OrderItem, (item) => item.order)
+  orderItems: OrderItem[];
 
   @ApiProperty({
     example: '2024-01-15T08:00:00Z',

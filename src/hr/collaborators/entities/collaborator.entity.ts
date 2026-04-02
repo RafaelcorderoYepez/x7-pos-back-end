@@ -16,7 +16,7 @@ import { CollaboratorStatus } from '../constants/collaborator-status.enum';
 import { ShiftAssignment } from '../../../shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from '../../../table-assignments/entities/table-assignment.entity';
 import { CashDrawer } from '../../../cashdrawer/cash-drawers/entities/cash-drawer.entity';
-import { Order } from '../../../orders/entities/order.entity';
+import { Order } from '../../../restaurant-operations/pos/orders/entities/order.entity';
 
 @Entity("collaborator")
 @Index(["user_id"], { unique: true })

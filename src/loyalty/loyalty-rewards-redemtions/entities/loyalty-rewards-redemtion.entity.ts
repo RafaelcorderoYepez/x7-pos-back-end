@@ -9,7 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { LoyaltyCustomer } from '../../loyalty-customer/entities/loyalty-customer.entity';
 import { LoyaltyReward } from '../../loyalty-reward/entities/loyalty-reward.entity';
-import { Order } from '../../../orders/entities/order.entity';
+import { Order } from '../../../restaurant-operations/pos/orders/entities/order.entity';
 
 @Entity('loyalty_rewards_redemptions')
 export class LoyaltyRewardsRedemtion {

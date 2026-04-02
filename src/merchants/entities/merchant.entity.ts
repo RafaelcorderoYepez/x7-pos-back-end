@@ -21,7 +21,7 @@ import { Shift } from 'src/shifts/entities/shift.entity';
 import { ShiftAssignment } from 'src/shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from 'src/table-assignments/entities/table-assignment.entity';
 import { CashDrawer } from 'src/cashdrawer/cash-drawers/entities/cash-drawer.entity';
-import { Order } from 'src/orders/entities/order.entity';
+import { Order } from 'src/restaurant-operations/pos/orders/entities/order.entity';
 import { Movement } from 'src/inventory/products-inventory/stocks/movements/entities/movement.entity';
 import { LoyaltyProgram } from 'src/loyalty/loyalty-programs/entities/loyalty-program.entity';
 import { PurchaseOrder } from 'src/inventory/products-inventory/purchase-order/entities/purchase-order.entity';

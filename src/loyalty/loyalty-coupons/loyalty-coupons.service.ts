@@ -6,7 +6,7 @@ import { UpdateLoyaltyCouponDto } from './dto/update-loyalty-coupon.dto';
 import { LoyaltyCoupon } from './entities/loyalty-coupon.entity';
 import { LoyaltyCustomer } from '../loyalty-customer/entities/loyalty-customer.entity';
 import { LoyaltyReward } from '../loyalty-reward/entities/loyalty-reward.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 import { GetLoyaltyCouponsQueryDto } from './dto/get-loyalty-coupons-query.dto';
 import {
   LoyaltyCouponResponseDto,

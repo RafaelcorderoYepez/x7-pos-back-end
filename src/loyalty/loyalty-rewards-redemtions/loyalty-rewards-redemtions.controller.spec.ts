@@ -10,7 +10,7 @@ import {
 } from './dto/loyalty-rewards-redemtion-response.dto';
 import { AllPaginatedLoyaltyRewardsRedemtionDto } from './dto/all-paginated-loyalty-rewards-redemtion.dto';
 import { LoyaltyRewardLittleResponseDto } from '../loyalty-reward/dto/loyalty-reward-response.dto';
-import { OrderLittleResponseDto } from 'src/orders/dto/order-response.dto';
+import { OrderLittleResponseDto } from 'src/restaurant-operations/pos/orders/dto/order-response.dto';
 import { LoyaltyCustomerLittleResponseDto } from '../loyalty-customer/dto/loyalty-customer-response.dto';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 

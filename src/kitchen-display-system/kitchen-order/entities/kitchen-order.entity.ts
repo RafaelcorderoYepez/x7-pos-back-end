@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Merchant } from '../../../merchants/entities/merchant.entity';
-import { Order } from '../../../orders/entities/order.entity';
+import { Order } from '../../../restaurant-operations/pos/orders/entities/order.entity';
 import { OnlineOrder } from '../../../online-ordering-system/online-order/entities/online-order.entity';
 import { KitchenStation } from '../../kitchen-station/entities/kitchen-station.entity';
 import { KitchenOrderStatus } from '../constants/kitchen-order-status.enum';

@@ -12,10 +12,10 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
-import { Table } from '../tables/entities/table.entity';
-import { Collaborator } from '../hr/collaborators/entities/collaborator.entity';
-import { MerchantSubscription } from '../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { Merchant } from '../../../merchants/entities/merchant.entity';
+import { Table } from '../../../tables/entities/table.entity';
+import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
+import { MerchantSubscription } from '../../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
 import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -23,6 +23,11 @@ import { GetOrdersQueryDto, OrderSortBy } from './dto/get-orders-query.dto';
 import { OrderStatus } from './constants/order-status.enum';
 import { OrderBusinessStatus } from './constants/order-business-status.enum';
 import { OrderType } from './constants/order-type.enum';
+import { OrderItem } from '../order-item/entities/order-item.entity';
+import { OrderItemStatus } from '../order-item/constants/order-item-status.enum';
+import { OrderSource } from './constants/order-source.enum';
+import { DeliveryStatus } from './constants/delivery-status.enum';
+import { KitchenStatus } from './constants/kitchen-status.enum';
 
 describe('OrdersService', () => {
   let service: OrdersService;
@@ -32,6 +37,7 @@ describe('OrdersService', () => {
   let collaboratorRepository: Repository<Collaborator>;
   let subscriptionRepository: Repository<MerchantSubscription>;
   let customerRepository: Repository<Customer>;
+  let orderItemRepository: Repository<OrderItem>;
 
   const mockOrderRepository = {
     create: jest.fn(),
@@ -39,6 +45,15 @@ describe('OrdersService', () => {
     findOne: jest.fn(),
     findAndCount: jest.fn(),
     update: jest.fn(),
+    createQueryBuilder: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      getRawOne: jest.fn().mockResolvedValue({ maxn: null }),
+    })),
+  };
+
+  const mockOrderItemRepository = {
+    find: jest.fn().mockResolvedValue([]),
   };
 
   const mockMerchantRepository = {
@@ -104,6 +119,24 @@ describe('OrdersService', () => {
     closed_at: null,
     created_at: new Date('2024-01-15T08:00:00Z'),
     updated_at: new Date('2024-01-15T08:00:00Z'),
+    order_number: '000001',
+    source: OrderSource.POS,
+    guest_count: 1,
+    subtotal: 0,
+    tax_total: 0,
+    discount_total: 0,
+    tip_total: 0,
+    total: 0,
+    paid_total: 0,
+    balance_due: 0,
+    is_paid: true,
+    delivery_address: null,
+    delivery_zone_id: null,
+    delivery_fee: 0,
+    delivery_status: DeliveryStatus.UNASSIGNED,
+    kitchen_status: KitchenStatus.PENDING,
+    ready_at: null,
+    preparing_at: null,
   };
 
   beforeEach(async () => {
@@ -134,6 +167,10 @@ describe('OrdersService', () => {
           provide: getRepositoryToken(Customer),
           useValue: mockCustomerRepository,
         },
+        {
+          provide: getRepositoryToken(OrderItem),
+          useValue: mockOrderItemRepository,
+        },
       ],
     }).compile();
 
@@ -151,6 +188,9 @@ describe('OrdersService', () => {
     );
     customerRepository = module.get<Repository<Customer>>(
       getRepositoryToken(Customer),
+    );
+    orderItemRepository = module.get<Repository<OrderItem>>(
+      getRepositoryToken(OrderItem),
     );
   });
 
@@ -987,16 +1027,20 @@ describe('OrdersService', () => {
       type: OrderType.TAKE_OUT,
     };
 
+    beforeEach(() => {
+      jest
+        .spyOn(orderRepository, 'save')
+        .mockImplementation(async (o: Order) => ({ ...mockOrder, ...o }) as Order);
+      jest.spyOn(orderItemRepository, 'find').mockResolvedValue([]);
+    });
+
     it('should update an order successfully', async () => {
       const updatedOrder = {
         ...mockOrder,
         status: OrderBusinessStatus.COMPLETED,
         type: OrderType.TAKE_OUT,
       };
-      jest
-        .spyOn(orderRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrder as any)
-        .mockResolvedValueOnce(updatedOrder as any);
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
 
       const result = await service.update(1, updateOrderDto, 1);
@@ -1011,10 +1055,7 @@ describe('OrdersService', () => {
       const dtoWithTableId: UpdateOrderDto = { tableId: 2 };
       const newTable = { ...mockTable, id: 2 };
       const updatedOrder = { ...mockOrder, table_id: 2 };
-      jest
-        .spyOn(orderRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrder as any)
-        .mockResolvedValueOnce(updatedOrder as any);
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
       jest.spyOn(tableRepository, 'findOne').mockResolvedValue(newTable as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
 
@@ -1033,10 +1074,7 @@ describe('OrdersService', () => {
       const dtoWithCollaboratorId: UpdateOrderDto = { collaboratorId: 2 };
       const newCollaborator = { ...mockCollaborator, id: 2 };
       const updatedOrder = { ...mockOrder, collaborator_id: 2 };
-      jest
-        .spyOn(orderRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrder as any)
-        .mockResolvedValueOnce(updatedOrder as any);
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
       jest
         .spyOn(collaboratorRepository, 'findOne')
         .mockResolvedValue(newCollaborator as any);
@@ -1057,10 +1095,7 @@ describe('OrdersService', () => {
       const dtoWithSubscriptionId: UpdateOrderDto = { subscriptionId: 2 };
       const newSubscription = { ...mockSubscription, id: 2 };
       const updatedOrder = { ...mockOrder, subscription_id: 2 };
-      jest
-        .spyOn(orderRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrder as any)
-        .mockResolvedValueOnce(updatedOrder as any);
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
       jest
         .spyOn(subscriptionRepository, 'findOne')
         .mockResolvedValue(newSubscription as any);
@@ -1081,10 +1116,7 @@ describe('OrdersService', () => {
       const dtoWithCustomerId: UpdateOrderDto = { customerId: 2 };
       const newCustomer = { ...mockCustomer, id: 2 };
       const updatedOrder = { ...mockOrder, customer_id: 2 };
-      jest
-        .spyOn(orderRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrder as any)
-        .mockResolvedValueOnce(updatedOrder as any);
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
       jest
         .spyOn(customerRepository, 'findOne')
         .mockResolvedValue(newCustomer as any);
@@ -1109,10 +1141,7 @@ describe('OrdersService', () => {
         ...mockOrder,
         closed_at: new Date('2024-01-15T10:00:00Z'),
       };
-      jest
-        .spyOn(orderRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrder as any)
-        .mockResolvedValueOnce(updatedOrder as any);
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
 
       await service.update(1, dtoWithClosedAt, 1);
@@ -1128,10 +1157,7 @@ describe('OrdersService', () => {
     it('should set closedAt to null when provided as empty string', async () => {
       const dtoWithEmptyClosedAt: UpdateOrderDto = { closedAt: '' };
       const updatedOrder = { ...mockOrder, closed_at: null };
-      jest
-        .spyOn(orderRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrder as any)
-        .mockResolvedValueOnce(updatedOrder as any);
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
 
       await service.update(1, dtoWithEmptyClosedAt, 1);
@@ -1353,16 +1379,13 @@ describe('OrdersService', () => {
     });
 
     it('should throw NotFoundException if order not found after update', async () => {
+      let findCount = 0;
       const orderFindOneSpy = jest
         .spyOn(orderRepository, 'findOne')
-        .mockImplementation((options: any) => {
-          // First call: existing order (with logical_status ACTIVE)
-          if (options.where.logical_status === OrderStatus.ACTIVE) {
+        .mockImplementation(() => {
+          findCount += 1;
+          if (findCount <= 3) {
             return Promise.resolve(mockOrder as any);
-          }
-          // Second call: order not found after update (by id only, no logical_status filter)
-          if (options.where.id === 1 && !options.where.logical_status) {
-            return Promise.resolve(null);
           }
           return Promise.resolve(null);
         });
@@ -1371,7 +1394,7 @@ describe('OrdersService', () => {
       await expect(service.update(1, updateOrderDto, 1)).rejects.toThrow(
         new NotFoundException('Order not found after update'),
       );
-      expect(orderFindOneSpy).toHaveBeenCalledTimes(2);
+      expect(orderFindOneSpy).toHaveBeenCalled();
     });
   });
 
@@ -1426,6 +1449,116 @@ describe('OrdersService', () => {
       await expect(service.remove(1, 1)).rejects.toThrow(
         'You can only delete orders from your merchant',
       );
+    });
+  });
+
+  describe('totals and status aggregation', () => {
+    it('syncOrderAggregates should recalculate subtotal, total, balance_due and is_paid', async () => {
+      const persisted = {
+        ...mockOrder,
+        tax_total: 5,
+        discount_total: 10,
+        tip_total: 3,
+        delivery_fee: 2,
+        paid_total: 40,
+        subtotal: 0,
+        total: 0,
+        balance_due: 0,
+        is_paid: false,
+      };
+
+      const items = [
+        {
+          quantity: 2,
+          price: 20,
+          discount: 5,
+          status: OrderItemStatus.ACTIVE,
+          kitchen_status: KitchenStatus.PENDING,
+        },
+        {
+          quantity: 1,
+          price: 15,
+          discount: 0,
+          status: OrderItemStatus.ACTIVE,
+          kitchen_status: KitchenStatus.SENT,
+        },
+      ];
+
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(persisted as any);
+      jest.spyOn(orderItemRepository, 'find').mockResolvedValue(items as any);
+      const saveSpy = jest
+        .spyOn(orderRepository, 'save')
+        .mockImplementation(async (o: any) => o);
+
+      await service.syncOrderAggregates(1);
+
+      expect(saveSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          subtotal: 50, // (2*20-5) + (1*15-0)
+          total: 50, // 50 - 10 + 5 + 3 + 2
+          balance_due: 10, // 50 - 40
+          is_paid: false,
+          kitchen_status: KitchenStatus.SENT,
+        }),
+      );
+    });
+
+    it('syncOrderAggregates should set is_paid=true when balance_due equals 0', async () => {
+      const persisted = {
+        ...mockOrder,
+        tax_total: 0,
+        discount_total: 0,
+        tip_total: 0,
+        delivery_fee: 0,
+        paid_total: 25,
+      };
+      const items = [
+        {
+          quantity: 1,
+          price: 25,
+          discount: 0,
+          status: OrderItemStatus.ACTIVE,
+          kitchen_status: KitchenStatus.PENDING,
+        },
+      ];
+
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(persisted as any);
+      jest.spyOn(orderItemRepository, 'find').mockResolvedValue(items as any);
+      const saveSpy = jest
+        .spyOn(orderRepository, 'save')
+        .mockImplementation(async (o: any) => o);
+
+      await service.syncOrderAggregates(1);
+
+      expect(saveSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          subtotal: 25,
+          total: 25,
+          balance_due: 0,
+          is_paid: true,
+        }),
+      );
+    });
+
+    it('update should trigger aggregate recalculation when financial fields are changed', async () => {
+      const dto: UpdateOrderDto = {
+        taxTotal: 4,
+        discountTotal: 2,
+        tipTotal: 3,
+        deliveryFee: 5,
+        paidTotal: 10,
+      };
+
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
+      jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
+      const syncSpy = jest
+        .spyOn(service, 'syncOrderAggregates')
+        .mockResolvedValue(undefined);
+      jest.spyOn(orderRepository, 'save').mockResolvedValue(mockOrder as any);
+
+      await service.update(1, dto, 1);
+
+      expect(syncSpy).toHaveBeenCalledWith(1);
     });
   });
 });

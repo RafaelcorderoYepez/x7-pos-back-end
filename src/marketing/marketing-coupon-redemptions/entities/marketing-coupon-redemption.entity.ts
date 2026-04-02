@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { MarketingCoupon } from '../../marketing-coupons/entities/marketing-coupon.entity';
-import { Order } from '../../../orders/entities/order.entity';
+import { Order } from '../../../restaurant-operations/pos/orders/entities/order.entity';
 import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { MarketingCouponRedemptionStatus } from '../constants/marketing-coupon-redemption-status.enum';
 

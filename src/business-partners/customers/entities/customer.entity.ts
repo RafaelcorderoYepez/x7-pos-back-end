@@ -4,7 +4,7 @@ import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { Company } from 'src/companies/entities/company.entity';
 import { OneToMany } from 'typeorm';
-import { Order } from 'src/orders/entities/order.entity';
+import { Order } from 'src/restaurant-operations/pos/orders/entities/order.entity';
 import { LoyaltyCustomer } from 'src/loyalty/loyalty-customer/entities/loyalty-customer.entity';
 
 @Entity()

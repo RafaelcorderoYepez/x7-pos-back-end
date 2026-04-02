@@ -4,7 +4,7 @@ import { OnlineOrderService } from './online-order.service';
 import { OnlineOrderController } from './online-order.controller';
 import { OnlineOrder } from './entities/online-order.entity';
 import { OnlineStore } from '../online-stores/entities/online-store.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { Merchant } from '../../merchants/entities/merchant.entity';
 

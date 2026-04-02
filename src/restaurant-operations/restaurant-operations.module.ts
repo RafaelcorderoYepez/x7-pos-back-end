@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-
+import { PosModule } from './pos/pos.module';
 
 @Module({
-  imports: [],
-  controllers: [],
-  providers: [],
-  exports: [],
+  imports: [PosModule],
+  exports: [PosModule],
 })
 export class RestaurantOperationsModule {}

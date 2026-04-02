@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { MarketingCouponRedemptionsService } from './marketing-coupon-redemptions.service';
 import { MarketingCouponRedemption } from './entities/marketing-coupon-redemption.entity';
 import { MarketingCoupon } from '../marketing-coupons/entities/marketing-coupon.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import { CreateMarketingCouponRedemptionDto } from './dto/create-marketing-coupon-redemption.dto';
 import { UpdateMarketingCouponRedemptionDto } from './dto/update-marketing-coupon-redemption.dto';

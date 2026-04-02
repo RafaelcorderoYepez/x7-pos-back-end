@@ -1,7 +1,19 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsNotEmpty, IsPositive, IsOptional, IsDateString, IsEnum } from 'class-validator';
+import {
+  IsNumber,
+  IsNotEmpty,
+  IsPositive,
+  IsOptional,
+  IsDateString,
+  IsEnum,
+  IsInt,
+  Min,
+  IsString,
+} from 'class-validator';
 import { OrderBusinessStatus } from '../constants/order-business-status.enum';
 import { OrderType } from '../constants/order-type.enum';
+import { OrderSource } from '../constants/order-source.enum';
+import { DeliveryStatus } from '../constants/delivery-status.enum';
 
 export class CreateOrderDto {
   @ApiProperty({ example: 1, description: 'Identifier of the Merchant owning the Order' })
@@ -56,4 +68,60 @@ export class CreateOrderDto {
   @IsDateString()
   @IsOptional()
   closedAt?: string;
+
+  @ApiPropertyOptional({ example: OrderSource.POS, enum: OrderSource })
+  @IsOptional()
+  @IsEnum(OrderSource)
+  source?: OrderSource;
+
+  @ApiPropertyOptional({ example: 2, description: 'Number of guests' })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  guestCount?: number;
+
+  @ApiPropertyOptional({ description: 'Delivery address' })
+  @IsOptional()
+  @IsString()
+  deliveryAddress?: string;
+
+  @ApiPropertyOptional({ description: 'Delivery zone id' })
+  @IsOptional()
+  @IsInt()
+  deliveryZoneId?: number;
+
+  @ApiPropertyOptional({ example: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  deliveryFee?: number;
+
+  @ApiPropertyOptional({ enum: DeliveryStatus })
+  @IsOptional()
+  @IsEnum(DeliveryStatus)
+  deliveryStatus?: DeliveryStatus;
+
+  @ApiPropertyOptional({ example: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  taxTotal?: number;
+
+  @ApiPropertyOptional({ example: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  discountTotal?: number;
+
+  @ApiPropertyOptional({ example: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  tipTotal?: number;
+
+  @ApiPropertyOptional({ example: 0 })
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  paidTotal?: number;
 }

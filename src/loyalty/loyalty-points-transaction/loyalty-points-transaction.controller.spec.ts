@@ -13,7 +13,7 @@ import {
 } from './dto/loyalty-points-transaction-response.dto';
 import { AllPaginatedLoyaltyPointsTransactionDto } from './dto/all-paginated-loyalty-points-transaction.dto';
 import { LoyaltyPointsSource } from './constants/loyalty-points-source.enum';
-import { OrderBusinessStatus } from 'src/orders/constants/order-business-status.enum';
+import { OrderBusinessStatus } from 'src/restaurant-operations/pos/orders/constants/order-business-status.enum';
 import { CashTransactionType } from 'src/cashdrawer/cash-transactions/constants/cash-transaction-type.enum';
 
 describe('LoyaltyPointsTransactionController', () => {

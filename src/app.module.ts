@@ -50,8 +50,6 @@ import { OnlineOrderModule } from './online-ordering-system/online-order/online-
 import { OnlineOrderItemModule } from './online-ordering-system/online-order-item/online-order-item.module';
 import { OnlinePaymentModule } from './online-ordering-system/online-payment/online-payment.module';
 import { OnlineStoresModule } from './online-ordering-system/online-stores/online-stores.module';
-import { OrderItemModule } from './order-item/order-item.module';
-import { OrdersModule } from './orders/orders.module';
 import { PayrollAdjustmentsModule } from './payroll/payroll-adjustments/payroll-adjustments.module';
 import { PayrollEntriesModule } from './payroll/payroll-entries/payroll-entries.module';
 import { PayrollRunsModule } from './payroll/payroll-runs/payroll-runs.module';
@@ -137,8 +135,8 @@ import { OnlineOrder } from './online-ordering-system/online-order/entities/onli
 import { OnlineOrderItem } from './online-ordering-system/online-order-item/entities/online-order-item.entity';
 import { OnlinePayment } from './online-ordering-system/online-payment/entities/online-payment.entity';
 import { OnlineStore } from './online-ordering-system/online-stores/entities/online-store.entity';
-import { Order } from './orders/entities/order.entity';
-import { OrderItem } from './order-item/entities/order-item.entity';
+import { Order } from './restaurant-operations/pos/orders/entities/order.entity';
+import { OrderItem } from './restaurant-operations/pos/order-item/entities/order-item.entity';
 import { PayrollAdjustment } from './payroll/payroll-adjustments/entities/payroll-adjustment.entity';
 import { PayrollEntry } from './payroll/payroll-entries/entities/payroll-entry.entity';
 import { PayrollRun } from './payroll/payroll-runs/entities/payroll-run.entity';
@@ -338,8 +336,6 @@ import { Variant } from './inventory/products-inventory/variants/entities/varian
     OnlineOrderItemModule,
     OnlinePaymentModule,
     OnlineStoresModule,
-    OrderItemModule,
-    OrdersModule,
     PayrollAdjustmentsModule,
     PayrollEntriesModule,
     PayrollRunsModule,

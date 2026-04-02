@@ -9,7 +9,7 @@ import { NotFoundException, ForbiddenException, BadRequestException, ConflictExc
 import { KitchenOrderItemService } from './kitchen-order-item.service';
 import { KitchenOrderItem } from './entities/kitchen-order-item.entity';
 import { KitchenOrder } from '../kitchen-order/entities/kitchen-order.entity';
-import { OrderItem } from '../../order-item/entities/order-item.entity';
+import { OrderItem } from '../../restaurant-operations/pos/order-item/entities/order-item.entity';
 import { Product } from '../../inventory/products-inventory/products/entities/product.entity';
 import { Variant } from '../../inventory/products-inventory/variants/entities/variant.entity';
 import { CreateKitchenOrderItemDto } from './dto/create-kitchen-order-item.dto';
@@ -17,7 +17,7 @@ import { UpdateKitchenOrderItemDto } from './dto/update-kitchen-order-item.dto';
 import { GetKitchenOrderItemQueryDto } from './dto/get-kitchen-order-item-query.dto';
 import { KitchenOrderItemStatus } from './constants/kitchen-order-item-status.enum';
 import { KitchenOrderStatus } from '../kitchen-order/constants/kitchen-order-status.enum';
-import { OrderItemStatus } from '../../order-item/constants/order-item-status.enum';
+import { OrderItemStatus } from '../../restaurant-operations/pos/order-item/constants/order-item-status.enum';
 
 describe('KitchenOrderItemService', () => {
   let service: KitchenOrderItemService;

@@ -3,15 +3,15 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiBearerAuth, ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiExtraModels, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Scopes } from '../auth/decorators/scopes.decorator';
-import { UserRole } from '../users/constants/role.enum';
-import { Scope } from '../users/constants/scope.enum';
+import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../auth/guards/roles.guard';
+import { Roles } from '../../../auth/decorators/roles.decorator';
+import { Scopes } from '../../../auth/decorators/scopes.decorator';
+import { UserRole } from '../../../users/constants/role.enum';
+import { Scope } from '../../../users/constants/scope.enum';
 import { OneOrderResponseDto, PaginatedOrdersResponseDto } from './dto/order-response.dto';
 import { GetOrdersQueryDto, OrderSortBy } from './dto/get-orders-query.dto';
-import { ErrorResponse } from '../common/dtos/error-response.dto';
+import { ErrorResponse } from '../../../common/dtos/error-response.dto';
 
 @ApiTags('Orders')
 @ApiBearerAuth()

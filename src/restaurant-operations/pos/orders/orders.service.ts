@@ -6,15 +6,26 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
+import { OrderItem } from '../order-item/entities/order-item.entity';
+import { OrderSource } from './constants/order-source.enum';
+import { DeliveryStatus } from './constants/delivery-status.enum';
+import { KitchenStatus } from './constants/kitchen-status.enum';
+import {
+  applyPaidDerivedFields,
+  computeOrderTotal,
+  computeSubtotalFromItems,
+  deriveKitchenStatusFromItems,
+  roundMoney,
+} from './order-aggregation.util';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { GetOrdersQueryDto, OrderSortBy } from './dto/get-orders-query.dto';
 import { Order } from './entities/order.entity';
 import { OrderStatus } from './constants/order-status.enum';
-import { Merchant } from '../merchants/entities/merchant.entity';
-import { Table } from '../tables/entities/table.entity';
-import { Collaborator } from '../hr/collaborators/entities/collaborator.entity';
-import { MerchantSubscription } from '../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { Merchant } from '../../../merchants/entities/merchant.entity';
+import { Table } from '../../../tables/entities/table.entity';
+import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
+import { MerchantSubscription } from '../../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
 import { Customer } from 'src/business-partners/customers/entities/customer.entity';
 import {
   OneOrderResponseDto,
@@ -37,7 +48,9 @@ export class OrdersService {
     private readonly subscriptionRepo: Repository<MerchantSubscription>,
     @InjectRepository(Customer)
     private readonly customerRepo: Repository<Customer>,
-  ) { }
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepo: Repository<OrderItem>,
+  ) {}
 
   async create(
     dto: CreateOrderDto,
@@ -138,6 +151,31 @@ export class OrdersService {
     order.customer_id = dto.customerId;
     order.closed_at = closedAt;
     order.logical_status = OrderStatus.ACTIVE;
+
+    order.order_number = await this.nextOrderNumber(dto.merchantId);
+    order.source = dto.source ?? OrderSource.POS;
+    order.guest_count = dto.guestCount ?? 1;
+    order.delivery_address = dto.deliveryAddress ?? null;
+    order.delivery_zone_id =
+      dto.deliveryZoneId !== undefined ? dto.deliveryZoneId : null;
+    order.delivery_fee = roundMoney(dto.deliveryFee ?? 0);
+    order.delivery_status = dto.deliveryStatus ?? DeliveryStatus.UNASSIGNED;
+    order.tax_total = roundMoney(dto.taxTotal ?? 0);
+    order.discount_total = roundMoney(dto.discountTotal ?? 0);
+    order.tip_total = roundMoney(dto.tipTotal ?? 0);
+    order.paid_total = roundMoney(dto.paidTotal ?? 0);
+    order.subtotal = 0;
+    order.total = computeOrderTotal(
+      0,
+      order.discount_total,
+      order.tax_total,
+      order.tip_total,
+      order.delivery_fee,
+    );
+    applyPaidDerivedFields(order);
+    order.kitchen_status = KitchenStatus.PENDING;
+    order.ready_at = null;
+    order.preparing_at = null;
 
     const saved = await this.orderRepo.save(order);
 
@@ -448,6 +486,38 @@ export class OrdersService {
     }
 
     await this.orderRepo.update(id, updateData);
+
+    const order = await this.orderRepo.findOne({ where: { id } });
+    if (!order) {
+      throw new NotFoundException('Order not found after update');
+    }
+
+    if (dto.source !== undefined) order.source = dto.source;
+    if (dto.guestCount !== undefined) order.guest_count = dto.guestCount;
+    if (dto.deliveryAddress !== undefined) {
+      order.delivery_address = dto.deliveryAddress ?? null;
+    }
+    if (dto.deliveryZoneId !== undefined) {
+      order.delivery_zone_id = dto.deliveryZoneId ?? null;
+    }
+    if (dto.deliveryFee !== undefined) {
+      order.delivery_fee = roundMoney(dto.deliveryFee);
+    }
+    if (dto.deliveryStatus !== undefined) {
+      order.delivery_status = dto.deliveryStatus;
+    }
+    if (dto.taxTotal !== undefined) order.tax_total = roundMoney(dto.taxTotal);
+    if (dto.discountTotal !== undefined) {
+      order.discount_total = roundMoney(dto.discountTotal);
+    }
+    if (dto.tipTotal !== undefined) order.tip_total = roundMoney(dto.tipTotal);
+    if (dto.paidTotal !== undefined) {
+      order.paid_total = roundMoney(dto.paidTotal);
+    }
+
+    await this.orderRepo.save(order);
+    await this.syncOrderAggregates(id);
+
     const updated = await this.orderRepo.findOne({ where: { id } });
     if (!updated) {
       throw new NotFoundException('Order not found after update');
@@ -495,6 +565,56 @@ export class OrdersService {
     };
   }
 
+  /**
+   * Recomputes subtotal from line items, order total, kitchen roll-up, balance and is_paid.
+   * Call after order-item create / update / delete, or after changing order-level tax/discount/tip/delivery/paid.
+   */
+  async syncOrderAggregates(orderId: number): Promise<void> {
+    const order = await this.orderRepo.findOne({ where: { id: orderId } });
+    if (!order) return;
+
+    const items = await this.orderItemRepo.find({
+      where: { order_id: orderId },
+    });
+
+    order.subtotal = computeSubtotalFromItems(items);
+    order.total = computeOrderTotal(
+      Number(order.subtotal),
+      Number(order.discount_total),
+      Number(order.tax_total),
+      Number(order.tip_total),
+      Number(order.delivery_fee),
+    );
+
+    const nextKitchen = deriveKitchenStatusFromItems(items);
+    order.kitchen_status = nextKitchen;
+    if (nextKitchen === KitchenStatus.PREPARING && !order.preparing_at) {
+      order.preparing_at = new Date();
+    }
+    if (nextKitchen === KitchenStatus.READY && !order.ready_at) {
+      order.ready_at = new Date();
+    }
+
+    applyPaidDerivedFields(order);
+    await this.orderRepo.save(order);
+  }
+
+  private async nextOrderNumber(merchantId: number): Promise<string> {
+    const raw = await this.orderRepo
+      .createQueryBuilder('o')
+      .select('MAX(CAST(o.order_number AS INTEGER))', 'maxn')
+      .where('o.merchant_id = :mid', { mid: merchantId })
+      .getRawOne<{ maxn: string | null }>();
+
+    const n =
+      raw?.maxn != null && raw.maxn !== ''
+        ? parseInt(raw.maxn, 10)
+        : 0;
+    const next = Number.isFinite(n) ? n + 1 : 1;
+    const str = String(next);
+    return str.length > 20 ? str.slice(0, 20) : str.padStart(6, '0');
+  }
+
   private format(row: Order): OrderResponseDto {
     return {
       id: row.id,
@@ -506,6 +626,24 @@ export class OrdersService {
       type: row.type,
       customerId: row.customer_id,
       status: row.logical_status,
+      orderNumber: row.order_number,
+      source: row.source,
+      guestCount: row.guest_count,
+      subtotal: Number(row.subtotal),
+      taxTotal: Number(row.tax_total),
+      discountTotal: Number(row.discount_total),
+      tipTotal: Number(row.tip_total),
+      total: Number(row.total),
+      paidTotal: Number(row.paid_total),
+      balanceDue: Number(row.balance_due),
+      isPaid: row.is_paid,
+      deliveryAddress: row.delivery_address,
+      deliveryZoneId: row.delivery_zone_id,
+      deliveryFee: Number(row.delivery_fee),
+      deliveryStatus: row.delivery_status,
+      kitchenStatus: row.kitchen_status,
+      readyAt: row.ready_at,
+      preparingAt: row.preparing_at,
       createdAt: row.created_at,
       closedAt: row.closed_at,
       updatedAt: row.updated_at,

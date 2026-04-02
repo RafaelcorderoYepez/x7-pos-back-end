@@ -9,9 +9,9 @@ import { BadRequestException, ForbiddenException, NotFoundException, ConflictExc
 import { OrderItemService } from './order-item.service';
 import { OrderItem } from './entities/order-item.entity';
 import { Order } from '../orders/entities/order.entity';
-import { Product } from '../inventory/products-inventory/products/entities/product.entity';
-import { Variant } from '../inventory/products-inventory/variants/entities/variant.entity';
-import { Modifier } from '../inventory/products-inventory/modifiers/entities/modifier.entity';
+import { Product } from '../../../inventory/products-inventory/products/entities/product.entity';
+import { Variant } from '../../../inventory/products-inventory/variants/entities/variant.entity';
+import { Modifier } from '../../../inventory/products-inventory/modifiers/entities/modifier.entity';
 import { CreateOrderItemDto } from './dto/create-order-item.dto';
 import { UpdateOrderItemDto } from './dto/update-order-item.dto';
 import { GetOrderItemQueryDto, OrderItemSortBy } from './dto/get-order-item-query.dto';
@@ -19,6 +19,8 @@ import { OrderItemStatus } from './constants/order-item-status.enum';
 import { OrderStatus } from '../orders/constants/order-status.enum';
 import { OrderBusinessStatus } from '../orders/constants/order-business-status.enum';
 import { OrderType } from '../orders/constants/order-type.enum';
+import { OrdersService } from '../orders/orders.service';
+import { KitchenStatus } from '../orders/constants/kitchen-status.enum';
 
 describe('OrderItemService', () => {
   let service: OrderItemService;
@@ -50,6 +52,10 @@ describe('OrderItemService', () => {
 
   const mockModifierRepository = {
     findOne: jest.fn(),
+  };
+
+  const mockOrdersService = {
+    syncOrderAggregates: jest.fn().mockResolvedValue(undefined),
   };
 
   const mockOrder = {
@@ -108,6 +114,7 @@ describe('OrderItemService', () => {
     discount: '10.00',
     notes: 'Extra sauce',
     status: OrderItemStatus.ACTIVE,
+    kitchen_status: KitchenStatus.PENDING,
     created_at: new Date('2024-01-15T08:00:00.000Z'),
     updated_at: new Date('2024-01-15T08:00:00.000Z'),
     order: mockOrder,
@@ -140,6 +147,7 @@ describe('OrderItemService', () => {
           provide: getRepositoryToken(Modifier),
           useValue: mockModifierRepository,
         },
+        { provide: OrdersService, useValue: mockOrdersService },
       ],
     }).compile();
 
@@ -1037,6 +1045,57 @@ describe('OrderItemService', () => {
       await expect(service.remove(1, 1)).rejects.toThrow(
         new ConflictException('Order item is already deleted'),
       );
+    });
+  });
+
+  describe('aggregate recalculation triggers', () => {
+    it('should trigger order totals recalculation after add item', async () => {
+      const createOrderItemDto: CreateOrderItemDto = {
+        orderId: 1,
+        productId: 1,
+        variantId: 1,
+        modifierId: 1,
+        quantity: 1,
+        price: 10,
+        discount: 0,
+        notes: 'test',
+      };
+
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
+      jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as any);
+      jest.spyOn(variantRepository, 'findOne').mockResolvedValue(mockVariant as any);
+      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(mockModifier as any);
+      jest.spyOn(orderItemRepository, 'save').mockResolvedValue(mockOrderItem as any);
+      jest.spyOn(orderItemRepository, 'findOne').mockResolvedValue(mockOrderItem as any);
+
+      await service.create(createOrderItemDto, 1);
+
+      expect(mockOrdersService.syncOrderAggregates).toHaveBeenCalledWith(1);
+    });
+
+    it('should trigger order totals recalculation after update item', async () => {
+      const updateOrderItemDto: UpdateOrderItemDto = { quantity: 3 };
+      jest.spyOn(orderItemRepository, 'findOne').mockResolvedValue(mockOrderItem as any);
+      jest.spyOn(orderItemRepository, 'update').mockResolvedValue(undefined as any);
+
+      await service.update(1, updateOrderItemDto, 1);
+
+      expect(mockOrdersService.syncOrderAggregates).toHaveBeenCalledWith(1);
+    });
+
+    it('should trigger order totals recalculation after delete item', async () => {
+      jest.spyOn(orderItemRepository, 'findOne').mockResolvedValue({
+        ...mockOrderItem,
+        status: OrderItemStatus.ACTIVE,
+      } as any);
+      jest.spyOn(orderItemRepository, 'save').mockResolvedValue({
+        ...mockOrderItem,
+        status: OrderItemStatus.DELETED,
+      } as any);
+
+      await service.remove(1, 1);
+
+      expect(mockOrdersService.syncOrderAggregates).toHaveBeenCalledWith(1);
     });
   });
 });

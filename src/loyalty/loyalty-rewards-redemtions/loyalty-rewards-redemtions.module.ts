@@ -5,7 +5,7 @@ import { LoyaltyRewardsRedemtionsController } from './loyalty-rewards-redemtions
 import { LoyaltyRewardsRedemtion } from './entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyReward } from '../loyalty-reward/entities/loyalty-reward.entity';
 import { LoyaltyCustomer } from '../loyalty-customer/entities/loyalty-customer.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([LoyaltyRewardsRedemtion, LoyaltyReward, LoyaltyCustomer, Order])],

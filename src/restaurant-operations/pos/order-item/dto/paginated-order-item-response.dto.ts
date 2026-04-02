@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SuccessResponse } from '../../common/dtos/success-response.dto';
+import { SuccessResponse } from '../../../../common/dtos/success-response.dto';
 import { OrderItemResponseDto } from './order-item-response.dto';
 
 export class PaginationMetaDto {

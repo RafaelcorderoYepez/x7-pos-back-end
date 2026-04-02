@@ -1,4 +1,4 @@
-import { OrderLittleResponseDto } from 'src/orders/dto/order-response.dto';
+import { OrderLittleResponseDto } from 'src/restaurant-operations/pos/orders/dto/order-response.dto';
 import { SuccessResponse } from '../../../common/dtos/success-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { CashTransactionLittleResponseDto } from 'src/cashdrawer/cash-transactions/dto/cash-transaction-response.dto';

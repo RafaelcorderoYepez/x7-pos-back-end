@@ -5,7 +5,7 @@ import { TipsController } from './tips.controller';
 import { Tip } from './entities/tip.entity';
 import { Company } from '../../companies/entities/company.entity';
 import { Merchant } from '../../merchants/entities/merchant.entity';
-import { Order } from '../../orders/entities/order.entity';
+import { Order } from '../../restaurant-operations/pos/orders/entities/order.entity';
 
 @Module({
   imports: [

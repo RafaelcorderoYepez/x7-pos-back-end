@@ -13,10 +13,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LoyaltyCustomer } from '../loyalty-customer/entities/loyalty-customer.entity';
 import { DataSource, Repository } from 'typeorm';
 import { ErrorMessage } from 'src/common/constants/error-messages';
-import { Order } from 'src/orders/entities/order.entity';
+import { Order } from 'src/restaurant-operations/pos/orders/entities/order.entity';
 import { CashTransaction } from 'src/cashdrawer/cash-transactions/entities/cash-transaction.entity';
 import { CashTransactionStatus } from 'src/cashdrawer/cash-transactions/constants/cash-transaction-status.enum';
-import { OrderBusinessStatus } from 'src/orders/constants/order-business-status.enum';
+import { OrderBusinessStatus } from 'src/restaurant-operations/pos/orders/constants/order-business-status.enum';
 import { LoyaltyTier } from '../loyalty-tier/entities/loyalty-tier.entity';
 import { evaluateTierUpgrade } from '../loyalty-tier/loyalty-tier.helpers';
 

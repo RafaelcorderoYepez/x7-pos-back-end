@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SuccessResponse } from '../../../common/dtos/success-response.dto';
 import { LoyaltyCustomerLittleResponseDto } from '../../loyalty-customer/dto/loyalty-customer-response.dto';
 import { LoyaltyRewardLittleResponseDto } from '../../loyalty-reward/dto/loyalty-reward-response.dto';
-import { OrderLittleResponseDto } from '../../../orders/dto/order-response.dto';
+import { OrderLittleResponseDto } from '../../../restaurant-operations/pos/orders/dto/order-response.dto';
 
 export class LoyaltyRewardsRedemtionResponseDto {
     @ApiProperty({
