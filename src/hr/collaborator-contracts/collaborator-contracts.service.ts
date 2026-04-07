@@ -10,8 +10,8 @@ import {
   OneCollaboratorContractResponseDto,
 } from './dto/collaborator-contract-response.dto';
 import { PaginatedCollaboratorContractsResponseDto } from './dto/paginated-collaborator-contracts-response.dto';
-import { Company } from '../../companies/entities/company.entity';
-import { Merchant } from '../../merchants/entities/merchant.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../../platform-saas/merchants/entities/merchant.entity';
 import { Collaborator } from '../collaborators/entities/collaborator.entity';
 
 @Injectable()

@@ -3,14 +3,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MerchantOvertimeRuleService } from './merchant-overtime-rule.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MerchantOvertimeRule } from './entity/merchant-overtime-rule.entity';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import { OvertimeCalculationType } from '../constants/overtime-calculation-type.enum';
 import { OvertimeRateType } from '../constants/overtime-rate-type.enum';
 import { CreateMerchantOvertimeRuleDto } from './dto/create-merchant-overtime-rule.dto';
 import { UpdateMerchantOvertimeRuleDto } from './dto/update-merchant-overtime-rule.dto';
 import { SelectQueryBuilder } from 'typeorm';
 import { Repository, In } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 
 describe('MerchantOvertimeRuleService', () => {
   let service: MerchantOvertimeRuleService;

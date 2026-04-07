@@ -35,8 +35,8 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Scopes } from '../../auth/decorators/scopes.decorator';
-import { UserRole } from '../../users/constants/role.enum';
-import { Scope } from '../../users/constants/scope.enum';
+import { UserRole } from '../../platform-saas/users/constants/role.enum';
+import { Scope } from '../../platform-saas/users/constants/scope.enum';
 import { AdjustmentType } from './constants/adjustment-type.enum';
 import { PayrollAdjustmentSortBy } from './dto/get-payroll-adjustments-query.dto';
 

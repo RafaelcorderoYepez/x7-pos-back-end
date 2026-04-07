@@ -7,10 +7,10 @@ import { UpdateTimeEntryDto } from './dto/update-time-entry.dto';
 import { GetTimeEntryQueryDto } from './dto/get-time-entry-query.dto';
 import { TimeEntryResponseDto, OneTimeEntryResponseDto } from './dto/time-entry-response.dto';
 import { PaginatedTimeEntriesResponseDto } from './dto/paginated-time-entries-response.dto';
-import { Company } from '../../companies/entities/company.entity';
-import { Merchant } from '../../merchants/entities/merchant.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../../platform-saas/merchants/entities/merchant.entity';
 import { Collaborator } from '../collaborators/entities/collaborator.entity';
-import { Shift } from '../../shifts/entities/shift.entity';
+import { Shift } from '../../restaurant-operations/shift/shifts/entities/shift.entity';
 
 @Injectable()
 export class CollaboratorTimeEntriesService {

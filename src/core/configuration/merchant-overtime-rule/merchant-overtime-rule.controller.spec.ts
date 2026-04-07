@@ -3,8 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MerchantOvertimeRuleController } from './merchant-overtime-rule.controller';
 import { MerchantOvertimeRuleService } from './merchant-overtime-rule.service';
 import { MerchantOvertimeRule } from './entity/merchant-overtime-rule.entity';
-import { Company } from 'src/companies/entities/company.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 import { OvertimeCalculationType } from '../constants/overtime-calculation-type.enum';
 import { OvertimeRateType } from '../constants/overtime-rate-type.enum';
 

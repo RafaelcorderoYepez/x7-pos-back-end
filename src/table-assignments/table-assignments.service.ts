@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException, BadRequestException, 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager, Not, Between, Like, IsNull } from 'typeorm';
 import { TableAssignment } from './entities/table-assignment.entity';
-import { Shift } from '../shifts/entities/shift.entity';
+import { Shift } from '../restaurant-operations/shift/shifts/entities/shift.entity';
 import { Table } from '../tables/entities/table.entity';
 import { Collaborator } from '../hr/collaborators/entities/collaborator.entity';
 import { CreateTableAssignmentDto } from './dto/create-table-assignment.dto';

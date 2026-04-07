@@ -8,7 +8,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, ForbiddenException, BadRequestException, ConflictException } from '@nestjs/common';
 import { TablesService } from './tables.service';
 import { Table } from './entities/table.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
+import { Merchant } from '../platform-saas/merchants/entities/merchant.entity';
 import { CreateTableDto } from './dto/create-table.dto';
 import { UpdateTableDto } from './dto/update-table.dto';
 import { GetTablesQueryDto } from './dto/get-tables-query.dto';

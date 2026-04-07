@@ -35,9 +35,9 @@ import {
 import { ErrorResponse } from 'src/common/dtos/error-response.dto';
 import { Product } from './entities/product.entity';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Scope } from 'src/users/constants/scope.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
-import { UserRole } from 'src/users/constants/role.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 

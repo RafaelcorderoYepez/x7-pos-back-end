@@ -3,8 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MerchantTaxRuleController } from './merchant-tax-rule.controller';
 import { MerchantTaxRuleService } from './merchant-tax-rule.service';
 import { MerchantTaxRule } from './entity/merchant-tax-rule.entity';
-import { Company } from 'src/companies/entities/company.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 import { TaxType } from '../constants/tax-type.enum';
 
 describe('MerchantTaxRuleController', () => {

@@ -9,7 +9,7 @@ import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { GetLocationsQueryDto } from './dto/get-locations-query.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 
 describe('LocationsService', () => {

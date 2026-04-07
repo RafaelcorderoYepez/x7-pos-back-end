@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import { SuplierInvoice } from './entities/suplier-invoice.entity';
-import { Company } from '../../companies/entities/company.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
 import { CreateSuplierInvoiceDto } from './dto/create-suplier-invoice.dto';
 import { UpdateSuplierInvoiceDto } from './dto/update-suplier-invoice.dto';
 import {
@@ -19,7 +19,7 @@ import {
 } from './dto/suplier-invoice-response.dto';
 import { PaginatedSuplierInvoicesResponseDto } from './dto/paginated-suplier-invoices-response.dto';
 import { SupplierInvoiceStatus } from './constants/supplier-invoice-status.enum';
-import { Supplier } from '../../business-partners/suppliers/entities/supplier.entity';
+import { Supplier } from '../../core/business-partners/suppliers/entities/supplier.entity';
 
 @Injectable()
 export class SuplierInvoicesService {

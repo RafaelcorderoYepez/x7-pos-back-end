@@ -7,7 +7,7 @@ import { LoginDto } from './dto/login.dto';
 import { RequestResetPasswordDto } from './dto/request-reset-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { User } from '../users/entities/user.entity';
+import { User } from '../platform-saas/users/entities/user.entity';
 
 /* eslint-disable @typescript-eslint/unbound-method */
 describe('AuthController', () => {

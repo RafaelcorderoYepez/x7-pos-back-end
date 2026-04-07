@@ -3,8 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SuccessResponse } from 'src/common/dtos/success-response.dto';
 import { MerchantTaxRule } from '../entity/merchant-tax-rule.entity';
 import { Configuration } from '../../entity/configuration-entity';
-import { Company } from 'src/companies/entities/company.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 
 export class MerchantTaxRuleResponseDto extends Configuration {
   @ApiProperty({

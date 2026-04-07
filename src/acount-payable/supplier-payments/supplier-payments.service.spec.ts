@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SupplierPaymentsService } from './supplier-payments.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { SupplierPayment } from './entities/supplier-payment.entity';
-import { Company } from '../../companies/entities/company.entity';
-import { Supplier } from '../../business-partners/suppliers/entities/supplier.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Supplier } from '../../core/business-partners/suppliers/entities/supplier.entity';
 
 describe('SupplierPaymentsService', () => {
   let service: SupplierPaymentsService;

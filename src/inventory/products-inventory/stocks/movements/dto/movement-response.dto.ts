@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SuccessResponse } from 'src/common/dtos/success-response.dto';
 import { ItemLittleResponseDto } from '../../items/dto/item-response.dto';
-import { MerchantResponseDto } from 'src/merchants/dtos/merchant-response.dto';
+import { MerchantResponseDto } from 'src/platform-saas/merchants/dtos/merchant-response.dto';
 
 export class MovementResponseDto {
   @ApiProperty({ example: 1, description: 'Movement ID' })
