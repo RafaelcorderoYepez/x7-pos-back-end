@@ -12,7 +12,7 @@ import { UpdateMovementDto } from './dto/update-movement.dto';
 import { GetMovementsQueryDto } from './dto/get-movements-query.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { MovementsStatus } from './constants/movements-status';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { Product } from '../../products/entities/product.entity';
 import { Variant } from '../../variants/entities/variant.entity';
 import { Location } from '../locations/entities/location.entity';

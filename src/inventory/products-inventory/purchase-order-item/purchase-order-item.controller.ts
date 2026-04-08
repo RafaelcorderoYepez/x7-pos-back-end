@@ -13,9 +13,9 @@ import { PurchaseOrderItemService } from './purchase-order-item.service';
 import { CreatePurchaseOrderItemDto } from './dto/create-purchase-order-item.dto';
 import { UpdatePurchaseOrderItemDto } from './dto/update-purchase-order-item.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/users/constants/role.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
-import { Scope } from 'src/users/constants/scope.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import {
   ApiBearerAuth,
   ApiExtraModels,

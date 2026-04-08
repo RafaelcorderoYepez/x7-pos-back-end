@@ -1,0 +1,21 @@
+//src/subscriptions/merchant-subscriptions/merchant-subscription.module.ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MerchantSubscriptionService } from './merchant-subscription.service';
+import { MerchantSubscriptionController } from './merchant-subscription.controller';
+import { MerchantSubscription } from './entities/merchant-subscription.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
+import { SubscriptionPlan } from '../subscription-plan/entity/subscription-plan.entity';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([
+      MerchantSubscription,
+      Merchant,
+      SubscriptionPlan,
+    ]),
+  ],
+  controllers: [MerchantSubscriptionController],
+  providers: [MerchantSubscriptionService],
+})
+export class MerchantSubscriptionModule {}

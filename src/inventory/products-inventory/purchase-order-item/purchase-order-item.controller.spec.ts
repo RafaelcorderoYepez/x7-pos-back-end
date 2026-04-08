@@ -7,8 +7,8 @@ import { UpdatePurchaseOrderItemDto } from './dto/update-purchase-order-item.dto
 import { AllPaginatedPurchaseOrdersItems } from './dto/all-paginated-purchase-order-item.dto';
 import { GetPurchaseOrdersItemsQueryDto } from './dto/get-purchase-order-item-query.dto';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 
 describe('PurchaseOrderItemController', () => {
   let controller: PurchaseOrderItemController;

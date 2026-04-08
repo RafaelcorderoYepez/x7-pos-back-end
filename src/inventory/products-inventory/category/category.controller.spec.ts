@@ -3,8 +3,8 @@ import { CategoryController } from './category.controller';
 import { CategoryService } from './category.service';
 import { GetCategoriesQueryDto } from './dto/get-categories-query.dto';
 import { AllPaginatedCategories } from './dto/all-paginated-categories.dto';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 
 describe('CategoryController', () => {

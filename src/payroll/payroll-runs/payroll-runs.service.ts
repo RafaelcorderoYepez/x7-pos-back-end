@@ -6,8 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
 import { PayrollRun } from './entities/payroll-run.entity';
-import { Company } from '../../companies/entities/company.entity';
-import { Merchant } from '../../merchants/entities/merchant.entity';
+import { Company } from '../../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../../platform-saas/merchants/entities/merchant.entity';
 import { CreatePayrollRunDto } from './dto/create-payroll-run.dto';
 import { UpdatePayrollRunDto } from './dto/update-payroll-run.dto';
 import { GetPayrollRunsQueryDto, PayrollRunSortBy } from './dto/get-payroll-runs-query.dto';

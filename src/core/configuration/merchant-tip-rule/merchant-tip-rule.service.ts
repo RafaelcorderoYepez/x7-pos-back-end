@@ -1,8 +1,8 @@
 //src/core/configuration/merchant-tip-rule/merchant-tip-rule.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Company } from 'src/companies/entities/company.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 import { In, Repository } from 'typeorm';
 import { CreateMerchantTipRuleDto } from './dto/create-merchant-tip-rule.dto';
 import { OneMerchantTipRuleResponseDto } from './dto/merchant-tip-rule-response.dto';

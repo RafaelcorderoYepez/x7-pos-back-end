@@ -8,13 +8,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, ForbiddenException, BadRequestException, ConflictException } from '@nestjs/common';
 import { TableAssignmentsService } from './table-assignments.service';
 import { TableAssignment } from './entities/table-assignment.entity';
-import { Shift } from '../shifts/entities/shift.entity';
+import { Shift } from '../restaurant-operations/shift/shifts/entities/shift.entity';
 import { Table } from '../tables/entities/table.entity';
 import { Collaborator } from '../hr/collaborators/entities/collaborator.entity';
 import { CreateTableAssignmentDto } from './dto/create-table-assignment.dto';
 import { UpdateTableAssignmentDto } from './dto/update-table-assignment.dto';
 import { GetTableAssignmentsQueryDto } from './dto/get-table-assignments-query.dto';
-import { ShiftRole } from '../shifts/constants/shift-role.enum';
+import { ShiftRole } from '../restaurant-operations/shift/shifts/constants/shift-role.enum';
 
 describe('TableAssignmentsService', () => {
   let service: TableAssignmentsService;

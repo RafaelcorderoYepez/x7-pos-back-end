@@ -3,7 +3,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsService } from './products.service';
 import { Product } from './entities/product.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { Repository } from 'typeorm';
 import { ProductsInventoryService } from '../products-inventory.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -13,7 +13,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { ModifiersService } from '../modifiers/modifiers.service';
 import { VariantsService } from '../variants/variants.service';
 import { Category } from '../category/entities/category.entity';
-import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
+import { Supplier } from 'src/core/business-partners/suppliers/entities/supplier.entity';
 
 describe('ProductsService', () => {
   let service: ProductsService;

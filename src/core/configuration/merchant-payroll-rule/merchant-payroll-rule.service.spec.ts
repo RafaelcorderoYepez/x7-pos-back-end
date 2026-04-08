@@ -3,13 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MerchantPayrollRuleService } from './merchant-payroll-rule.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { MerchantPayrollRule } from './entity/merchant-payroll-rule.entity';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import { PayrollFrequency } from '../constants/payroll-frequency.enum';
 import { CreateMerchantPayrollRuleDto } from './dto/create-merchant-payroll-rule.dto';
 import { UpdateMerchantPayrollRuleDto } from './dto/update-merchant-payroll-rule.dto';
 import { SelectQueryBuilder } from 'typeorm';
 import { Repository, In } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 
 describe('MerchantPayrollRuleService', () => {
   let service: MerchantPayrollRuleService;

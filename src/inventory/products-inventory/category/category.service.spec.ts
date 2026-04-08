@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoryService } from './category.service';
 import { Category } from './entities/category.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { Repository } from 'typeorm';
 import { ProductsInventoryService } from '../products-inventory.service';
 import { getRepositoryToken } from '@nestjs/typeorm';

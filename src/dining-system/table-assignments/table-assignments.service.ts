@@ -8,7 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, EntityManager, Between, IsNull, In } from 'typeorm';
 import { TableAssignment } from './entities/table-assignment.entity';
-import { Shift } from 'src/shifts/entities/shift.entity';
+import { Shift } from 'src/restaurant-operations/shift/shifts/entities/shift.entity';
 import { Table } from '../tables/entities/table.entity';
 import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity';
 import { CreateTableAssignmentDto } from './dto/create-table-assignment.dto';
