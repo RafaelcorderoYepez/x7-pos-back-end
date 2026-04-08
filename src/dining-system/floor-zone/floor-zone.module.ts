@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { FloorZoneController } from './floor-zone.controller';
 import { FloorZoneService } from './floor-zone.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { FloorZone } from './entity/floor-zone.entity';
 import { FloorPlan } from '../floor-plan/entity/floor-plan.entity';
 import { Table } from '../tables/entities/table.entity';

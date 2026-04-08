@@ -27,9 +27,9 @@ import {
 import { FloorPlanService } from './floor-plan.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Scope } from 'src/users/constants/scope.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
-import { UserRole } from 'src/users/constants/role.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CreateFloorPlanDto } from './dto/create-floor-plan.dto';
 import {

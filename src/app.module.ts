@@ -113,7 +113,7 @@ import { SupplierPayment } from './acount-payable/supplier-payments/entities/sup
 import { SupplierPaymentAllocation } from './acount-payable/supplier_payment_allocations/entities/supplier_payment_allocation.entity';
 import { SupplierPaymentItem } from './acount-payable/supplier-payment-items/entities/supplier-payment-item.entity';
 import { Table } from './dining-system/tables/entities/table.entity';
-import { TableAssignment } from './table-assignments/entities/table-assignment.entity';
+import { TableAssignment } from './dining-system/table-assignments/entities/table-assignment.entity';
 import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.entity';
 import { Tip } from './restaurant-operations/tips/tips/entities/tip.entity';
 import { TipAllocation } from './restaurant-operations/tips/tip-allocations/entities/tip-allocation.entity';

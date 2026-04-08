@@ -9,7 +9,7 @@ import {
   Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Shift } from 'src/shifts/entities/shift.entity';
+import { Shift } from 'src/restaurant-operations/shift/shifts/entities/shift.entity';
 import { Table } from '../../tables/entities/table.entity';
 import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity';
 

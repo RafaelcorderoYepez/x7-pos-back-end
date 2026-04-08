@@ -1,7 +1,7 @@
 //src/dining-system/floor-zone/dto/floor-zone-response.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import { FloorPlan } from 'src/dining-system/floor-plan/entity/floor-plan.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { SuccessResponse } from 'src/common/dtos/success-response.dto';
 
 export class FloorZoneResponseDto {
