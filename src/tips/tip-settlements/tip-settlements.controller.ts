@@ -40,7 +40,10 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ErrorResponse } from 'src/common/dtos/error-response.dto';
 import { SettlementMethod } from './constants/settlement-method.enum';
-import { GetTipSettlementQueryDto, TipSettlementSortBy } from './dto/get-tip-settlement-query.dto';
+import {
+  GetTipSettlementQueryDto,
+  TipSettlementSortBy,
+} from './dto/get-tip-settlement-query.dto';
 
 @ApiTags('Tip Settlements')
 @ApiBearerAuth()
@@ -98,10 +101,7 @@ export class TipSettlementsController {
   })
   async create(@Body() dto: CreateTipSettlementDto, @Request() req: any) {
     const authenticatedUserMerchantId = req.user?.merchant?.id;
-    return this.tipSettlementsService.create(
-      dto,
-      authenticatedUserMerchantId,
-    );
+    return this.tipSettlementsService.create(dto, authenticatedUserMerchantId);
   }
 
   @Get()
@@ -122,7 +122,11 @@ export class TipSettlementsController {
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
   @ApiQuery({ name: 'collaboratorId', required: false, type: Number })
   @ApiQuery({ name: 'shiftId', required: false, type: Number })
-  @ApiQuery({ name: 'settlementMethod', required: false, enum: SettlementMethod })
+  @ApiQuery({
+    name: 'settlementMethod',
+    required: false,
+    enum: SettlementMethod,
+  })
   @ApiQuery({
     name: 'settledDate',
     required: false,
@@ -179,10 +183,7 @@ export class TipSettlementsController {
     type: ErrorResponse,
   })
   @ApiBadRequestResponse({ description: 'Invalid ID', type: ErrorResponse })
-  async findOne(
-    @Param('id', ParseIntPipe) id: number,
-    @Request() req: any,
-  ) {
+  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
     const authenticatedUserMerchantId = req.user?.merchant?.id;
     return this.tipSettlementsService.findOne(id, authenticatedUserMerchantId);
   }
@@ -200,7 +201,11 @@ export class TipSettlementsController {
     summary: 'Update a Tip Settlement by ID',
     description: 'Updates an existing tip settlement. All fields are optional.',
   })
-  @ApiParam({ name: 'id', type: Number, description: 'Tip settlement ID to update' })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'Tip settlement ID to update',
+  })
   @ApiOkResponse({
     description: 'Tip settlement updated successfully',
     type: OneTipSettlementResponseDto,
@@ -245,7 +250,11 @@ export class TipSettlementsController {
     summary: 'Delete a Tip Settlement by ID',
     description: 'Permanently deletes a tip settlement.',
   })
-  @ApiParam({ name: 'id', type: Number, description: 'Tip settlement ID to delete' })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'Tip settlement ID to delete',
+  })
   @ApiOkResponse({
     description: 'Tip settlement deleted successfully',
     type: OneTipSettlementResponseDto,

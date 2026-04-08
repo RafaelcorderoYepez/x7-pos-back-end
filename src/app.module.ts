@@ -65,8 +65,8 @@ import { ShiftsModule } from './shifts/shifts.module';
 import { SubscriptionApplicationModule } from './subscriptions/subscription-application/subscription-application.module';
 import { SubscriptionPaymentsModule } from './subscriptions/subscription-payments/subscription-payments.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
-import { TableAssignmentsModule } from './table-assignments/table-assignments.module';
-import { TablesModule } from './tables/tables.module';
+import { TableAssignmentsModule } from './dining-system/table-assignments/table-assignments.module';
+import { TablesModule } from './dining-system/tables/tables.module';
 import { TipAllocationsModule } from './tips/tip-allocations/tip-allocations.module';
 import { TipPoolMembersModule } from './tips/tip-pool-members/tip-pool-members.module';
 import { TipPoolsModule } from './tips/tip-pools/tip-pools.module';
@@ -156,8 +156,8 @@ import { SubscriptionPayment } from './subscriptions/subscription-payments/entit
 import { SubscriptionPlan } from './subscriptions/subscription-plan/entity/subscription-plan.entity';
 import { SuplierInvoice } from './acount-payable/suplier-invoices/entities/suplier-invoice.entity';
 import { Supplier } from './business-partners/suppliers/entities/supplier.entity';
-import { Table } from './tables/entities/table.entity';
-import { TableAssignment } from './table-assignments/entities/table-assignment.entity';
+import { Table } from './dining-system/tables/entities/table.entity';
+import { TableAssignment } from './dining-system/table-assignments/entities/table-assignment.entity';
 import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.entity';
 import { Tip } from './tips/tips/entities/tip.entity';
 import { TipAllocation } from './tips/tip-allocations/entities/tip-allocation.entity';
@@ -172,6 +172,11 @@ import { BusinessPartnersModule } from './business-partners/business-partners.mo
 import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.module';
 import { MerchantTaxRuleModule } from './core/configuration/merchant-tax-rule/merchant-tax-rule.module';
 import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/merchant-tax-rule.entity';
+import { DiningSystemModule } from './dining-system/dining-system.module';
+import { FloorPlanModule } from './dining-system/floor-plan/floor-plan.module';
+import { FloorZoneModule } from './dining-system/floor-zone/floor-zone.module';
+import { FloorZone } from './dining-system/floor-zone/entity/floor-zone.entity';
+import { FloorPlan } from './dining-system/floor-plan/entity/floor-plan.entity';
 
 @Module({
   imports: [
@@ -279,6 +284,8 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
           User,
           Variant,
           MerchantTaxRule,
+          FloorZone,
+          FloorPlan,
         ],
         synchronize: true,
       }),
@@ -361,6 +368,9 @@ import { MerchantTaxRule } from './core/configuration/merchant-tax-rule/entity/m
     CoreModule,
     BusinessPartnersModule,
     MerchantTaxRuleModule,
+    DiningSystemModule,
+    FloorPlanModule,
+    FloorZoneModule,
   ],
 })
 export class AppModule {}

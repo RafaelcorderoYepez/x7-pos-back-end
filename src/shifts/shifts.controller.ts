@@ -17,7 +17,11 @@ import {
 import { ShiftsService } from './shifts.service';
 import { CreateShiftDto } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
-import { ShiftResponseDto, OneShiftResponseDto, AllShiftsResponseDto } from './dto/shift-response.dto';
+import {
+  ShiftResponseDto,
+  OneShiftResponseDto,
+  AllShiftsResponseDto,
+} from './dto/shift-response.dto';
 import { GetShiftsQueryDto } from './dto/get-shifts-query.dto';
 import { PaginatedShiftsResponseDto } from './dto/paginated-shifts-response.dto';
 import {
@@ -43,8 +47,6 @@ import { Scope } from 'src/users/constants/scope.enum';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { ShiftRole } from './constants/shift-role.enum';
-import { ShiftStatus } from './constants/shift-status.enum';
 import { ErrorResponse } from '../common/dtos/error-response.dto';
 
 @ApiTags('Shifts')
@@ -56,16 +58,18 @@ export class ShiftsController {
   constructor(private readonly shiftsService: ShiftsService) {}
 
   @Post()
-  @Roles(UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
   @Scopes(
+    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create a new shift',
-    description: 'Creates a new shift for the authenticated user\'s merchant. Only merchant administrators can create shifts. The shift number must be unique within the merchant. The start time is required, end time is optional. Role defaults to WAITER if not specified.'
+    description:
+      "Creates a new shift for the authenticated user's merchant. Only merchant administrators can create shifts. The shift number must be unique within the merchant. The start time is required, end time is optional. Role defaults to WAITER if not specified.",
   })
   @ApiCreatedResponse({
     description: 'Shift created successfully',
@@ -84,13 +88,13 @@ export class ShiftsController {
           status: 'active',
           merchant: {
             id: 1,
-            name: 'Restaurant ABC'
-          }
-        }
-      }
-    }
+            name: 'Restaurant ABC',
+          },
+        },
+      },
+    },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid input data or business rule violation',
     schema: {
       examples: {
@@ -98,62 +102,63 @@ export class ShiftsController {
           summary: 'Invalid time format',
           value: {
             statusCode: 400,
-            message: 'Invalid start time format. Please provide a valid date string',
-            error: 'Bad Request'
-          }
+            message:
+              'Invalid start time format. Please provide a valid date string',
+            error: 'Bad Request',
+          },
         },
         invalidTimeOrder: {
           summary: 'Invalid time order',
           value: {
             statusCode: 400,
             message: 'End time must be after start time',
-            error: 'Bad Request'
-          }
-        }
-      }
-    }
+            error: 'Bad Request',
+          },
+        },
+      },
+    },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized - Invalid or missing authentication token',
     schema: {
       example: {
         statusCode: 401,
         message: 'Unauthorized',
-        error: 'Unauthorized'
-      }
-    }
+        error: 'Unauthorized',
+      },
+    },
   })
-  @ApiForbiddenResponse({ 
+  @ApiForbiddenResponse({
     description: 'Forbidden - You can only create shifts for your own merchant',
     schema: {
       example: {
         statusCode: 403,
         message: 'You can only create shifts for your own merchant',
-        error: 'Forbidden'
-      }
-    }
+        error: 'Forbidden',
+      },
+    },
   })
-  @ApiNotFoundResponse({ 
+  @ApiNotFoundResponse({
     description: 'Merchant not found',
     schema: {
       example: {
         statusCode: 404,
         message: 'Merchant with ID 999 not found',
-        error: 'Not Found'
-      }
-    }
+        error: 'Not Found',
+      },
+    },
   })
-  @ApiConflictResponse({ 
+  @ApiConflictResponse({
     description: 'Shift number already exists',
     schema: {
       example: {
         statusCode: 409,
-        message: 'Shift number \'SHIFT-001\' already exists for merchant 1',
-        error: 'Conflict'
-      }
-    }
+        message: "Shift number 'SHIFT-001' already exists for merchant 1",
+        error: 'Conflict',
+      },
+    },
   })
-  @ApiBody({ 
+  @ApiBody({
     type: CreateShiftDto,
     description: 'Shift creation data',
     examples: {
@@ -166,8 +171,8 @@ export class ShiftsController {
           startTime: '2024-01-15T08:00:00Z',
           endTime: '2024-01-15T16:00:00Z',
           role: 'waiter',
-          status: 'active'
-        }
+          status: 'active',
+        },
       },
       example2: {
         summary: 'Shift without end time',
@@ -177,26 +182,32 @@ export class ShiftsController {
           number: 'SHIFT-002',
           startTime: '2024-01-15T08:00:00Z',
           role: 'cook',
-          status: 'active'
-        }
-      }
-    }
+          status: 'active',
+        },
+      },
+    },
   })
-  async create(@Body() dto: CreateShiftDto, @Request() req: any): Promise<OneShiftResponseDto> {
+  async create(
+    @Body() dto: CreateShiftDto,
+    @Request() req: any,
+  ): Promise<OneShiftResponseDto> {
     // Obtener el merchant_id del usuario autenticado
     const authenticatedUserMerchantId = req.user?.merchant?.id;
-    
+
     // Validar que el usuario tiene merchant_id
     if (!authenticatedUserMerchantId) {
-      throw new ForbiddenException('User must be associated with a merchant to create shifts');
+      throw new ForbiddenException(
+        'User must be associated with a merchant to create shifts',
+      );
     }
-    
+
     return this.shiftsService.create(dto, authenticatedUserMerchantId);
   }
 
   @Get()
-  @Roles(UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
   @Scopes(
+    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
@@ -204,16 +215,70 @@ export class ShiftsController {
   )
   @ApiOperation({
     summary: 'Get all shifts',
-    description: 'Retrieves all shifts for the authenticated user\'s merchant with filtering, sorting, and pagination support. Only users with any merchant role can access this endpoint.'
+    description:
+      "Retrieves all shifts for the authenticated user's merchant with filtering, sorting, and pagination support. Only users with any merchant role can access this endpoint.",
   })
-  @ApiQuery({ name: 'role', required: false, enum: ['waiter', 'cook', 'bartender', 'host', 'cashier', 'manager', 'busser', 'delivery'], description: 'Filter by shift role' })
-  @ApiQuery({ name: 'status', required: false, enum: ['active', 'completed', 'cancelled', 'deleted'], description: 'Filter by shift status' })
-  @ApiQuery({ name: 'startDate', required: false, type: String, description: 'Filter shifts from this date (YYYY-MM-DD format)' })
-  @ApiQuery({ name: 'endDate', required: false, type: String, description: 'Filter shifts until this date (YYYY-MM-DD format)' })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number for pagination (minimum 1)', example: 1 })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page (minimum 1, maximum 100)', example: 10 })
-  @ApiQuery({ name: 'sortBy', required: false, enum: ['startTime', 'endTime', 'role', 'status'], description: 'Field to sort by', example: 'startTime' })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'], description: 'Sort order', example: 'DESC' })
+  @ApiQuery({
+    name: 'role',
+    required: false,
+    enum: [
+      'waiter',
+      'cook',
+      'bartender',
+      'host',
+      'cashier',
+      'manager',
+      'busser',
+      'delivery',
+    ],
+    description: 'Filter by shift role',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['active', 'completed', 'cancelled', 'deleted'],
+    description: 'Filter by shift status',
+  })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: String,
+    description: 'Filter shifts from this date (YYYY-MM-DD format)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: String,
+    description: 'Filter shifts until this date (YYYY-MM-DD format)',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number for pagination (minimum 1)',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Number of items per page (minimum 1, maximum 100)',
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: ['startTime', 'endTime', 'role', 'status'],
+    description: 'Field to sort by',
+    example: 'startTime',
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    enum: ['ASC', 'DESC'],
+    description: 'Sort order',
+    example: 'DESC',
+  })
   @ApiOkResponse({
     description: 'List of shifts retrieved successfully with pagination',
     type: PaginatedShiftsResponseDto,
@@ -231,8 +296,8 @@ export class ShiftsController {
             status: 'active',
             merchant: {
               id: 1,
-              name: 'Restaurant ABC'
-            }
+              name: 'Restaurant ABC',
+            },
           },
           {
             id: 2,
@@ -243,9 +308,9 @@ export class ShiftsController {
             status: 'completed',
             merchant: {
               id: 1,
-              name: 'Restaurant ABC'
-            }
-          }
+              name: 'Restaurant ABC',
+            },
+          },
         ],
         meta: {
           page: 1,
@@ -253,30 +318,31 @@ export class ShiftsController {
           total: 25,
           totalPages: 3,
           hasNext: true,
-          hasPrev: false
-        }
-      }
-    }
+          hasPrev: false,
+        },
+      },
+    },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized - Invalid or missing authentication token',
     schema: {
       example: {
         statusCode: 401,
         message: 'Unauthorized',
-        error: 'Unauthorized'
-      }
-    }
+        error: 'Unauthorized',
+      },
+    },
   })
-  @ApiForbiddenResponse({ 
-    description: 'Forbidden - User must be associated with a merchant to view shifts',
+  @ApiForbiddenResponse({
+    description:
+      'Forbidden - User must be associated with a merchant to view shifts',
     schema: {
       example: {
         statusCode: 403,
         message: 'User must be associated with a merchant to view shifts',
-        error: 'Forbidden'
-      }
-    }
+        error: 'Forbidden',
+      },
+    },
   })
   @ApiNotFoundResponse({
     description: 'Merchant not found',
@@ -284,11 +350,11 @@ export class ShiftsController {
       example: {
         statusCode: 404,
         message: 'Merchant with ID 999 not found',
-        error: 'Not Found'
-      }
-    }
+        error: 'Not Found',
+      },
+    },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid input data or filter parameters',
     schema: {
       examples: {
@@ -297,59 +363,66 @@ export class ShiftsController {
           value: {
             statusCode: 400,
             message: 'Invalid startDate format. Please use YYYY-MM-DD format',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         invalidDateRange: {
           summary: 'Invalid date range',
           value: {
             statusCode: 400,
             message: 'startDate must be before or equal to endDate',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         invalidPagination: {
           summary: 'Invalid pagination parameters',
           value: {
             statusCode: 400,
             message: 'page must be a positive number',
-            error: 'Bad Request'
-          }
-        }
-      }
-    }
+            error: 'Bad Request',
+          },
+        },
+      },
+    },
   })
-  async findAll(@Query() query: GetShiftsQueryDto, @Request() req: any): Promise<PaginatedShiftsResponseDto> {
+  async findAll(
+    @Query() query: GetShiftsQueryDto,
+    @Request() req: any,
+  ): Promise<PaginatedShiftsResponseDto> {
     // Get the merchant_id from the authenticated user
     const authenticatedUserMerchantId = req.user?.merchant?.id;
 
     // Validate that the user has merchant_id
     if (!authenticatedUserMerchantId) {
-      throw new ForbiddenException('User must be associated with a merchant to view shifts');
+      throw new ForbiddenException(
+        'User must be associated with a merchant to view shifts',
+      );
     }
 
     return this.shiftsService.findAll(query, authenticatedUserMerchantId);
   }
 
   @Get(':id')
-  @Roles(UserRole.MERCHANT_ADMIN, UserRole.MERCHANT_USER)
+  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN, UserRole.MERCHANT_USER)
   @Scopes(
+    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get a shift by ID',
-    description: 'Retrieves a specific shift by its ID. Only users with any merchant role can access this endpoint. Users can only access shifts from their own merchant.'
+    description:
+      'Retrieves a specific shift by its ID. Only users with any merchant role can access this endpoint. Users can only access shifts from their own merchant.',
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: Number, 
+  @ApiParam({
+    name: 'id',
+    type: Number,
     description: 'Shift ID',
-    example: 1
+    example: 1,
   })
-  @ApiOkResponse({ 
+  @ApiOkResponse({
     description: 'Shift found successfully',
     type: OneShiftResponseDto,
     schema: {
@@ -365,24 +438,25 @@ export class ShiftsController {
           status: 'active',
           merchant: {
             id: 1,
-            name: 'Restaurant ABC'
-          }
-        }
-      }
-    }
+            name: 'Restaurant ABC',
+          },
+        },
+      },
+    },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized - Invalid or missing authentication token',
     schema: {
       example: {
         statusCode: 401,
         message: 'Unauthorized',
-        error: 'Unauthorized'
-      }
-    }
+        error: 'Unauthorized',
+      },
+    },
   })
-  @ApiForbiddenResponse({ 
-    description: 'Forbidden - User must be associated with a merchant or can only view shifts from their own merchant',
+  @ApiForbiddenResponse({
+    description:
+      'Forbidden - User must be associated with a merchant or can only view shifts from their own merchant',
     schema: {
       examples: {
         noMerchant: {
@@ -390,21 +464,21 @@ export class ShiftsController {
           value: {
             statusCode: 403,
             message: 'User must be associated with a merchant to view shifts',
-            error: 'Forbidden'
-          }
+            error: 'Forbidden',
+          },
         },
         differentMerchant: {
           summary: 'Trying to access shift from different merchant',
           value: {
             statusCode: 403,
             message: 'You can only view shifts from your own merchant',
-            error: 'Forbidden'
-          }
-        }
-      }
-    }
+            error: 'Forbidden',
+          },
+        },
+      },
+    },
   })
-  @ApiNotFoundResponse({ 
+  @ApiNotFoundResponse({
     description: 'Shift or merchant not found',
     schema: {
       examples: {
@@ -413,21 +487,21 @@ export class ShiftsController {
           value: {
             statusCode: 404,
             message: 'Shift 999 not found',
-            error: 'Not Found'
-          }
+            error: 'Not Found',
+          },
         },
         merchantNotFound: {
           summary: 'Merchant not found',
           value: {
             statusCode: 404,
             message: 'Merchant with ID 999 not found',
-            error: 'Not Found'
-          }
-        }
-      }
-    }
+            error: 'Not Found',
+          },
+        },
+      },
+    },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid ID format or value',
     schema: {
       examples: {
@@ -436,62 +510,66 @@ export class ShiftsController {
           value: {
             statusCode: 400,
             message: 'Invalid shift ID',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         negativeId: {
           summary: 'Negative or zero ID',
           value: {
             statusCode: 400,
             message: 'Invalid shift ID',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         nonNumericId: {
           summary: 'Non-numeric ID',
           value: {
             statusCode: 400,
             message: 'Validation failed (numeric string is expected)',
-            error: 'Bad Request'
-          }
-        }
-      }
-    }
+            error: 'Bad Request',
+          },
+        },
+      },
+    },
   })
   async findOne(
     @Param('id', ParseIntPipe) id: number,
-    @Request() req: any
+    @Request() req: any,
   ): Promise<OneShiftResponseDto> {
     // Obtener el merchant_id del usuario autenticado
     const authenticatedUserMerchantId = req.user?.merchant?.id;
 
     // Validar que el usuario tiene merchant_id
     if (!authenticatedUserMerchantId) {
-      throw new ForbiddenException('User must be associated with a merchant to view shifts');
+      throw new ForbiddenException(
+        'User must be associated with a merchant to view shifts',
+      );
     }
 
     return this.shiftsService.findOne(id, authenticatedUserMerchantId);
   }
 
   @Put(':id')
-  @Roles(UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
   @Scopes(
+    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update a shift by ID',
-    description: 'Updates an existing shift for the authenticated user\'s merchant. Only merchant administrators can update shifts. The merchant value cannot be modified. All fields are optional. End time must be after start time if provided.'
+    description:
+      "Updates an existing shift for the authenticated user's merchant. Only merchant administrators can update shifts. The merchant value cannot be modified. All fields are optional. End time must be after start time if provided.",
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: Number, 
+  @ApiParam({
+    name: 'id',
+    type: Number,
     description: 'Shift ID to update',
-    example: 1
+    example: 1,
   })
-  @ApiOkResponse({ 
+  @ApiOkResponse({
     description: 'Shift updated successfully',
     type: OneShiftResponseDto,
     schema: {
@@ -507,24 +585,25 @@ export class ShiftsController {
           status: 'active',
           merchant: {
             id: 1,
-            name: 'Restaurant ABC'
-          }
-        }
-      }
-    }
+            name: 'Restaurant ABC',
+          },
+        },
+      },
+    },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized - Invalid or missing authentication token',
     schema: {
       example: {
         statusCode: 401,
         message: 'Unauthorized',
-        error: 'Unauthorized'
-      }
-    }
+        error: 'Unauthorized',
+      },
+    },
   })
-  @ApiForbiddenResponse({ 
-    description: 'Forbidden - User must be associated with a merchant or can only update shifts from their own merchant',
+  @ApiForbiddenResponse({
+    description:
+      'Forbidden - User must be associated with a merchant or can only update shifts from their own merchant',
     schema: {
       examples: {
         noMerchant: {
@@ -532,31 +611,31 @@ export class ShiftsController {
           value: {
             statusCode: 403,
             message: 'User must be associated with a merchant to update shifts',
-            error: 'Forbidden'
-          }
+            error: 'Forbidden',
+          },
         },
         differentMerchant: {
           summary: 'Trying to update shift from different merchant',
           value: {
             statusCode: 403,
             message: 'You can only update shifts from your own merchant',
-            error: 'Forbidden'
-          }
-        }
-      }
-    }
+            error: 'Forbidden',
+          },
+        },
+      },
+    },
   })
-  @ApiNotFoundResponse({ 
+  @ApiNotFoundResponse({
     description: 'Shift not found',
     schema: {
       example: {
         statusCode: 404,
         message: 'Shift 999 not found',
-        error: 'Not Found'
-      }
-    }
+        error: 'Not Found',
+      },
+    },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid input data, ID format, or business rule violation',
     schema: {
       examples: {
@@ -565,54 +644,56 @@ export class ShiftsController {
           value: {
             statusCode: 400,
             message: 'Invalid shift ID',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         noFields: {
           summary: 'No fields provided for update',
           value: {
             statusCode: 400,
             message: 'At least one field must be provided for update',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         invalidTimeFormat: {
           summary: 'Invalid time format',
           value: {
             statusCode: 400,
-            message: 'Invalid start time format. Please provide a valid date string',
-            error: 'Bad Request'
-          }
+            message:
+              'Invalid start time format. Please provide a valid date string',
+            error: 'Bad Request',
+          },
         },
         invalidTimeOrder: {
           summary: 'Invalid time order',
           value: {
             statusCode: 400,
             message: 'End time must be after start time',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         invalidEnum: {
           summary: 'Invalid enum value',
           value: {
             statusCode: 400,
             message: 'role must be a valid enum value',
-            error: 'Bad Request'
-          }
-        }
-      }
-    }
+            error: 'Bad Request',
+          },
+        },
+      },
+    },
   })
-  @ApiBody({ 
+  @ApiBody({
     type: UpdateShiftDto,
-    description: 'Shift update data (all fields optional, merchantId cannot be modified)',
+    description:
+      'Shift update data (all fields optional, merchantId cannot be modified)',
     examples: {
       example1: {
         summary: 'Update end time only',
         description: 'Update only the end time of a shift',
         value: {
-          endTime: '2024-01-15T18:00:00Z'
-        }
+          endTime: '2024-01-15T18:00:00Z',
+        },
       },
       example2: {
         summary: 'Update multiple fields',
@@ -621,24 +702,24 @@ export class ShiftsController {
           startTime: '2024-01-15T09:00:00Z',
           endTime: '2024-01-15T17:00:00Z',
           role: 'cook',
-          status: 'active'
-        }
+          status: 'active',
+        },
       },
       example3: {
         summary: 'Remove end time',
         description: 'Set end time to null (ongoing shift)',
         value: {
-          endTime: null
-        }
+          endTime: null,
+        },
       },
       example4: {
         summary: 'Update role only',
         description: 'Change only the role of the shift',
         value: {
-          role: 'bartender'
-        }
-      }
-    }
+          role: 'bartender',
+        },
+      },
+    },
   })
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -647,34 +728,38 @@ export class ShiftsController {
   ): Promise<OneShiftResponseDto> {
     // Obtener el merchant_id del usuario autenticado
     const authenticatedUserMerchantId = req.user?.merchant?.id;
-    
+
     // Validar que el usuario tiene merchant_id
     if (!authenticatedUserMerchantId) {
-      throw new ForbiddenException('User must be associated with a merchant to update shifts');
+      throw new ForbiddenException(
+        'User must be associated with a merchant to update shifts',
+      );
     }
-    
+
     return this.shiftsService.update(id, dto, authenticatedUserMerchantId);
   }
 
   @Delete(':id')
-  @Roles(UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
   @Scopes(
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
+    Scope.ADMIN_PORTAL,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Delete a shift by ID',
-    description: 'Deletes a specific shift by its ID. Only merchant administrators can delete shifts from their own merchant. This is a logical delete operation (changes status to DELETED). Cannot delete shifts with active assignments.'
+    description:
+      'Deletes a specific shift by its ID. Only merchant administrators can delete shifts from their own merchant. This is a logical delete operation (changes status to DELETED). Cannot delete shifts with active assignments.',
   })
-  @ApiParam({ 
-    name: 'id', 
-    type: Number, 
+  @ApiParam({
+    name: 'id',
+    type: Number,
     description: 'Shift ID to delete',
-    example: 1
+    example: 1,
   })
-  @ApiOkResponse({ 
+  @ApiOkResponse({
     description: 'Shift deleted successfully',
     type: OneShiftResponseDto,
     schema: {
@@ -690,24 +775,25 @@ export class ShiftsController {
           status: 'deleted',
           merchant: {
             id: 1,
-            name: 'Restaurant ABC'
-          }
-        }
-      }
-    }
+            name: 'Restaurant ABC',
+          },
+        },
+      },
+    },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized - Invalid or missing authentication token',
     schema: {
       example: {
         statusCode: 401,
         message: 'Unauthorized',
-        error: 'Unauthorized'
-      }
-    }
+        error: 'Unauthorized',
+      },
+    },
   })
-  @ApiForbiddenResponse({ 
-    description: 'Forbidden - User must be associated with a merchant or can only delete shifts from their own merchant',
+  @ApiForbiddenResponse({
+    description:
+      'Forbidden - User must be associated with a merchant or can only delete shifts from their own merchant',
     schema: {
       examples: {
         noMerchant: {
@@ -715,21 +801,21 @@ export class ShiftsController {
           value: {
             statusCode: 403,
             message: 'User must be associated with a merchant to delete shifts',
-            error: 'Forbidden'
-          }
+            error: 'Forbidden',
+          },
         },
         differentMerchant: {
           summary: 'Trying to delete shift from different merchant',
           value: {
             statusCode: 403,
             message: 'You can only delete shifts from your own merchant',
-            error: 'Forbidden'
-          }
-        }
-      }
-    }
+            error: 'Forbidden',
+          },
+        },
+      },
+    },
   })
-  @ApiNotFoundResponse({ 
+  @ApiNotFoundResponse({
     description: 'Shift or merchant not found',
     schema: {
       examples: {
@@ -738,21 +824,21 @@ export class ShiftsController {
           value: {
             statusCode: 404,
             message: 'Shift 999 not found',
-            error: 'Not Found'
-          }
+            error: 'Not Found',
+          },
         },
         merchantNotFound: {
           summary: 'Merchant not found',
           value: {
             statusCode: 404,
             message: 'Merchant with ID 999 not found',
-            error: 'Not Found'
-          }
-        }
-      }
-    }
+            error: 'Not Found',
+          },
+        },
+      },
+    },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid ID format or value',
     schema: {
       examples: {
@@ -761,48 +847,51 @@ export class ShiftsController {
           value: {
             statusCode: 400,
             message: 'Invalid shift ID',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         negativeId: {
           summary: 'Negative or zero ID',
           value: {
             statusCode: 400,
             message: 'Invalid shift ID',
-            error: 'Bad Request'
-          }
+            error: 'Bad Request',
+          },
         },
         nonNumericId: {
           summary: 'Non-numeric ID',
           value: {
             statusCode: 400,
             message: 'Validation failed (numeric string is expected)',
-            error: 'Bad Request'
-          }
-        }
-      }
-    }
+            error: 'Bad Request',
+          },
+        },
+      },
+    },
   })
-  @ApiConflictResponse({ 
+  @ApiConflictResponse({
     description: 'Conflict - Cannot delete shift with active assignments',
     schema: {
       example: {
         statusCode: 409,
-        message: 'Cannot delete shift. There are 3 active shift assignment(s) associated with this shift. Please remove the assignments first.',
-        error: 'Conflict'
-      }
-    }
+        message:
+          'Cannot delete shift. There are 3 active shift assignment(s) associated with this shift. Please remove the assignments first.',
+        error: 'Conflict',
+      },
+    },
   })
   async remove(
     @Param('id', ParseIntPipe) id: number,
-    @Request() req: any
+    @Request() req: any,
   ): Promise<OneShiftResponseDto> {
     // Obtener el merchant_id del usuario autenticado
     const authenticatedUserMerchantId = req.user?.merchant?.id;
 
     // Validar que el usuario tiene merchant_id
     if (!authenticatedUserMerchantId) {
-      throw new ForbiddenException('User must be associated with a merchant to delete shifts');
+      throw new ForbiddenException(
+        'User must be associated with a merchant to delete shifts',
+      );
     }
 
     return this.shiftsService.remove(id, authenticatedUserMerchantId);

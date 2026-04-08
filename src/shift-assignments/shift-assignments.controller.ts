@@ -41,7 +41,6 @@ import { Scope } from 'src/users/constants/scope.enum';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { ShiftRole } from '../shifts/constants/shift-role.enum';
 import { ErrorResponse } from '../common/dtos/error-response.dto';
 
 @ApiTags('Shift Assignments')

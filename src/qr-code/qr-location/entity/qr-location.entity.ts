@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { QRMenu } from 'src/qr-code/qr-menu/entity/qr-menu.entity';
 import { QRMenuType } from 'src/qr-code/constants/qr-menu-type.enum';
-import { Table } from 'src/tables/entities/table.entity';
+import { Table } from 'src/dining-system/tables/entities/table.entity';
 
 @Entity({ name: 'qr_location' })
 export class QRLocation {

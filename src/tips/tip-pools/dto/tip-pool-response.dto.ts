@@ -22,16 +22,20 @@ export class BasicShiftInfoDto {
 export class TipPoolResponseDto {
   @ApiProperty() id: number;
   @ApiProperty() companyId: number;
-  @ApiProperty({ type: () => BasicCompanyInfoDto }) company: BasicCompanyInfoDto;
+  @ApiProperty({ type: () => BasicCompanyInfoDto })
+  company: BasicCompanyInfoDto;
   @ApiProperty() merchantId: number;
-  @ApiProperty({ type: () => BasicMerchantInfoDto }) merchant: BasicMerchantInfoDto;
+  @ApiProperty({ type: () => BasicMerchantInfoDto })
+  merchant: BasicMerchantInfoDto;
   @ApiProperty() shiftId: number;
-  @ApiProperty({ type: () => BasicShiftInfoDto }) shift: BasicShiftInfoDto;
+  @ApiProperty({ type: () => BasicShiftInfoDto }) shift!: BasicShiftInfoDto;
   @ApiProperty() name: string;
-  @ApiProperty({ enum: TipPoolDistributionType }) distributionType: TipPoolDistributionType;
+  @ApiProperty({ enum: TipPoolDistributionType })
+  distributionType: TipPoolDistributionType;
   @ApiProperty() totalAmount: number;
   @ApiProperty({ enum: TipPoolStatus }) status: TipPoolStatus;
-  @ApiProperty({ enum: TipPoolRecordStatus }) recordStatus: TipPoolRecordStatus;
+  @ApiProperty({ enum: TipPoolRecordStatus })
+  recordStatus!: TipPoolRecordStatus;
   @ApiProperty({ nullable: true }) closedAt: Date | null;
   @ApiProperty() createdAt: Date;
   @ApiProperty() updatedAt: Date;

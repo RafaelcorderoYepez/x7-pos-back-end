@@ -6,7 +6,7 @@ import { Repository, In } from 'typeorm';
 import { QRMenu } from '../qr-menu/entity/qr-menu.entity';
 import { Merchant } from 'src/merchants/entities/merchant.entity';
 import { QRLocation } from './entity/qr-location.entity';
-import { Table } from 'src/tables/entities/table.entity';
+import { Table } from 'src/dining-system/tables/entities/table.entity';
 import { CreateQRLocationDto } from './dto/create-qr-location.dto';
 import { OneQRLocationResponseDto } from './dto/qr-location-response.dto';
 import { QueryQRLocationDto } from './dto/query-qr-location.dto';
