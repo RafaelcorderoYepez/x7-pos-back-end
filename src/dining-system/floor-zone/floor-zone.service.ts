@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FloorZone } from './entity/floor-zone.entity';
 import { In, Repository } from 'typeorm';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { FloorPlan } from '../floor-plan/entity/floor-plan.entity';
 import { CreateFloorZoneDto } from './dto/create-floor-zone.dto';
 import { OneFloorZoneResponseDto } from './dto/floor-zone-response.dto';

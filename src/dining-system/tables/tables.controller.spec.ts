@@ -45,9 +45,21 @@ describe('TablesController', () => {
       capacity: 4,
       status: 'available',
       location: 'Near window',
+      rotation: 0,
+      shape: 'Circle',
+      pos_x: 0,
+      pos_y: 0,
       merchant: {
         id: 1,
         name: 'Test Merchant',
+      },
+      floorZone: {
+        id: 1,
+        name: 'Main Dining Area',
+      },
+      floorPlan: {
+        id: 1,
+        name: 'First Floor',
       },
     },
   };
@@ -96,6 +108,12 @@ describe('TablesController', () => {
       capacity: 4,
       status: 'available',
       location: 'Near window',
+      rotation: 0,
+      shape: 'Circle',
+      pos_x: 0,
+      pos_y: 0,
+      floorZone: 1,
+      floorPlan: 1,
     };
 
     it('should create a new table successfully', async () => {

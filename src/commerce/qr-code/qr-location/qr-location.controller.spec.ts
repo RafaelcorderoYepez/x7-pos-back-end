@@ -4,10 +4,10 @@ import { QRLocationController } from './qr-location.controller';
 import { QRLocationService } from './qr-location.service';
 import { QRMenu } from '../qr-menu/entity/qr-menu.entity';
 import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
-import { Table } from 'src/tables/entities/table.entity';
 import { QRMenuType } from '../constants/qr-menu-type.enum';
 import { OneQRLocationResponseDto } from './dto/qr-location-response.dto';
 import { PaginatedQRLocationResponseDto } from './dto/paginated-qr-location-response.dto';
+import { Table } from 'src/dining-system/tables/entities/table.entity';
 
 describe('QRLocationController', () => {
   let controller: QRLocationController;

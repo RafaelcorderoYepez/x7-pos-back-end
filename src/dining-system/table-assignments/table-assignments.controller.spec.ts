@@ -61,6 +61,7 @@ describe('TableAssignmentsController', () => {
       name: 'Juan Pérez',
       role: 'WAITER',
     },
+    status: 'active',
   };
 
   const mockOneTableAssignmentResponse: OneTableAssignmentResponseDto = {
@@ -113,6 +114,7 @@ describe('TableAssignmentsController', () => {
       shiftId: 1,
       tableId: 1,
       collaboratorId: 1,
+      status: 'active',
     };
 
     it('should create a new table assignment successfully', async () => {

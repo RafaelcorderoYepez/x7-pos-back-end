@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { Table } from 'src/dining-system/tables/entities/table.entity';
 import { FloorZone } from 'src/dining-system/floor-zone/entity/floor-zone.entity';
 

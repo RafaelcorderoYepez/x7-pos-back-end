@@ -4,17 +4,18 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { Repository, EntityManager, IsNull, Between } from 'typeorm';
+import { In } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, ForbiddenException, BadRequestException, ConflictException } from '@nestjs/common';
 import { TableAssignmentsService } from './table-assignments.service';
 import { TableAssignment } from './entities/table-assignment.entity';
-import { Shift } from '../restaurant-operations/shift/shifts/entities/shift.entity';
 import { Table } from '../tables/entities/table.entity';
-import { Collaborator } from '../hr/collaborators/entities/collaborator.entity';
 import { CreateTableAssignmentDto } from './dto/create-table-assignment.dto';
 import { UpdateTableAssignmentDto } from './dto/update-table-assignment.dto';
 import { GetTableAssignmentsQueryDto } from './dto/get-table-assignments-query.dto';
-import { ShiftRole } from '../restaurant-operations/shift/shifts/constants/shift-role.enum';
+import { Shift } from 'src/restaurant-operations/shift/shifts/entities/shift.entity';
+import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity';
+import { ShiftRole } from 'src/hr/collaborators/constants';
 
 describe('TableAssignmentsService', () => {
   let service: TableAssignmentsService;
@@ -144,6 +145,7 @@ describe('TableAssignmentsService', () => {
       shiftId: 1,
       tableId: 1,
       collaboratorId: 1,
+      status: 'active',
     };
 
     it('should create a table assignment successfully', async () => {
@@ -343,7 +345,11 @@ describe('TableAssignmentsService', () => {
 
       const result = await service.findAll(query, 1);
 
-      expect(tableAssignmentRepository.findAndCount).toHaveBeenCalled();
+      expect(tableAssignmentRepository.findAndCount).toHaveBeenCalledWith(expect.objectContaining({
+        where: expect.objectContaining({
+          status: In(['active', 'inactive']),
+        }),
+      }));
       expect(result.statusCode).toBe(200);
       expect(result.message).toBe('Table assignments retrieved successfully');
       expect(result.data).toHaveLength(1);
@@ -371,6 +377,12 @@ describe('TableAssignmentsService', () => {
         where: { id: 1 },
         relations: ['merchant'],
       });
+      expect(tableAssignmentRepository.findAndCount).toHaveBeenCalledWith(expect.objectContaining({
+        where: expect.objectContaining({
+          shiftId: 1,
+          status: In(['active', 'inactive']),
+        }),
+      }));
     });
 
     it('should filter by tableId', async () => {
@@ -402,7 +414,7 @@ describe('TableAssignmentsService', () => {
     it('should throw BadRequestException if page is invalid', async () => {
       // Use negative value since 0 is treated as falsy and defaults to 1
       const queryWithInvalidPage = { ...query, page: -1 };
-      
+
       await expect(service.findAll(queryWithInvalidPage, 1)).rejects.toThrow(
         BadRequestException,
       );
@@ -413,7 +425,7 @@ describe('TableAssignmentsService', () => {
 
     it('should throw BadRequestException if limit is invalid', async () => {
       const queryWithInvalidLimit = { ...query, limit: 101 };
-      
+
       await expect(service.findAll(queryWithInvalidLimit, 1)).rejects.toThrow(
         BadRequestException,
       );
@@ -424,7 +436,7 @@ describe('TableAssignmentsService', () => {
 
     it('should throw BadRequestException if assignedDate format is invalid', async () => {
       const queryWithInvalidDate = { ...query, assignedDate: 'invalid-date' };
-      
+
       await expect(service.findAll(queryWithInvalidDate, 1)).rejects.toThrow(
         BadRequestException,
       );
@@ -455,7 +467,7 @@ describe('TableAssignmentsService', () => {
       const result = await service.findOne(1, 1);
 
       expect(tableAssignmentRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 1 },
+        where: { id: 1, status: In(['active', 'inactive']) },
         relations: ['shift', 'shift.merchant', 'table', 'collaborator'],
       });
       expect(result.statusCode).toBe(200);
@@ -520,7 +532,10 @@ describe('TableAssignmentsService', () => {
 
       const result = await service.update(1, updateTableAssignmentDto, 1);
 
-      expect(tableAssignmentRepository.findOne).toHaveBeenCalledTimes(2);
+      expect(tableAssignmentRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 1, status: In(['active', 'inactive']) },
+        relations: ['shift', 'shift.merchant', 'table', 'collaborator'],
+      });
       expect(tableAssignmentRepository.update).toHaveBeenCalled();
       expect(result.statusCode).toBe(200);
       expect(result.message).toBe('Table assignment updated successfully');

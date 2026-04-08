@@ -79,12 +79,12 @@ export class UpdateTableDto {
   @ApiPropertyOptional({ example: 1, description: 'Floor Zone ID' })
   @IsNumber()
   @IsOptional()
-  floorZone: number;
+  floorZone?: number;
 
   @ApiPropertyOptional({ example: 1 })
   @IsNumber()
   @IsOptional()
-  floorPlan: number;
+  floorPlan?: number;
 
   @ApiPropertyOptional({ example: 1, description: 'Table Group ID (optional)' })
   @IsNumber()

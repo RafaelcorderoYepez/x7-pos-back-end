@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { QRLocationService } from './qr-location.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { QRLocation } from './entity/qr-location.entity';
-import { Table } from 'src/tables/entities/table.entity';
 import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { QRMenu } from '../qr-menu/entity/qr-menu.entity';
 import { QRMenuType } from '../constants/qr-menu-type.enum';
@@ -11,6 +10,7 @@ import { CreateQRLocationDto } from './dto/create-qr-location.dto';
 import { SelectQueryBuilder } from 'typeorm';
 import { Repository, In } from 'typeorm';
 import { UpdateQrLocationDto } from './dto/update-qr-location.dto';
+import { Table } from 'src/dining-system/tables/entities/table.entity';
 
 describe('QRLocationService', () => {
   let service: QRLocationService;
