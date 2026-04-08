@@ -12,7 +12,7 @@ import { CreateQROrderDto } from './dto/create-qr-order.dto';
 import { SelectQueryBuilder } from 'typeorm';
 import { Repository, In } from 'typeorm';
 import { UpdateQROrderDto } from './dto/update-qr-order.dto';
-import { Table } from 'src/dining-system/tables/entities/table.entity';
+import { Table } from 'src/restaurant-operations/dining-system/tables/entities/table.entity';
 
 describe('QROrderService', () => {
   let service: QROrderService;

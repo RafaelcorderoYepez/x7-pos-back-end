@@ -10,7 +10,7 @@ import { CreateQRLocationDto } from './dto/create-qr-location.dto';
 import { SelectQueryBuilder } from 'typeorm';
 import { Repository, In } from 'typeorm';
 import { UpdateQrLocationDto } from './dto/update-qr-location.dto';
-import { Table } from 'src/dining-system/tables/entities/table.entity';
+import { Table } from 'src/restaurant-operations/dining-system/tables/entities/table.entity';
 
 describe('QRLocationService', () => {
   let service: QRLocationService;

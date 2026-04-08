@@ -7,7 +7,7 @@ import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { QRMenuType } from '../constants/qr-menu-type.enum';
 import { OneQRLocationResponseDto } from './dto/qr-location-response.dto';
 import { PaginatedQRLocationResponseDto } from './dto/paginated-qr-location-response.dto';
-import { Table } from 'src/dining-system/tables/entities/table.entity';
+import { Table } from 'src/restaurant-operations/dining-system/tables/entities/table.entity';
 
 describe('QRLocationController', () => {
   let controller: QRLocationController;

@@ -8,7 +8,7 @@ import { QRLocation } from 'src/commerce/qr-code/qr-location/entity/qr-location.
 import { Customer } from 'src/core/business-partners/customers/entities/customer.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { QROrderStatus } from '../constants/qr-order-status.enum';
-import { Table } from 'src/dining-system/tables/entities/table.entity';
+import { Table } from 'src/restaurant-operations/dining-system/tables/entities/table.entity';
 
 describe('QROrderController', () => {
   let controller: QROrderController;
