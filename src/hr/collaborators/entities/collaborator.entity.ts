@@ -14,9 +14,9 @@ import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ShiftRole } from '../constants/shift-role.enum';
 import { CollaboratorStatus } from '../constants/collaborator-status.enum';
 import { ShiftAssignment } from '../../../restaurant-operations/shift/shift-assignments/entities/shift-assignment.entity';
+import { TableAssignment } from 'src/dining-system/table-assignments/entities/table-assignment.entity';
 import { CashDrawer } from '../../../restaurant-operations/cashdrawer/cash-drawers/entities/cash-drawer.entity';
 import { Order } from '../../../orders/entities/order.entity';
-import { TableAssignment } from 'src/dining-system/table-assignments/entities/table-assignment.entity';
 
 @Entity('collaborator')
 @Index(['user_id'], { unique: true })

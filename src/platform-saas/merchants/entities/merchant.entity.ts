@@ -18,13 +18,13 @@ import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity'
 import { Product } from 'src/inventory/products-inventory/products/entities/product.entity';
 import { Shift } from 'src/restaurant-operations/shift/shifts/entities/shift.entity';
 import { ShiftAssignment } from 'src/restaurant-operations/shift/shift-assignments/entities/shift-assignment.entity';
+import { TableAssignment } from 'src/dining-system/table-assignments/entities/table-assignment.entity';
 import { CashDrawer } from 'src/restaurant-operations/cashdrawer/cash-drawers/entities/cash-drawer.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { Movement } from 'src/inventory/products-inventory/stocks/movements/entities/movement.entity';
 import { LoyaltyProgram } from 'src/growth/loyalty/loyalty-programs/entities/loyalty-program.entity';
 import { PurchaseOrder } from 'src/inventory/products-inventory/purchase-order/entities/purchase-order.entity';
 import { Location } from 'src/inventory/products-inventory/stocks/locations/entities/location.entity';
-import { TableAssignment } from 'src/dining-system/table-assignments/entities/table-assignment.entity';
 
 @Entity()
 export class Merchant {
