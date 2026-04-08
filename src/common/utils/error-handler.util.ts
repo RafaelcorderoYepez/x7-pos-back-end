@@ -213,6 +213,18 @@ export class ErrorHandler {
     throw new NotFoundException(message);
   }
 
+  static floorPlanNotFound(
+    message: string = ErrorMessage.FLOOR_PLAN_NOT_FOUND,
+  ): never {
+    throw new NotFoundException(message);
+  }
+
+  static floorZoneNotFound(
+    message: string = ErrorMessage.FLOOR_ZONE_NOT_FOUND,
+  ): never {
+    throw new NotFoundException(message);
+  }
+
   static userNotFound(message: string = ErrorMessage.USER_NOT_FOUND): never {
     throw new NotFoundException(message);
   }

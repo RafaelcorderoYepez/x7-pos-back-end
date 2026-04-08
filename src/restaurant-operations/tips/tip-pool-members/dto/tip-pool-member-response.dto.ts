@@ -15,22 +15,27 @@ export class BasicCollaboratorInfoDto {
 export class TipPoolMemberResponseDto {
   @ApiProperty() id: number;
   @ApiProperty() tipPoolId: number;
-  @ApiProperty({ type: () => BasicTipPoolInfoDto }) tipPool: BasicTipPoolInfoDto;
+  @ApiProperty({ type: () => BasicTipPoolInfoDto })
+  tipPool: BasicTipPoolInfoDto;
   @ApiProperty() collaboratorId: number;
-  @ApiProperty({ type: () => BasicCollaboratorInfoDto }) collaborator: BasicCollaboratorInfoDto;
+  @ApiProperty({ type: () => BasicCollaboratorInfoDto })
+  collaborator: BasicCollaboratorInfoDto;
   @ApiProperty() role: string;
   @ApiProperty() weight: number;
-  @ApiProperty({ enum: TipPoolMemberRecordStatus }) recordStatus: TipPoolMemberRecordStatus;
+  @ApiProperty({ enum: TipPoolMemberRecordStatus })
+  recordStatus: TipPoolMemberRecordStatus;
   @ApiProperty() createdAt: Date;
   @ApiProperty() updatedAt: Date;
 }
 
 export class OneTipPoolMemberResponseDto extends SuccessResponse {
-  @ApiProperty({ type: TipPoolMemberResponseDto }) data: TipPoolMemberResponseDto;
+  @ApiProperty({ type: TipPoolMemberResponseDto })
+  data: TipPoolMemberResponseDto;
 }
 
 export class PaginatedTipPoolMemberResponseDto extends SuccessResponse {
-  @ApiProperty({ type: [TipPoolMemberResponseDto] }) data: TipPoolMemberResponseDto[];
+  @ApiProperty({ type: [TipPoolMemberResponseDto] })
+  data: TipPoolMemberResponseDto[];
   @ApiProperty() paginationMeta: {
     page: number;
     limit: number;

@@ -16,7 +16,10 @@ import { TipPoolMemberRecordStatus } from '../constants/tip-pool-member-record-s
 @Entity('tip_pool_members')
 @Index(['tip_pool_id', 'collaborator_id'])
 export class TipPoolMember {
-  @ApiProperty({ example: 1, description: 'Unique identifier of the tip pool member' })
+  @ApiProperty({
+    example: 1,
+    description: 'Unique identifier of the tip pool member',
+  })
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
@@ -36,11 +39,17 @@ export class TipPoolMember {
   @JoinColumn({ name: 'collaborator_id' })
   collaborator: Collaborator;
 
-  @ApiProperty({ example: 'waiter', description: 'Role of the member in the pool' })
+  @ApiProperty({
+    example: 'waiter',
+    description: 'Role of the member in the pool',
+  })
   @Column({ type: 'varchar', length: 50 })
   role: string;
 
-  @ApiProperty({ example: 10.5, description: 'Weight or points for distribution' })
+  @ApiProperty({
+    example: 10.5,
+    description: 'Weight or points for distribution',
+  })
   @Column({ type: 'decimal', precision: 5, scale: 2 })
   weight: number;
 

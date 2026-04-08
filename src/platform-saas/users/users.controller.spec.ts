@@ -9,7 +9,7 @@ import {
   OneUserResponseDto,
   AllUsersResponseDto,
 } from './dtos/user-response.dto';
-import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
+import { AuthenticatedUser } from '@/auth/interfaces/authenticated-user.interface';
 
 describe('UsersController', () => {
   let controller: UsersController;

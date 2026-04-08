@@ -7,9 +7,6 @@ import { AcountPayableModule } from './acount-payable/acount-payable.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigurationModule } from './core/configuration/configuration.module';
 import { CoreModule } from './core/core.module';
-import { MerchantOvertimeRuleModule } from './core/configuration/merchant-overtime-rule/merchant-overtime-rule.module';
-import { MerchantPayrollRuleModule } from './core/configuration/merchant-payroll-rule/merchant-payroll-rule.module';
-import { MerchantTaxRuleModule } from './core/configuration/merchant-tax-rule/merchant-tax-rule.module';
 import { ReceiptItemModule } from './core/billing-transactions/receipt-item/receipt-item.module';
 import { ReceiptTaxModule } from './core/billing-transactions/receipt-tax/receipt-tax.module';
 import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.module';
@@ -23,8 +20,8 @@ import { PayrollEntriesModule } from './payroll/payroll-entries/payroll-entries.
 import { PayrollRunsModule } from './payroll/payroll-runs/payroll-runs.module';
 import { PayrollTaxDetailsModule } from './payroll/payroll-tax-details/payroll-tax-details.module';
 import { RestaurantOperationsModule } from './restaurant-operations/restaurant-operations.module';
-import { TableAssignmentsModule } from './table-assignments/table-assignments.module';
-import { TablesModule } from './tables/tables.module';
+import { TableAssignmentsModule } from './dining-system/table-assignments/table-assignments.module';
+import { TablesModule } from './dining-system/tables/tables.module';
 import { PlatformSaasModule } from './platform-saas/platform-saas.module';
 import { CommerceModule } from './commerce/commerce.module';
 import { GrowthModule } from './growth/growth.module';
@@ -115,7 +112,7 @@ import { SupplierCreditNote } from './acount-payable/supplier-credit-notes/entit
 import { SupplierPayment } from './acount-payable/supplier-payments/entities/supplier-payment.entity';
 import { SupplierPaymentAllocation } from './acount-payable/supplier_payment_allocations/entities/supplier_payment_allocation.entity';
 import { SupplierPaymentItem } from './acount-payable/supplier-payment-items/entities/supplier-payment-item.entity';
-import { Table } from './tables/entities/table.entity';
+import { Table } from './dining-system/tables/entities/table.entity';
 import { TableAssignment } from './table-assignments/entities/table-assignment.entity';
 import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.entity';
 import { Tip } from './restaurant-operations/tips/tips/entities/tip.entity';
@@ -125,6 +122,8 @@ import { TipPoolMember } from './restaurant-operations/tips/tip-pool-members/ent
 import { TipSettlement } from './restaurant-operations/tips/tip-settlements/entities/tip-settlement.entity';
 import { User } from './platform-saas/users/entities/user.entity';
 import { Variant } from './inventory/products-inventory/variants/entities/variant.entity';
+import { FloorZone } from './dining-system/floor-zone/entity/floor-zone.entity';
+import { FloorPlan } from './dining-system/floor-plan/entity/floor-plan.entity';
 
 @Module({
   imports: [
@@ -237,6 +236,10 @@ import { Variant } from './inventory/products-inventory/variants/entities/varian
           TipPoolMember,
           TipSettlement,
           User,
+          Variant,
+          MerchantTaxRule,
+          FloorZone,
+          FloorPlan,
         ],
         synchronize: true,
       }),
@@ -265,4 +268,4 @@ import { Variant } from './inventory/products-inventory/variants/entities/varian
     GrowthModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

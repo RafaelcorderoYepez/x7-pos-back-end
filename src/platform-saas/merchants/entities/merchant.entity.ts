@@ -13,10 +13,9 @@ import { CustomerSummaryDto } from 'src/core/business-partners/customers/dtos/cu
 import { ApiProperty } from '@nestjs/swagger';
 import { UserSummaryDto } from 'src/platform-saas/users/dtos/user-summary.dto';
 import { Category } from 'src/inventory/products-inventory/category/entities/category.entity';
-import { Table } from 'src/tables/entities/table.entity';
+import { Table } from 'src/dining-system/tables/entities/table.entity';
 import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity';
 import { Product } from 'src/inventory/products-inventory/products/entities/product.entity';
-import { Supplier } from 'src/core/business-partners/suppliers/entities/supplier.entity';
 import { Shift } from 'src/restaurant-operations/shift/shifts/entities/shift.entity';
 import { ShiftAssignment } from 'src/restaurant-operations/shift/shift-assignments/entities/shift-assignment.entity';
 import { TableAssignment } from 'src/table-assignments/entities/table-assignment.entity';
@@ -139,7 +138,6 @@ export class Merchant {
   })
   @OneToMany(() => Product, (Product) => Product.merchant)
   products: Product[];
-
 
   @ApiProperty({
     type: () => Movement,

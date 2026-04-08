@@ -29,7 +29,10 @@ import {
   ApiForbiddenResponse,
   ApiQuery,
 } from '@nestjs/swagger';
-import { OneTipResponseDto, PaginatedTipResponseDto } from './dto/tip-response.dto';
+import {
+  OneTipResponseDto,
+  PaginatedTipResponseDto,
+} from './dto/tip-response.dto';
 import { GetTipQueryDto } from './dto/get-tip-query.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/platform-saas/users/constants/role.enum';
@@ -59,19 +62,30 @@ export class TipsController {
   )
   @ApiOperation({
     summary: 'Create a new Tip',
-    description: "Creates a new tip for the authenticated user's merchant. Order must belong to the merchant.",
+    description:
+      "Creates a new tip for the authenticated user's merchant. Order must belong to the merchant.",
   })
   @ApiCreatedResponse({
     description: 'Tip created successfully',
     type: OneTipResponseDto,
   })
-  @ApiBadRequestResponse({ description: 'Invalid input data or validation errors', type: ErrorResponse })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized - Invalid or missing authentication token', type: ErrorResponse })
-  @ApiForbiddenResponse({
-    description: 'Forbidden - You must be associated with a merchant to create tips',
+  @ApiBadRequestResponse({
+    description: 'Invalid input data or validation errors',
     type: ErrorResponse,
   })
-  @ApiNotFoundResponse({ description: 'Company, merchant, or order not found', type: ErrorResponse })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized - Invalid or missing authentication token',
+    type: ErrorResponse,
+  })
+  @ApiForbiddenResponse({
+    description:
+      'Forbidden - You must be associated with a merchant to create tips',
+    type: ErrorResponse,
+  })
+  @ApiNotFoundResponse({
+    description: 'Company, merchant, or order not found',
+    type: ErrorResponse,
+  })
   @ApiBody({
     type: CreateTipDto,
     description: 'Tip creation data',
@@ -82,7 +96,7 @@ export class TipsController {
           companyId: 1,
           merchantId: 1,
           orderId: 1,
-          amount: 5.50,
+          amount: 5.5,
           method: TipMethod.CARD,
           status: TipStatus.PENDING,
         },
@@ -94,7 +108,7 @@ export class TipsController {
           merchantId: 1,
           orderId: 1,
           paymentId: 1,
-          amount: 10.00,
+          amount: 10.0,
           method: TipMethod.ONLINE,
           status: TipStatus.SETTLED,
         },
@@ -117,26 +131,84 @@ export class TipsController {
   )
   @ApiOperation({
     summary: 'Get all Tips with pagination and filters',
-    description: "Retrieves a paginated list of tips for the authenticated user's merchant.",
+    description:
+      "Retrieves a paginated list of tips for the authenticated user's merchant.",
   })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (minimum 1)', example: 1 })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page (1-100)', example: 10 })
-  @ApiQuery({ name: 'companyId', required: false, type: Number, description: 'Filter by company ID' })
-  @ApiQuery({ name: 'merchantId', required: false, type: Number, description: 'Filter by merchant ID' })
-  @ApiQuery({ name: 'orderId', required: false, type: Number, description: 'Filter by order ID' })
-  @ApiQuery({ name: 'paymentId', required: false, type: Number, description: 'Filter by payment ID' })
-  @ApiQuery({ name: 'method', required: false, enum: TipMethod, description: 'Filter by method' })
-  @ApiQuery({ name: 'status', required: false, enum: TipStatus, description: 'Filter by status' })
-  @ApiQuery({ name: 'createdDate', required: false, type: String, description: 'Filter by creation date (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'sortBy', required: false, enum: ['amount', 'status', 'createdAt', 'updatedAt'] })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (minimum 1)',
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (1-100)',
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'companyId',
+    required: false,
+    type: Number,
+    description: 'Filter by company ID',
+  })
+  @ApiQuery({
+    name: 'merchantId',
+    required: false,
+    type: Number,
+    description: 'Filter by merchant ID',
+  })
+  @ApiQuery({
+    name: 'orderId',
+    required: false,
+    type: Number,
+    description: 'Filter by order ID',
+  })
+  @ApiQuery({
+    name: 'paymentId',
+    required: false,
+    type: Number,
+    description: 'Filter by payment ID',
+  })
+  @ApiQuery({
+    name: 'method',
+    required: false,
+    enum: TipMethod,
+    description: 'Filter by method',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: TipStatus,
+    description: 'Filter by status',
+  })
+  @ApiQuery({
+    name: 'createdDate',
+    required: false,
+    type: String,
+    description: 'Filter by creation date (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: ['amount', 'status', 'createdAt', 'updatedAt'],
+  })
   @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'] })
   @ApiOkResponse({
     description: 'Paginated list of tips retrieved successfully',
     type: PaginatedTipResponseDto,
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized', type: ErrorResponse })
-  @ApiForbiddenResponse({ description: 'Forbidden - User must be associated with a merchant', type: ErrorResponse })
-  @ApiBadRequestResponse({ description: 'Invalid query parameters', type: ErrorResponse })
+  @ApiForbiddenResponse({
+    description: 'Forbidden - User must be associated with a merchant',
+    type: ErrorResponse,
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid query parameters',
+    type: ErrorResponse,
+  })
   async findAll(@Query() query: GetTipQueryDto, @Request() req: any) {
     const authenticatedUserMerchantId = req.user?.merchant?.id;
     return this.tipsService.findAll(query, authenticatedUserMerchantId);
@@ -153,7 +225,8 @@ export class TipsController {
   )
   @ApiOperation({
     summary: 'Get a Tip by ID',
-    description: 'Retrieves a specific tip by its ID. Users can only access tips from their own merchant.',
+    description:
+      'Retrieves a specific tip by its ID. Users can only access tips from their own merchant.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Tip ID' })
   @ApiOkResponse({
@@ -180,7 +253,8 @@ export class TipsController {
   )
   @ApiOperation({
     summary: 'Update a Tip by ID',
-    description: 'Updates an existing tip. Users can only update tips from their own merchant. All fields are optional.',
+    description:
+      'Updates an existing tip. Users can only update tips from their own merchant. All fields are optional.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Tip ID to update' })
   @ApiOkResponse({
@@ -190,7 +264,10 @@ export class TipsController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized', type: ErrorResponse })
   @ApiForbiddenResponse({ description: 'Forbidden', type: ErrorResponse })
   @ApiNotFoundResponse({ description: 'Tip not found', type: ErrorResponse })
-  @ApiBadRequestResponse({ description: 'Invalid input or ID', type: ErrorResponse })
+  @ApiBadRequestResponse({
+    description: 'Invalid input or ID',
+    type: ErrorResponse,
+  })
   @ApiBody({
     type: UpdateTipDto,
     description: 'Tip update data (all fields optional)',
@@ -215,7 +292,8 @@ export class TipsController {
   )
   @ApiOperation({
     summary: 'Soft delete a Tip by ID',
-    description: 'Performs a soft delete by setting the record status to deleted.',
+    description:
+      'Performs a soft delete by setting the record status to deleted.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Tip ID to delete' })
   @ApiOkResponse({
@@ -226,7 +304,10 @@ export class TipsController {
   @ApiForbiddenResponse({ description: 'Forbidden', type: ErrorResponse })
   @ApiNotFoundResponse({ description: 'Tip not found', type: ErrorResponse })
   @ApiBadRequestResponse({ description: 'Invalid ID', type: ErrorResponse })
-  @ApiConflictResponse({ description: 'Tip is already deleted', type: ErrorResponse })
+  @ApiConflictResponse({
+    description: 'Tip is already deleted',
+    type: ErrorResponse,
+  })
   async remove(@Param('id', ParseIntPipe) id: number, @Request() req: any) {
     const authenticatedUserMerchantId = req.user?.merchant?.id;
     return this.tipsService.remove(id, authenticatedUserMerchantId);

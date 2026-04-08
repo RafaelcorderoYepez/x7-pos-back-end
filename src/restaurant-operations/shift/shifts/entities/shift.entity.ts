@@ -20,45 +20,48 @@ export class Shift {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({ example: 1, description: 'Merchant ID associated with the shift' })
+  @ApiProperty({
+    example: 1,
+    description: 'Merchant ID associated with the shift',
+  })
   @Column()
   merchantId: number;
 
-  @ApiProperty({ 
-    example: '2024-01-15T08:00:00Z', 
-    description: 'Start time of the shift' 
+  @ApiProperty({
+    example: '2024-01-15T08:00:00Z',
+    description: 'Start time of the shift',
   })
   @Column({ type: 'timestamp' })
   startTime: Date;
 
-  @ApiProperty({ 
-    example: '2024-01-15T16:00:00Z', 
-    description: 'End time of the shift' 
+  @ApiProperty({
+    example: '2024-01-15T16:00:00Z',
+    description: 'End time of the shift',
   })
   @Column({ type: 'timestamp', nullable: true })
   endTime?: Date;
 
-  @ApiProperty({ 
+  @ApiProperty({
     enum: ShiftRole,
     example: ShiftRole.WAITER,
-    description: 'Role of the person working the shift' 
+    description: 'Role of the person working the shift',
   })
-  @Column({ 
-    type: 'enum', 
+  @Column({
+    type: 'enum',
     enum: ShiftRole,
-    default: ShiftRole.WAITER
+    default: ShiftRole.WAITER,
   })
   role: ShiftRole;
 
-  @ApiProperty({ 
+  @ApiProperty({
     enum: ShiftStatus,
     example: ShiftStatus.ACTIVE,
-    description: 'Current status of the shift' 
+    description: 'Current status of the shift',
   })
-  @Column({ 
-    type: 'enum', 
+  @Column({
+    type: 'enum',
     enum: ShiftStatus,
-    default: ShiftStatus.ACTIVE
+    default: ShiftStatus.ACTIVE,
   })
   status: ShiftStatus;
 

@@ -4,7 +4,7 @@ import { QRLocationController } from './qr-location.controller';
 import { QRLocationService } from './qr-location.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QRMenu } from '../qr-menu/entity/qr-menu.entity';
-import { Table } from 'src/tables/entities/table.entity';
+import { Table } from 'src/dining-system/tables/entities/table.entity';
 import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { QRLocation } from './entity/qr-location.entity';
 
