@@ -5,7 +5,7 @@ import { FloorPlanService } from './floor-plan.service';
 import { Table } from '../tables/entities/table.entity';
 import { FloorPlan } from './entity/floor-plan.entity';
 import { FloorZone } from '../floor-zone/entity/floor-zone.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({

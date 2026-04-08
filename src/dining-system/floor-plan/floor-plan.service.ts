@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FloorPlan } from '../floor-plan/entity/floor-plan.entity';
 import { In, Repository } from 'typeorm';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { CreateFloorPlanDto } from './dto/create-floor-plan.dto';
 import { OneFloorPlanResponseDto } from './dto/floor-plan-response.dto';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';

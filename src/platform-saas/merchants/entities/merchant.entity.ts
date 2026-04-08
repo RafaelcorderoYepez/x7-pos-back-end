@@ -18,7 +18,7 @@ import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity'
 import { Product } from 'src/inventory/products-inventory/products/entities/product.entity';
 import { Shift } from 'src/restaurant-operations/shift/shifts/entities/shift.entity';
 import { ShiftAssignment } from 'src/restaurant-operations/shift/shift-assignments/entities/shift-assignment.entity';
-import { TableAssignment } from 'src/table-assignments/entities/table-assignment.entity';
+import { TableAssignment } from 'src/dining-system/table-assignments/entities/table-assignment.entity';
 import { CashDrawer } from 'src/restaurant-operations/cashdrawer/cash-drawers/entities/cash-drawer.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { Movement } from 'src/inventory/products-inventory/stocks/movements/entities/movement.entity';
