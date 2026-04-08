@@ -6,7 +6,7 @@ import { In, Repository } from 'typeorm';
 import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { QRLocation } from '../qr-location/entity/qr-location.entity';
 import { Customer } from 'src/core/business-partners/customers/entities/customer.entity';
-import { Table } from 'src/dining-system/tables/entities/table.entity';
+import { Table } from 'src/restaurant-operations/dining-system/tables/entities/table.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { CreateQROrderDto } from './dto/create-qr-order.dto';
 import { OneQROrderResponseDto } from './dto/qr-order-response.dto';

@@ -16,28 +16,7 @@ import {
 import { Type } from 'class-transformer';
 import { JournalEntryStatus } from '../constants/journal-entry-status.enum';
 import { JournalEntryReferenceType } from '../constants/journal-entry-reference-type.enum';
-
-export class CreateJournalEntryLineDto {
-    @ApiProperty({ example: 1, description: 'Ledger Account ID' })
-    @IsNumber()
-    @IsPositive()
-    account_id: number;
-
-    @ApiProperty({ example: 1000.0, description: 'Debit amount (use 0 for credit lines)' })
-    @IsNumber()
-    @Min(0)
-    debit: number;
-
-    @ApiProperty({ example: 0.0, description: 'Credit amount (use 0 for debit lines)' })
-    @IsNumber()
-    @Min(0)
-    credit: number;
-
-    @ApiPropertyOptional({ example: 'Cash payment received', description: 'Line description' })
-    @IsOptional()
-    @IsString()
-    description?: string;
-}
+import { CreateJournalEntryLineDto } from '../../journal-entry-line/dto/create-journal-entry-line.dto';
 
 export class CreateJournalEntryDto {
     @ApiProperty({ example: 'JE-2024-0001', description: 'Unique entry number' })

@@ -5,7 +5,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { QROrder } from './entity/qr-order.entity';
 import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { Customer } from 'src/core/business-partners/customers/entities/customer.entity';
-import { Table } from 'src/tables/entities/table.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { QRLocation } from '../qr-location/entity/qr-location.entity';
 import { QROrderStatus } from '../constants/qr-order-status.enum';
@@ -13,6 +12,7 @@ import { CreateQROrderDto } from './dto/create-qr-order.dto';
 import { SelectQueryBuilder } from 'typeorm';
 import { Repository, In } from 'typeorm';
 import { UpdateQROrderDto } from './dto/update-qr-order.dto';
+import { Table } from 'src/restaurant-operations/dining-system/tables/entities/table.entity';
 
 describe('QROrderService', () => {
   let service: QROrderService;
