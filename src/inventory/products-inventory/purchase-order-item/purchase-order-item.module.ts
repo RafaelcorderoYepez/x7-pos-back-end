@@ -21,7 +21,6 @@ import { VariantsModule } from '../variants/variants.module';
       Supplier,
       Merchant,
     ]),
-    forwardRef(() => PurchaseOrderItemModule),
     forwardRef(() => ProductsModule),
     forwardRef(() => VariantsModule),
   ],

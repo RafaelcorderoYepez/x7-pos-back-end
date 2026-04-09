@@ -855,7 +855,7 @@ describe('ItemsService', () => {
       expect(itemToDelete.isActive).toBe(false);
       expect(itemRepo.save).toHaveBeenCalledWith(itemToDelete);
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Item Deleted successfully',
         data: {
           id: inactiveItem.id,

@@ -91,9 +91,11 @@ export class JournalEntryService {
       case 'Created':
         return { statusCode: 201, message: 'Journal Entry Created successfully', data };
       case 'Updated':
-        return { statusCode: 201, message: 'Journal Entry Updated successfully', data };
+        return { statusCode: 200, message: 'Journal Entry Updated successfully', data };
       case 'Deleted':
-        return { statusCode: 201, message: 'Journal Entry Deleted successfully', data };
+        return { statusCode: 200, message: 'Journal Entry Deleted successfully', data };
+      case 'Voided':
+        return { statusCode: 200, message: 'Journal Entry Voided successfully', data };
       default:
         return { statusCode: 200, message: 'Journal Entry retrieved successfully', data };
     }

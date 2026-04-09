@@ -534,7 +534,7 @@ describe('LoyaltyCustomerService', () => {
         'Updated',
       );
       expect(result.message).toBe('Loyalty Customer Updated successfully');
-      expect(result.statusCode).toBe(201);
+      expect(result.statusCode).toBe(200);
     });
 
     it('should return a deleted loyalty customer successfully', async () => {
@@ -548,7 +548,7 @@ describe('LoyaltyCustomerService', () => {
         'Deleted',
       );
       expect(result.message).toBe('Loyalty Customer Deleted successfully');
-      expect(result.statusCode).toBe(201);
+      expect(result.statusCode).toBe(200);
     });
 
     it('should throw NotFoundException if loyalty customer not found', async () => {
@@ -613,7 +613,7 @@ describe('LoyaltyCustomerService', () => {
     };
 
     const expectedResponse = {
-      statusCode: 201,
+      statusCode: 200,
       message: 'Loyalty Customer Updated successfully',
       data: {
         id: updatedLoyaltyCustomer.id,
@@ -784,7 +784,7 @@ describe('LoyaltyCustomerService', () => {
     };
 
     const expectedResponse = {
-      statusCode: 201,
+      statusCode: 200,
       message: 'Loyalty Customer Deleted successfully',
       data: {
         id: mockLoyaltyCustomer.id,
