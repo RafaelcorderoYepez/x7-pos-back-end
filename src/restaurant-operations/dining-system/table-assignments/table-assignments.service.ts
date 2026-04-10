@@ -10,7 +10,7 @@ import { Repository, EntityManager, Between, IsNull, In } from 'typeorm';
 import { TableAssignment } from './entities/table-assignment.entity';
 import { Shift } from 'src/restaurant-operations/shift/shifts/entities/shift.entity';
 import { Table } from '../tables/entities/table.entity';
-import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity';
+import { Collaborator } from 'src/finance-hr/hr/collaborators/entities/collaborator.entity';
 import { CreateTableAssignmentDto } from './dto/create-table-assignment.dto';
 import { UpdateTableAssignmentDto } from './dto/update-table-assignment.dto';
 import { GetTableAssignmentsQueryDto } from './dto/get-table-assignments-query.dto';
@@ -438,8 +438,13 @@ export class TableAssignmentsService {
 
     // 5. Update the assignment
     const updateData: any = {};
+
     if (dto.releasedAt !== undefined) {
       updateData.releasedAt = dto.releasedAt ? new Date(dto.releasedAt) : null;
+    }
+
+    if (dto.status !== undefined) {
+      updateData.status = dto.status;
     }
 
     await this.tableAssignmentRepo.update(id, updateData);

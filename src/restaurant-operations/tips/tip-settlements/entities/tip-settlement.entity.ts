@@ -8,7 +8,7 @@ import {
   Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Collaborator } from '../../../../hr/collaborators/entities/collaborator.entity';
+import { Collaborator } from 'src/finance-hr/hr/collaborators/entities/collaborator.entity';
 import { Shift } from '../../../shift/shifts/entities/shift.entity';
 import { User } from '../../../../platform-saas/users/entities/user.entity';
 import { SettlementMethod } from '../constants/settlement-method.enum';

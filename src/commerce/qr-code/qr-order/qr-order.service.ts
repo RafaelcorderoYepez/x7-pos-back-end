@@ -35,7 +35,7 @@ export class QROrderService {
 
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
-  ) { }
+  ) {}
 
   async create(dto: CreateQROrderDto): Promise<OneQROrderResponseDto> {
     if (dto.merchant && !Number.isInteger(dto.merchant)) {

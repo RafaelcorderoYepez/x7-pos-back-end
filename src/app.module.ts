@@ -3,22 +3,22 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AcountPayableModule } from './acount-payable/acount-payable.module';
+import { AcountPayableModule } from './finance-hr/acount-payable/acount-payable.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigurationModule } from './core/configuration/configuration.module';
 import { CoreModule } from './core/core.module';
 import { ReceiptItemModule } from './core/billing-transactions/receipt-item/receipt-item.module';
 import { ReceiptTaxModule } from './core/billing-transactions/receipt-tax/receipt-tax.module';
 import { ReceiptsModule } from './core/billing-transactions/receipts/receipts.module';
-import { HrModule } from './hr/hr.module';
+import { HrModule } from './finance-hr/hr/hr.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { MailModule } from './mail/mail.module';
 import { OrderItemModule } from './order-item/order-item.module';
 import { OrdersModule } from './orders/orders.module';
-import { PayrollAdjustmentsModule } from './payroll/payroll-adjustments/payroll-adjustments.module';
-import { PayrollEntriesModule } from './payroll/payroll-entries/payroll-entries.module';
-import { PayrollRunsModule } from './payroll/payroll-runs/payroll-runs.module';
-import { PayrollTaxDetailsModule } from './payroll/payroll-tax-details/payroll-tax-details.module';
+import { PayrollAdjustmentsModule } from './finance-hr/payroll/payroll-adjustments/payroll-adjustments.module';
+import { PayrollEntriesModule } from './finance-hr/payroll/payroll-entries/payroll-entries.module';
+import { PayrollRunsModule } from './finance-hr/payroll/payroll-runs/payroll-runs.module';
+import { PayrollTaxDetailsModule } from './finance-hr/payroll/payroll-tax-details/payroll-tax-details.module';
 import { RestaurantOperationsModule } from './restaurant-operations/restaurant-operations.module';
 import { PlatformSaasModule } from './platform-saas/platform-saas.module';
 import { CommerceModule } from './commerce/commerce.module';
@@ -30,8 +30,8 @@ import { CashDrawerHistory } from './restaurant-operations/cashdrawer/cash-drawe
 import { CashTipMovement } from './restaurant-operations/tips/cash-tip-movements/entities/cash-tip-movement.entity';
 import { CashTransaction } from './restaurant-operations/cashdrawer/cash-transactions/entities/cash-transaction.entity';
 import { Category } from './inventory/products-inventory/category/entities/category.entity';
-import { Collaborator } from './hr/collaborators/entities/collaborator.entity';
-import { CollaboratorContract } from './hr/collaborator-contracts/entities/collaborator-contract.entity';
+import { Collaborator } from './finance-hr/hr/collaborators/entities/collaborator.entity';
+import { CollaboratorContract } from './finance-hr/hr/collaborator-contracts/entities/collaborator-contract.entity';
 import { Company } from './platform-saas/companies/entities/company.entity';
 import { Configuration } from './core/configuration/entity/configuration-entity';
 import { Customer } from './core/business-partners/customers/entities/customer.entity';
@@ -80,10 +80,10 @@ import { OnlinePayment } from './commerce/online-ordering-system/online-payment/
 import { OnlineStore } from './commerce/online-ordering-system/online-stores/entities/online-store.entity';
 import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './order-item/entities/order-item.entity';
-import { PayrollAdjustment } from './payroll/payroll-adjustments/entities/payroll-adjustment.entity';
-import { PayrollEntry } from './payroll/payroll-entries/entities/payroll-entry.entity';
-import { PayrollRun } from './payroll/payroll-runs/entities/payroll-run.entity';
-import { PayrollTaxDetail } from './payroll/payroll-tax-details/entities/payroll-tax-detail.entity';
+import { PayrollAdjustment } from './finance-hr/payroll/payroll-adjustments/entities/payroll-adjustment.entity';
+import { PayrollEntry } from './finance-hr/payroll/payroll-entries/entities/payroll-entry.entity';
+import { PayrollRun } from './finance-hr/payroll/payroll-runs/entities/payroll-run.entity';
+import { PayrollTaxDetail } from './finance-hr/payroll/payroll-tax-details/entities/payroll-tax-detail.entity';
 import { PlanApplication } from './platform-saas/subscriptions/plan-applications/entity/plan-applications.entity';
 import { PlanFeature } from './platform-saas/subscriptions/plan-features/entity/plan-features.entity';
 import { Product } from './inventory/products-inventory/products/entities/product.entity';
@@ -103,16 +103,16 @@ import { ShiftAssignment } from './restaurant-operations/shift/shift-assignments
 import { SubscriptionApplication } from './platform-saas/subscriptions/subscription-application/entity/subscription-application.entity';
 import { SubscriptionPayment } from './platform-saas/subscriptions/subscription-payments/entity/subscription-payments.entity';
 import { SubscriptionPlan } from './platform-saas/subscriptions/subscription-plan/entity/subscription-plan.entity';
-import { SuplierInvoice } from './acount-payable/suplier-invoices/entities/suplier-invoice.entity';
-import { SuplierInvoiceItem } from './acount-payable/suplier-invoice-item/entities/suplier-invoice-item.entity';
+import { SuplierInvoice } from './finance-hr/acount-payable/suplier-invoices/entities/suplier-invoice.entity';
+import { SuplierInvoiceItem } from './finance-hr/acount-payable/suplier-invoice-item/entities/suplier-invoice-item.entity';
 import { Supplier } from './core/business-partners/suppliers/entities/supplier.entity';
-import { SupplierCreditNote } from './acount-payable/supplier-credit-notes/entities/supplier-credit-note.entity';
-import { SupplierPayment } from './acount-payable/supplier-payments/entities/supplier-payment.entity';
-import { SupplierPaymentAllocation } from './acount-payable/supplier_payment_allocations/entities/supplier_payment_allocation.entity';
-import { SupplierPaymentItem } from './acount-payable/supplier-payment-items/entities/supplier-payment-item.entity';
+import { SupplierCreditNote } from './finance-hr/acount-payable/supplier-credit-notes/entities/supplier-credit-note.entity';
+import { SupplierPayment } from './finance-hr/acount-payable/supplier-payments/entities/supplier-payment.entity';
+import { SupplierPaymentAllocation } from './finance-hr/acount-payable/supplier_payment_allocations/entities/supplier_payment_allocation.entity';
+import { SupplierPaymentItem } from './finance-hr/acount-payable/supplier-payment-items/entities/supplier-payment-item.entity';
 import { Table } from './restaurant-operations/dining-system/tables/entities/table.entity';
 import { TableAssignment } from './restaurant-operations/dining-system/table-assignments/entities/table-assignment.entity';
-import { TimeEntry } from './hr/collaborator-time-entries/entities/time-entry.entity';
+import { TimeEntry } from './finance-hr/hr/collaborator-time-entries/entities/time-entry.entity';
 import { Tip } from './restaurant-operations/tips/tips/entities/tip.entity';
 import { TipAllocation } from './restaurant-operations/tips/tip-allocations/entities/tip-allocation.entity';
 import { TipPool } from './restaurant-operations/tips/tip-pools/entities/tip-pool.entity';
@@ -120,6 +120,7 @@ import { TipPoolMember } from './restaurant-operations/tips/tip-pool-members/ent
 import { TipSettlement } from './restaurant-operations/tips/tip-settlements/entities/tip-settlement.entity';
 import { User } from './platform-saas/users/entities/user.entity';
 import { Variant } from './inventory/products-inventory/variants/entities/variant.entity';
+import { FinanceHrModule } from './finance-hr/finance-hr.module';
 import { FloorZone } from './restaurant-operations/dining-system/floor-zone/entity/floor-zone.entity';
 import { FloorPlan } from './restaurant-operations/dining-system/floor-plan/entity/floor-plan.entity';
 
@@ -262,6 +263,7 @@ import { FloorPlan } from './restaurant-operations/dining-system/floor-plan/enti
     PlatformSaasModule,
     CommerceModule,
     GrowthModule,
+    FinanceHrModule,
   ],
 })
 export class AppModule { }
