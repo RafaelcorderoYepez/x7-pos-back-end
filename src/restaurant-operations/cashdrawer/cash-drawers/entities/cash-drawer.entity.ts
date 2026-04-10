@@ -10,7 +10,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { Merchant } from '../../../../platform-saas/merchants/entities/merchant.entity';
 import { Shift } from '../../../shift/shifts/entities/shift.entity';
-import { Collaborator } from '../../../../hr/collaborators/entities/collaborator.entity';
+import { Collaborator } from 'src/finance-hr/hr/collaborators/entities/collaborator.entity';
 import { CashDrawerStatus } from '../constants/cash-drawer-status.enum';
 
 @Entity('cash_drawer')
