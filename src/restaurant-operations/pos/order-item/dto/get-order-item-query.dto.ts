@@ -2,6 +2,7 @@ import { IsOptional, IsString, IsNumber, IsEnum, Min, Max, IsDateString, IsPosit
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { OrderItemStatus } from '../constants/order-item-status.enum';
+import { OrderItemKitchenStatus } from '../constants/order-item-kitchen-status.enum';
 
 export enum OrderItemSortBy {
   QUANTITY = 'quantity',
@@ -66,15 +67,14 @@ export class GetOrderItemQueryDto {
   @IsPositive()
   variantId?: number;
 
-  @ApiPropertyOptional({ 
-    example: 1, 
-    description: 'Filter by modifier ID'
+  @ApiPropertyOptional({
+    example: OrderItemKitchenStatus.PENDING,
+    enum: OrderItemKitchenStatus,
+    description: 'Filter by line kitchen status',
   })
   @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @IsPositive()
-  modifierId?: number;
+  @IsEnum(OrderItemKitchenStatus)
+  kitchenStatus?: OrderItemKitchenStatus;
 
   @ApiPropertyOptional({ 
     example: OrderItemStatus.ACTIVE, 

@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  OneToMany,
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
@@ -12,9 +13,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Order } from '../../orders/entities/order.entity';
 import { Product } from '../../../../inventory/products-inventory/products/entities/product.entity';
 import { Variant } from '../../../../inventory/products-inventory/variants/entities/variant.entity';
-import { Modifier } from '../../../../inventory/products-inventory/modifiers/entities/modifier.entity';
 import { OrderItemStatus } from '../constants/order-item-status.enum';
-import { KitchenStatus } from '../../orders/constants/kitchen-status.enum';
+import { OrderItemModifier } from '../../order-item-modifiers/entities/order-item-modifier.entity';
 
 @Entity('order_item')
 @Index(['order_id', 'status', 'created_at'])
@@ -84,37 +84,25 @@ export class OrderItem {
   quantity: number;
 
   @ApiProperty({
-    example: 125.50,
+    example: 125.5,
     description: 'Price of the item',
   })
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   price: number;
 
   @ApiProperty({
-    example: 10.00,
+    example: 10.0,
     description: 'Discount applied to the item',
   })
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   discount: number;
 
   @ApiProperty({
-    example: 1,
-    description: 'Identifier of the Modifier associated with this item',
-    nullable: true,
+    example: 241.0,
+    description: 'Total price for the line (qty * price - discount)',
   })
-  @Column({ name: 'modifier_id', nullable: true })
-  modifier_id: number | null;
-
-  @ApiProperty({
-    type: () => Modifier,
-    description: 'Modifier associated with this item',
-    nullable: true,
-  })
-  @ManyToOne(() => Modifier, (modifier) => modifier.id, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'modifier_id' })
-  modifier: Modifier | null;
+  @Column({ type: 'decimal', precision: 12, scale: 2, name: 'total_price' })
+  total_price: number;
 
   @ApiProperty({
     example: 'Extra sauce on the side',
@@ -137,17 +125,12 @@ export class OrderItem {
   status: OrderItemStatus;
 
   @ApiProperty({
-    example: KitchenStatus.PENDING,
-    enum: KitchenStatus,
-    description: 'Kitchen workflow status for this line',
+    example: 'pending',
+    description:
+      'Kitchen workflow status for this line: pending, in_preparation, ready, served',
   })
-  @Column({
-    type: 'enum',
-    enum: KitchenStatus,
-    default: KitchenStatus.PENDING,
-    name: 'kitchen_status',
-  })
-  kitchen_status: KitchenStatus;
+  @Column({ type: 'varchar', length: 50, default: 'pending', name: 'kitchen_status' })
+  kitchen_status: string;
 
   @ApiProperty({
     example: '2023-10-01T12:00:00Z',
@@ -162,21 +145,7 @@ export class OrderItem {
   })
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updated_at: Date;
-}
 
-/*
-Table OrderItem {
-  id BIGSERIAL [pk]
-  order_id BIGSERIAL [ref: > Order.id]
-  product_id BIGSERIAL [ref: > Product.id]
-  variant_id BIGSERIAL [ref: > Variant.id]
-  quantity INT
-  price NUMERIC(12,2)
-  discount NUMERIC(12,2)
-  modifier_id BIGSERIAL [ref: > Modifier.id]
-  notes TEXT
-  status ENUM('active', 'deleted')
-  created_at TIMESTAMP
-  updated_at TIMESTAMP
+  @OneToMany(() => OrderItemModifier, (m) => m.orderItem)
+  orderItemModifiers: OrderItemModifier[];
 }
-*/

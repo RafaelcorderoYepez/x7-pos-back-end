@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsNotEmpty, IsPositive, IsOptional, IsString, Min } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsPositive, IsOptional, IsString, Min, IsEnum } from 'class-validator';
+import { OrderItemKitchenStatus } from '../constants/order-item-kitchen-status.enum';
 
 export class CreateOrderItemDto {
   @ApiProperty({
@@ -58,13 +59,13 @@ export class CreateOrderItemDto {
   discount?: number;
 
   @ApiPropertyOptional({
-    example: 1,
-    description: 'Identifier of the Modifier associated with this item',
+    example: OrderItemKitchenStatus.PENDING,
+    enum: OrderItemKitchenStatus,
+    description: 'Kitchen status for this line',
   })
   @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  modifierId?: number;
+  @IsEnum(OrderItemKitchenStatus)
+  kitchenStatus?: OrderItemKitchenStatus;
 
   @ApiPropertyOptional({
     example: 'Extra sauce on the side',

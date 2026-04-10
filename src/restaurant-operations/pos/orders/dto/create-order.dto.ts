@@ -105,12 +105,6 @@ export class CreateOrderDto {
   @IsOptional()
   @IsNumber()
   @Min(0)
-  taxTotal?: number;
-
-  @ApiPropertyOptional({ example: 0 })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
   discountTotal?: number;
 
   @ApiPropertyOptional({ example: 0 })
@@ -118,10 +112,4 @@ export class CreateOrderDto {
   @IsNumber()
   @Min(0)
   tipTotal?: number;
-
-  @ApiPropertyOptional({ example: 0 })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  paidTotal?: number;
 }

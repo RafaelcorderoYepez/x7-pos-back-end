@@ -5,15 +5,25 @@ import { OrderItem } from './entities/order-item.entity';
 import { Order } from '../orders/entities/order.entity';
 import { Product } from '../../../inventory/products-inventory/products/entities/product.entity';
 import { Variant } from '../../../inventory/products-inventory/variants/entities/variant.entity';
-import { Modifier } from '../../../inventory/products-inventory/modifiers/entities/modifier.entity';
 import { CreateOrderItemDto } from './dto/create-order-item.dto';
 import { UpdateOrderItemDto } from './dto/update-order-item.dto';
 import { GetOrderItemQueryDto, OrderItemSortBy } from './dto/get-order-item-query.dto';
 import { OrderItemResponseDto, OneOrderItemResponseDto } from './dto/order-item-response.dto';
 import { PaginatedOrderItemResponseDto } from './dto/paginated-order-item-response.dto';
 import { OrderItemStatus } from './constants/order-item-status.enum';
+import { OrderItemKitchenStatus } from './constants/order-item-kitchen-status.enum';
 import { OrderStatus } from '../orders/constants/order-status.enum';
 import { OrdersService } from '../orders/orders.service';
+import { lineSubtotal } from '../orders/order-aggregation.util';
+
+const ORDER_ITEM_RELATIONS = [
+  'order',
+  'order.merchant',
+  'product',
+  'product.merchant',
+  'variant',
+  'variant.product',
+] as const;
 
 @Injectable()
 export class OrderItemService {
@@ -26,8 +36,6 @@ export class OrderItemService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Variant)
     private readonly variantRepository: Repository<Variant>,
-    @InjectRepository(Modifier)
-    private readonly modifierRepository: Repository<Modifier>,
     private readonly ordersService: OrdersService,
   ) {}
 
@@ -91,26 +99,6 @@ export class OrderItemService {
       }
     }
 
-    // Validate modifier if provided
-    if (createOrderItemDto.modifierId) {
-      const modifier = await this.modifierRepository.findOne({
-        where: { id: createOrderItemDto.modifierId },
-        relations: ['product', 'product.merchant'],
-      });
-
-      if (!modifier) {
-        throw new NotFoundException('Modifier not found');
-      }
-
-      if (modifier.product.merchantId !== authenticatedUserMerchantId) {
-        throw new ForbiddenException('You can only use modifiers from your merchant');
-      }
-
-      if (modifier.productId !== createOrderItemDto.productId) {
-        throw new BadRequestException('Modifier does not belong to the specified product');
-      }
-    }
-
     // Business rule validation: quantity must be positive
     if (createOrderItemDto.quantity <= 0) {
       throw new BadRequestException('Quantity must be greater than 0');
@@ -135,16 +123,22 @@ export class OrderItemService {
     orderItem.quantity = createOrderItemDto.quantity;
     orderItem.price = createOrderItemDto.price;
     orderItem.discount = discount;
-    orderItem.modifier_id = createOrderItemDto.modifierId || null;
     orderItem.notes = createOrderItemDto.notes || null;
     orderItem.status = OrderItemStatus.ACTIVE;
+    orderItem.kitchen_status =
+      createOrderItemDto.kitchenStatus ?? OrderItemKitchenStatus.PENDING;
+    orderItem.total_price = lineSubtotal({
+      quantity: orderItem.quantity,
+      price: orderItem.price,
+      discount: orderItem.discount,
+    });
 
     const savedOrderItem = await this.orderItemRepository.save(orderItem);
 
     // Fetch the complete order item with relations
     const completeOrderItem = await this.orderItemRepository.findOne({
       where: { id: savedOrderItem.id },
-      relations: ['order', 'order.merchant', 'product', 'product.merchant', 'variant', 'variant.product', 'modifier', 'modifier.product'],
+      relations: [...ORDER_ITEM_RELATIONS],
     });
 
     if (!completeOrderItem) {
@@ -254,8 +248,8 @@ export class OrderItemService {
       whereConditions.variant_id = query.variantId;
     }
 
-    if (query.modifierId) {
-      whereConditions.modifier_id = query.modifierId;
+    if (query.kitchenStatus) {
+      whereConditions.kitchen_status = query.kitchenStatus;
     }
 
     if (query.createdDate) {
@@ -281,7 +275,7 @@ export class OrderItemService {
     // Execute query
     const [orderItems, total] = await this.orderItemRepository.findAndCount({
       where: whereConditions,
-      relations: ['order', 'order.merchant', 'product', 'product.merchant', 'variant', 'variant.product', 'modifier', 'modifier.product'],
+      relations: [...ORDER_ITEM_RELATIONS],
       order: orderConditions,
       skip,
       take: limit,
@@ -327,7 +321,7 @@ export class OrderItemService {
         id,
         status: OrderItemStatus.ACTIVE,
       },
-      relations: ['order', 'order.merchant', 'product', 'product.merchant', 'variant', 'variant.product', 'modifier', 'modifier.product'],
+      relations: [...ORDER_ITEM_RELATIONS],
     });
 
     if (!orderItem) {
@@ -364,12 +358,14 @@ export class OrderItemService {
         id,
         status: OrderItemStatus.ACTIVE,
       },
-      relations: ['order', 'order.merchant', 'product', 'product.merchant', 'variant', 'variant.product', 'modifier', 'modifier.product'],
+      relations: [...ORDER_ITEM_RELATIONS],
     });
 
     if (!existingOrderItem) {
       throw new NotFoundException('Order item not found');
     }
+
+    const previousOrderId = existingOrderItem.order_id;
 
     // Validate merchant ownership
     if (existingOrderItem.order.merchant_id !== authenticatedUserMerchantId) {
@@ -433,31 +429,6 @@ export class OrderItemService {
       }
     }
 
-    // Validate modifier if provided
-    if (updateOrderItemDto.modifierId !== undefined) {
-      if (updateOrderItemDto.modifierId === null) {
-        // Allowing null to remove modifier
-      } else {
-        const modifier = await this.modifierRepository.findOne({
-          where: { id: updateOrderItemDto.modifierId },
-          relations: ['product', 'product.merchant'],
-        });
-
-        if (!modifier) {
-          throw new NotFoundException('Modifier not found');
-        }
-
-        if (modifier.product.merchantId !== authenticatedUserMerchantId) {
-          throw new ForbiddenException('You can only use modifiers from your merchant');
-        }
-
-        const productId = updateOrderItemDto.productId || existingOrderItem.product_id;
-        if (modifier.productId !== productId) {
-          throw new BadRequestException('Modifier does not belong to the specified product');
-        }
-      }
-    }
-
     // Business rule validation: amounts
     if (updateOrderItemDto.quantity !== undefined && updateOrderItemDto.quantity <= 0) {
       throw new BadRequestException('Quantity must be greater than 0');
@@ -477,10 +448,33 @@ export class OrderItemService {
     if (updateOrderItemDto.quantity !== undefined) updateData.quantity = updateOrderItemDto.quantity;
     if (updateOrderItemDto.price !== undefined) updateData.price = updateOrderItemDto.price;
     if (updateOrderItemDto.discount !== undefined) updateData.discount = updateOrderItemDto.discount;
-    if (updateOrderItemDto.modifierId !== undefined) updateData.modifier_id = updateOrderItemDto.modifierId;
     if (updateOrderItemDto.notes !== undefined) updateData.notes = updateOrderItemDto.notes || null;
     if (updateOrderItemDto.kitchenStatus !== undefined) {
       updateData.kitchen_status = updateOrderItemDto.kitchenStatus;
+    }
+
+    const nextQty =
+      updateData.quantity !== undefined
+        ? updateData.quantity
+        : existingOrderItem.quantity;
+    const nextPrice =
+      updateData.price !== undefined
+        ? updateData.price
+        : existingOrderItem.price;
+    const nextDisc =
+      updateData.discount !== undefined
+        ? updateData.discount
+        : existingOrderItem.discount;
+    if (
+      updateData.quantity !== undefined ||
+      updateData.price !== undefined ||
+      updateData.discount !== undefined
+    ) {
+      updateData.total_price = lineSubtotal({
+        quantity: nextQty,
+        price: Number(nextPrice),
+        discount: Number(nextDisc),
+      });
     }
 
     await this.orderItemRepository.update(id, updateData);
@@ -488,7 +482,7 @@ export class OrderItemService {
     // Fetch updated order item
     const updatedOrderItem = await this.orderItemRepository.findOne({
       where: { id },
-      relations: ['order', 'order.merchant', 'product', 'product.merchant', 'variant', 'variant.product', 'modifier', 'modifier.product'],
+      relations: [...ORDER_ITEM_RELATIONS],
     });
 
     if (!updatedOrderItem) {
@@ -496,6 +490,9 @@ export class OrderItemService {
     }
 
     await this.ordersService.syncOrderAggregates(updatedOrderItem.order_id);
+    if (previousOrderId !== updatedOrderItem.order_id) {
+      await this.ordersService.syncOrderAggregates(previousOrderId);
+    }
 
     return {
       statusCode: 200,
@@ -522,7 +519,7 @@ export class OrderItemService {
         id,
         status: OrderItemStatus.ACTIVE,
       },
-      relations: ['order', 'order.merchant', 'product', 'product.merchant', 'variant', 'variant.product', 'modifier', 'modifier.product'],
+      relations: [...ORDER_ITEM_RELATIONS],
     });
 
     if (!existingOrderItem) {
@@ -578,12 +575,7 @@ export class OrderItemService {
       quantity: orderItem.quantity,
       price: Number(orderItem.price),
       discount: Number(orderItem.discount),
-      modifierId: orderItem.modifier_id,
-      modifier: orderItem.modifier ? {
-        id: orderItem.modifier.id,
-        name: orderItem.modifier.name,
-        priceDelta: Number(orderItem.modifier.priceDelta),
-      } : null,
+      totalPrice: Number(orderItem.total_price),
       notes: orderItem.notes,
       status: orderItem.status,
       kitchenStatus: orderItem.kitchen_status,

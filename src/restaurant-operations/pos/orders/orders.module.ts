@@ -11,12 +11,18 @@ import { Customer } from 'src/business-partners/customers/entities/customer.enti
 import { LoyaltyRewardsRedemtion } from 'src/loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyCoupon } from 'src/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
 import { OrderItem } from '../order-item/entities/order-item.entity';
+import { OrderPayment } from '../order-payments/entities/order-payment.entity';
+import { OrderTax } from '../order-taxes/entities/order-tax.entity';
+import { OrderItemModifier } from '../order-item-modifiers/entities/order-item-modifier.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Order,
       OrderItem,
+      OrderPayment,
+      OrderTax,
+      OrderItemModifier,
       Merchant,
       Table,
       Collaborator,

@@ -7,11 +7,10 @@ import { OrderItem } from './entities/order-item.entity';
 import { Order } from '../orders/entities/order.entity';
 import { Product } from '../../../inventory/products-inventory/products/entities/product.entity';
 import { Variant } from '../../../inventory/products-inventory/variants/entities/variant.entity';
-import { Modifier } from '../../../inventory/products-inventory/modifiers/entities/modifier.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([OrderItem, Order, Product, Variant, Modifier]),
+    TypeOrmModule.forFeature([OrderItem, Order, Product, Variant]),
     OrdersModule,
   ],
   controllers: [OrderItemController],

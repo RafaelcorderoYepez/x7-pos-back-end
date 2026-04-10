@@ -2,11 +2,11 @@ import { PartialType } from '@nestjs/swagger';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional } from 'class-validator';
 import { CreateOrderItemDto } from './create-order-item.dto';
-import { KitchenStatus } from '../../orders/constants/kitchen-status.enum';
+import { OrderItemKitchenStatus } from '../constants/order-item-kitchen-status.enum';
 
 export class UpdateOrderItemDto extends PartialType(CreateOrderItemDto) {
-  @ApiPropertyOptional({ enum: KitchenStatus })
+  @ApiPropertyOptional({ enum: OrderItemKitchenStatus })
   @IsOptional()
-  @IsEnum(KitchenStatus)
-  kitchenStatus?: KitchenStatus;
+  @IsEnum(OrderItemKitchenStatus)
+  kitchenStatus?: OrderItemKitchenStatus;
 }

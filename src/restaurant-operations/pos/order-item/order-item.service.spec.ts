@@ -11,7 +11,6 @@ import { OrderItem } from './entities/order-item.entity';
 import { Order } from '../orders/entities/order.entity';
 import { Product } from '../../../inventory/products-inventory/products/entities/product.entity';
 import { Variant } from '../../../inventory/products-inventory/variants/entities/variant.entity';
-import { Modifier } from '../../../inventory/products-inventory/modifiers/entities/modifier.entity';
 import { CreateOrderItemDto } from './dto/create-order-item.dto';
 import { UpdateOrderItemDto } from './dto/update-order-item.dto';
 import { GetOrderItemQueryDto, OrderItemSortBy } from './dto/get-order-item-query.dto';
@@ -20,7 +19,7 @@ import { OrderStatus } from '../orders/constants/order-status.enum';
 import { OrderBusinessStatus } from '../orders/constants/order-business-status.enum';
 import { OrderType } from '../orders/constants/order-type.enum';
 import { OrdersService } from '../orders/orders.service';
-import { KitchenStatus } from '../orders/constants/kitchen-status.enum';
+import { OrderItemKitchenStatus } from './constants/order-item-kitchen-status.enum';
 
 describe('OrderItemService', () => {
   let service: OrderItemService;
@@ -28,7 +27,6 @@ describe('OrderItemService', () => {
   let orderRepository: Repository<Order>;
   let productRepository: Repository<Product>;
   let variantRepository: Repository<Variant>;
-  let modifierRepository: Repository<Modifier>;
 
   const mockOrderItemRepository = {
     save: jest.fn(),
@@ -47,10 +45,6 @@ describe('OrderItemService', () => {
   };
 
   const mockVariantRepository = {
-    findOne: jest.fn(),
-  };
-
-  const mockModifierRepository = {
     findOne: jest.fn(),
   };
 
@@ -92,35 +86,23 @@ describe('OrderItemService', () => {
     },
   };
 
-  const mockModifier = {
-    id: 1,
-    productId: 1,
-    name: 'Extra Cheese',
-    priceDelta: '2.50',
-    product: {
-      id: 1,
-      merchantId: 1,
-    },
-  };
-
   const mockOrderItem = {
     id: 1,
     order_id: 1,
     product_id: 1,
     variant_id: 1,
-    modifier_id: 1,
     quantity: 2,
     price: '125.50',
     discount: '10.00',
+    total_price: '241.00',
     notes: 'Extra sauce',
     status: OrderItemStatus.ACTIVE,
-    kitchen_status: KitchenStatus.PENDING,
+    kitchen_status: OrderItemKitchenStatus.PENDING,
     created_at: new Date('2024-01-15T08:00:00.000Z'),
     updated_at: new Date('2024-01-15T08:00:00.000Z'),
     order: mockOrder,
     product: mockProduct,
     variant: mockVariant,
-    modifier: mockModifier,
   };
 
   beforeEach(async () => {
@@ -143,10 +125,6 @@ describe('OrderItemService', () => {
           provide: getRepositoryToken(Variant),
           useValue: mockVariantRepository,
         },
-        {
-          provide: getRepositoryToken(Modifier),
-          useValue: mockModifierRepository,
-        },
         { provide: OrdersService, useValue: mockOrdersService },
       ],
     }).compile();
@@ -156,7 +134,6 @@ describe('OrderItemService', () => {
     orderRepository = module.get<Repository<Order>>(getRepositoryToken(Order));
     productRepository = module.get<Repository<Product>>(getRepositoryToken(Product));
     variantRepository = module.get<Repository<Variant>>(getRepositoryToken(Variant));
-    modifierRepository = module.get<Repository<Modifier>>(getRepositoryToken(Modifier));
   });
 
   afterEach(() => {
@@ -168,7 +145,6 @@ describe('OrderItemService', () => {
       orderId: 1,
       productId: 1,
       variantId: 1,
-      modifierId: 1,
       quantity: 2,
       price: 125.50,
       discount: 10.00,
@@ -179,7 +155,6 @@ describe('OrderItemService', () => {
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
       jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as any);
       jest.spyOn(variantRepository, 'findOne').mockResolvedValue(mockVariant as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(mockModifier as any);
       jest.spyOn(orderItemRepository, 'save').mockResolvedValue(mockOrderItem as any);
       jest.spyOn(orderItemRepository, 'findOne').mockResolvedValue(mockOrderItem as any);
 
@@ -294,50 +269,6 @@ describe('OrderItemService', () => {
       );
     });
 
-    it('should throw NotFoundException if modifier not found', async () => {
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
-      jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as any);
-      jest.spyOn(variantRepository, 'findOne').mockResolvedValue(mockVariant as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(null);
-
-      await expect(service.create(createOrderItemDto, 1)).rejects.toThrow(
-        new NotFoundException('Modifier not found'),
-      );
-    });
-
-    it('should throw ForbiddenException if modifier belongs to different merchant', async () => {
-      const modifierFromDifferentMerchant = {
-        ...mockModifier,
-        product: {
-          id: 1,
-          merchantId: 2,
-        },
-      };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
-      jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as any);
-      jest.spyOn(variantRepository, 'findOne').mockResolvedValue(mockVariant as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(modifierFromDifferentMerchant as any);
-
-      await expect(service.create(createOrderItemDto, 1)).rejects.toThrow(
-        new ForbiddenException('You can only use modifiers from your merchant'),
-      );
-    });
-
-    it('should throw BadRequestException if modifier does not belong to product', async () => {
-      const modifierWithDifferentProduct = {
-        ...mockModifier,
-        productId: 2,
-      };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
-      jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as any);
-      jest.spyOn(variantRepository, 'findOne').mockResolvedValue(mockVariant as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(modifierWithDifferentProduct as any);
-
-      await expect(service.create(createOrderItemDto, 1)).rejects.toThrow(
-        new BadRequestException('Modifier does not belong to the specified product'),
-      );
-    });
-
     it('should throw BadRequestException if quantity is less than or equal to 0', async () => {
       const dtoWithInvalidQuantity: CreateOrderItemDto = {
         orderId: 1,
@@ -386,38 +317,35 @@ describe('OrderItemService', () => {
       );
     });
 
-    it('should create order item without variant and modifier', async () => {
-      const dtoWithoutVariantAndModifier: CreateOrderItemDto = {
+    it('should create order item without variant', async () => {
+      const dtoWithoutVariant: CreateOrderItemDto = {
         orderId: 1,
         productId: 1,
         quantity: 2,
         price: 125.50,
         discount: 10.00,
       };
-      const orderItemWithoutVariantAndModifier = {
+      const orderItemWithoutVariant = {
         ...mockOrderItem,
         variant_id: null,
-        modifier_id: null,
         variant: null,
-        modifier: null,
       };
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
       jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as any);
-      jest.spyOn(orderItemRepository, 'save').mockResolvedValue(orderItemWithoutVariantAndModifier as any);
-      jest.spyOn(orderItemRepository, 'findOne').mockResolvedValue(orderItemWithoutVariantAndModifier as any);
+      jest.spyOn(orderItemRepository, 'save').mockResolvedValue(orderItemWithoutVariant as any);
+      jest.spyOn(orderItemRepository, 'findOne').mockResolvedValue(orderItemWithoutVariant as any);
 
-      const result = await service.create(dtoWithoutVariantAndModifier, 1);
+      const result = await service.create(dtoWithoutVariant, 1);
 
       expect(result.statusCode).toBe(201);
       expect(result.data.variantId).toBeNull();
-      expect(result.data.modifierId).toBeNull();
+      expect(result.data.totalPrice).toBe(241);
     });
 
     it('should throw NotFoundException if order item not found after creation', async () => {
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
       jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as any);
       jest.spyOn(variantRepository, 'findOne').mockResolvedValue(mockVariant as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(mockModifier as any);
       jest.spyOn(orderItemRepository, 'save').mockResolvedValue(mockOrderItem as any);
       jest.spyOn(orderItemRepository, 'findOne').mockResolvedValue(null);
 
@@ -566,12 +494,15 @@ describe('OrderItemService', () => {
       expect(result.statusCode).toBe(200);
     });
 
-    it('should filter by modifierId', async () => {
-      const queryWithModifierId = { ...query, modifierId: 1 };
+    it('should filter by kitchenStatus', async () => {
+      const queryWithKitchen = {
+        ...query,
+        kitchenStatus: OrderItemKitchenStatus.READY,
+      };
       jest.spyOn(orderRepository, 'find').mockResolvedValue([{ id: 1 }] as any);
       jest.spyOn(orderItemRepository, 'findAndCount').mockResolvedValue([[mockOrderItem], 1] as any);
 
-      const result = await service.findAll(queryWithModifierId, 1);
+      const result = await service.findAll(queryWithKitchen, 1);
 
       expect(result.statusCode).toBe(200);
     });
@@ -754,6 +685,26 @@ describe('OrderItemService', () => {
       });
     });
 
+    it('should sync order aggregates for both orders when orderId changes', async () => {
+      const dtoWithOrderId = { ...updateOrderItemDto, orderId: 2 };
+      const targetOrder = { ...mockOrder, id: 2 };
+      const movedOrderItem = {
+        ...mockOrderItem,
+        order_id: 2,
+        order: targetOrder,
+      };
+      jest.spyOn(orderItemRepository, 'findOne')
+        .mockResolvedValueOnce(mockOrderItem as any)
+        .mockResolvedValueOnce(movedOrderItem as any);
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(targetOrder as any);
+      jest.spyOn(orderItemRepository, 'update').mockResolvedValue(undefined as any);
+
+      await service.update(1, dtoWithOrderId, 1);
+
+      expect(mockOrdersService.syncOrderAggregates).toHaveBeenCalledWith(2);
+      expect(mockOrdersService.syncOrderAggregates).toHaveBeenCalledWith(1);
+    });
+
     it('should throw NotFoundException if new order not found', async () => {
       const dtoWithOrderId = { ...updateOrderItemDto, orderId: 999 };
       jest.spyOn(orderItemRepository, 'findOne').mockResolvedValueOnce(mockOrderItem as any);
@@ -873,64 +824,6 @@ describe('OrderItemService', () => {
 
       await expect(service.update(1, dtoWithVariantId, 1)).rejects.toThrow(
         new BadRequestException('Variant does not belong to the specified product'),
-      );
-    });
-
-    it('should validate modifier if modifierId is provided', async () => {
-      const dtoWithModifierId = { ...updateOrderItemDto, modifierId: 2 };
-      jest.spyOn(orderItemRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrderItem as any)
-        .mockResolvedValueOnce(mockOrderItem as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(mockModifier as any);
-      jest.spyOn(orderItemRepository, 'update').mockResolvedValue(undefined as any);
-
-      await service.update(1, dtoWithModifierId, 1);
-
-      expect(modifierRepository.findOne).toHaveBeenCalled();
-    });
-
-    it('should allow null modifierId to remove modifier', async () => {
-      const dtoWithNullModifierId = { ...updateOrderItemDto, modifierId: null } as any;
-      const orderItemWithoutModifier = {
-        ...mockOrderItem,
-        modifier_id: null,
-        modifier: null,
-      };
-      jest.spyOn(orderItemRepository, 'findOne')
-        .mockResolvedValueOnce(mockOrderItem as any)
-        .mockResolvedValueOnce(orderItemWithoutModifier as any);
-      jest.spyOn(orderItemRepository, 'update').mockResolvedValue(undefined as any);
-
-      const result = await service.update(1, dtoWithNullModifierId, 1);
-
-      expect(result.statusCode).toBe(200);
-      expect(orderItemRepository.update).toHaveBeenCalledWith(
-        1,
-        expect.objectContaining({ modifier_id: null }),
-      );
-    });
-
-    it('should throw NotFoundException if new modifier not found', async () => {
-      const dtoWithModifierId = { ...updateOrderItemDto, modifierId: 999 };
-      jest.spyOn(orderItemRepository, 'findOne').mockResolvedValueOnce(mockOrderItem as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(null);
-
-      await expect(service.update(1, dtoWithModifierId, 1)).rejects.toThrow(
-        new NotFoundException('Modifier not found'),
-      );
-    });
-
-    it('should throw BadRequestException if modifier does not belong to product', async () => {
-      const dtoWithModifierId = { ...updateOrderItemDto, modifierId: 2 };
-      const modifierWithDifferentProduct = {
-        ...mockModifier,
-        productId: 2,
-      };
-      jest.spyOn(orderItemRepository, 'findOne').mockResolvedValueOnce(mockOrderItem as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(modifierWithDifferentProduct as any);
-
-      await expect(service.update(1, dtoWithModifierId, 1)).rejects.toThrow(
-        new BadRequestException('Modifier does not belong to the specified product'),
       );
     });
 
@@ -1054,7 +947,6 @@ describe('OrderItemService', () => {
         orderId: 1,
         productId: 1,
         variantId: 1,
-        modifierId: 1,
         quantity: 1,
         price: 10,
         discount: 0,
@@ -1064,7 +956,6 @@ describe('OrderItemService', () => {
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
       jest.spyOn(productRepository, 'findOne').mockResolvedValue(mockProduct as any);
       jest.spyOn(variantRepository, 'findOne').mockResolvedValue(mockVariant as any);
-      jest.spyOn(modifierRepository, 'findOne').mockResolvedValue(mockModifier as any);
       jest.spyOn(orderItemRepository, 'save').mockResolvedValue(mockOrderItem as any);
       jest.spyOn(orderItemRepository, 'findOne').mockResolvedValue(mockOrderItem as any);
 

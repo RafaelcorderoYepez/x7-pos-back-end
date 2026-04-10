@@ -137,6 +137,9 @@ import { OnlinePayment } from './online-ordering-system/online-payment/entities/
 import { OnlineStore } from './online-ordering-system/online-stores/entities/online-store.entity';
 import { Order } from './restaurant-operations/pos/orders/entities/order.entity';
 import { OrderItem } from './restaurant-operations/pos/order-item/entities/order-item.entity';
+import { OrderItemModifier } from './restaurant-operations/pos/order-item-modifiers/entities/order-item-modifier.entity';
+import { OrderPayment } from './restaurant-operations/pos/order-payments/entities/order-payment.entity';
+import { OrderTax } from './restaurant-operations/pos/order-taxes/entities/order-tax.entity';
 import { PayrollAdjustment } from './payroll/payroll-adjustments/entities/payroll-adjustment.entity';
 import { PayrollEntry } from './payroll/payroll-entries/entities/payroll-entry.entity';
 import { PayrollRun } from './payroll/payroll-runs/entities/payroll-run.entity';
@@ -254,6 +257,9 @@ import { Variant } from './inventory/products-inventory/variants/entities/varian
           OnlineStore,
           Order,
           OrderItem,
+          OrderItemModifier,
+          OrderPayment,
+          OrderTax,
           PayrollAdjustment,
           PayrollEntry,
           PayrollRun,

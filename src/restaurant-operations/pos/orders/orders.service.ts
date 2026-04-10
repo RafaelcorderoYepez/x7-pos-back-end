@@ -5,15 +5,22 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository, Between, In } from 'typeorm';
 import { OrderItem } from '../order-item/entities/order-item.entity';
+import { OrderPayment } from '../order-payments/entities/order-payment.entity';
+import { OrderTax } from '../order-taxes/entities/order-tax.entity';
+import { OrderItemModifier } from '../order-item-modifiers/entities/order-item-modifier.entity';
+import { OrderItemStatus } from '../order-item/constants/order-item-status.enum';
 import { OrderSource } from './constants/order-source.enum';
 import { DeliveryStatus } from './constants/delivery-status.enum';
 import { KitchenStatus } from './constants/kitchen-status.enum';
 import {
   applyPaidDerivedFields,
   computeOrderTotal,
+  computePaidTotalFromPayments,
   computeSubtotalFromItems,
+  computeTaxTotalFromOrderTaxes,
+  computeTipTotalFromPayments,
   deriveKitchenStatusFromItems,
   roundMoney,
 } from './order-aggregation.util';
@@ -50,6 +57,12 @@ export class OrdersService {
     private readonly customerRepo: Repository<Customer>,
     @InjectRepository(OrderItem)
     private readonly orderItemRepo: Repository<OrderItem>,
+    @InjectRepository(OrderPayment)
+    private readonly orderPaymentRepo: Repository<OrderPayment>,
+    @InjectRepository(OrderTax)
+    private readonly orderTaxRepo: Repository<OrderTax>,
+    @InjectRepository(OrderItemModifier)
+    private readonly orderItemModifierRepo: Repository<OrderItemModifier>,
   ) {}
 
   async create(
@@ -160,10 +173,11 @@ export class OrdersService {
       dto.deliveryZoneId !== undefined ? dto.deliveryZoneId : null;
     order.delivery_fee = roundMoney(dto.deliveryFee ?? 0);
     order.delivery_status = dto.deliveryStatus ?? DeliveryStatus.UNASSIGNED;
-    order.tax_total = roundMoney(dto.taxTotal ?? 0);
+    order.tax_total = 0;
     order.discount_total = roundMoney(dto.discountTotal ?? 0);
-    order.tip_total = roundMoney(dto.tipTotal ?? 0);
-    order.paid_total = roundMoney(dto.paidTotal ?? 0);
+    order.manual_tip_total = roundMoney(dto.tipTotal ?? 0);
+    order.tip_total = order.manual_tip_total;
+    order.paid_total = 0;
     order.subtotal = 0;
     order.total = computeOrderTotal(
       0,
@@ -506,13 +520,11 @@ export class OrdersService {
     if (dto.deliveryStatus !== undefined) {
       order.delivery_status = dto.deliveryStatus;
     }
-    if (dto.taxTotal !== undefined) order.tax_total = roundMoney(dto.taxTotal);
     if (dto.discountTotal !== undefined) {
       order.discount_total = roundMoney(dto.discountTotal);
     }
-    if (dto.tipTotal !== undefined) order.tip_total = roundMoney(dto.tipTotal);
-    if (dto.paidTotal !== undefined) {
-      order.paid_total = roundMoney(dto.paidTotal);
+    if (dto.tipTotal !== undefined) {
+      order.manual_tip_total = roundMoney(dto.tipTotal);
     }
 
     await this.orderRepo.save(order);
@@ -566,8 +578,10 @@ export class OrdersService {
   }
 
   /**
-   * Recomputes subtotal from line items, order total, kitchen roll-up, balance and is_paid.
-   * Call after order-item create / update / delete, or after changing order-level tax/discount/tip/delivery/paid.
+   * Recomputes subtotal from line items, tax_total from order_taxes, tip_total
+   * (manual_tip_total + sum of payment tip_amount), order total, paid_total from
+   * order_payments, kitchen roll-up, balance_due and is_paid.
+   * Call after order-item, order-item-modifier, order-tax or order-payment create / update / delete, or after changing order-level discount/tip/delivery.
    */
   async syncOrderAggregates(orderId: number): Promise<void> {
     const order = await this.orderRepo.findOne({ where: { id: orderId } });
@@ -577,7 +591,23 @@ export class OrdersService {
       where: { order_id: orderId },
     });
 
-    order.subtotal = computeSubtotalFromItems(items);
+    const payments = await this.orderPaymentRepo.find({
+      where: { order_id: orderId },
+    });
+
+    const taxes = await this.orderTaxRepo.find({
+      where: { order_id: orderId },
+    });
+
+    const modifierAddonByItemId = await this.buildModifierAddonByOrderItemId(items);
+
+    order.subtotal = computeSubtotalFromItems(items, modifierAddonByItemId);
+    order.tax_total = computeTaxTotalFromOrderTaxes(taxes);
+
+    const tipsFromPayments = computeTipTotalFromPayments(payments);
+    const manualTip = roundMoney(Number(order.manual_tip_total ?? 0));
+    order.tip_total = roundMoney(manualTip + tipsFromPayments);
+
     order.total = computeOrderTotal(
       Number(order.subtotal),
       Number(order.discount_total),
@@ -585,6 +615,8 @@ export class OrdersService {
       Number(order.tip_total),
       Number(order.delivery_fee),
     );
+
+    order.paid_total = computePaidTotalFromPayments(payments);
 
     const nextKitchen = deriveKitchenStatusFromItems(items);
     order.kitchen_status = nextKitchen;
@@ -597,6 +629,34 @@ export class OrdersService {
 
     applyPaidDerivedFields(order);
     await this.orderRepo.save(order);
+  }
+
+  /** Per active order item: sum(modifier.price × item.quantity). */
+  private async buildModifierAddonByOrderItemId(
+    items: OrderItem[],
+  ): Promise<Map<number, number>> {
+    const map = new Map<number, number>();
+    const active = items.filter((i) => i.status === OrderItemStatus.ACTIVE);
+    const itemIds = active.map((i) => i.id);
+    if (itemIds.length === 0) return map;
+
+    const mods = await this.orderItemModifierRepo.find({
+      where: {
+        order_item_id: itemIds.length === 1 ? itemIds[0] : In(itemIds),
+      },
+    });
+
+    const itemById = new Map(active.map((i) => [i.id, i]));
+    for (const m of mods) {
+      const item = itemById.get(m.order_item_id);
+      if (!item) continue;
+      const piece = roundMoney(Number(m.price) * Number(item.quantity));
+      map.set(
+        m.order_item_id,
+        roundMoney((map.get(m.order_item_id) ?? 0) + piece),
+      );
+    }
+    return map;
   }
 
   private async nextOrderNumber(merchantId: number): Promise<string> {

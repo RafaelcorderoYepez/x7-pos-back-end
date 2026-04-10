@@ -24,6 +24,9 @@ import { OrderStatus } from './constants/order-status.enum';
 import { OrderBusinessStatus } from './constants/order-business-status.enum';
 import { OrderType } from './constants/order-type.enum';
 import { OrderItem } from '../order-item/entities/order-item.entity';
+import { OrderPayment } from '../order-payments/entities/order-payment.entity';
+import { OrderTax } from '../order-taxes/entities/order-tax.entity';
+import { OrderItemModifier } from '../order-item-modifiers/entities/order-item-modifier.entity';
 import { OrderItemStatus } from '../order-item/constants/order-item-status.enum';
 import { OrderSource } from './constants/order-source.enum';
 import { DeliveryStatus } from './constants/delivery-status.enum';
@@ -38,6 +41,9 @@ describe('OrdersService', () => {
   let subscriptionRepository: Repository<MerchantSubscription>;
   let customerRepository: Repository<Customer>;
   let orderItemRepository: Repository<OrderItem>;
+  let orderPaymentRepository: Repository<OrderPayment>;
+  let orderTaxRepository: Repository<OrderTax>;
+  let orderItemModifierRepository: Repository<OrderItemModifier>;
 
   const mockOrderRepository = {
     create: jest.fn(),
@@ -53,6 +59,18 @@ describe('OrdersService', () => {
   };
 
   const mockOrderItemRepository = {
+    find: jest.fn().mockResolvedValue([]),
+  };
+
+  const mockOrderPaymentRepository = {
+    find: jest.fn().mockResolvedValue([]),
+  };
+
+  const mockOrderTaxRepository = {
+    find: jest.fn().mockResolvedValue([]),
+  };
+
+  const mockOrderItemModifierRepository = {
     find: jest.fn().mockResolvedValue([]),
   };
 
@@ -125,6 +143,7 @@ describe('OrdersService', () => {
     subtotal: 0,
     tax_total: 0,
     discount_total: 0,
+    manual_tip_total: 0,
     tip_total: 0,
     total: 0,
     paid_total: 0,
@@ -171,6 +190,18 @@ describe('OrdersService', () => {
           provide: getRepositoryToken(OrderItem),
           useValue: mockOrderItemRepository,
         },
+        {
+          provide: getRepositoryToken(OrderPayment),
+          useValue: mockOrderPaymentRepository,
+        },
+        {
+          provide: getRepositoryToken(OrderTax),
+          useValue: mockOrderTaxRepository,
+        },
+        {
+          provide: getRepositoryToken(OrderItemModifier),
+          useValue: mockOrderItemModifierRepository,
+        },
       ],
     }).compile();
 
@@ -191,6 +222,15 @@ describe('OrdersService', () => {
     );
     orderItemRepository = module.get<Repository<OrderItem>>(
       getRepositoryToken(OrderItem),
+    );
+    orderPaymentRepository = module.get<Repository<OrderPayment>>(
+      getRepositoryToken(OrderPayment),
+    );
+    orderTaxRepository = module.get<Repository<OrderTax>>(
+      getRepositoryToken(OrderTax),
+    );
+    orderItemModifierRepository = module.get<Repository<OrderItemModifier>>(
+      getRepositoryToken(OrderItemModifier),
     );
   });
 
@@ -1458,6 +1498,7 @@ describe('OrdersService', () => {
         ...mockOrder,
         tax_total: 5,
         discount_total: 10,
+        manual_tip_total: 3,
         tip_total: 3,
         delivery_fee: 2,
         paid_total: 40,
@@ -1469,23 +1510,34 @@ describe('OrdersService', () => {
 
       const items = [
         {
+          id: 101,
           quantity: 2,
           price: 20,
           discount: 5,
           status: OrderItemStatus.ACTIVE,
-          kitchen_status: KitchenStatus.PENDING,
+          kitchen_status: 'pending',
+          total_price: 35,
         },
         {
+          id: 102,
           quantity: 1,
           price: 15,
           discount: 0,
           status: OrderItemStatus.ACTIVE,
-          kitchen_status: KitchenStatus.SENT,
+          kitchen_status: 'in_preparation',
+          total_price: 15,
         },
       ];
 
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(persisted as any);
       jest.spyOn(orderItemRepository, 'find').mockResolvedValue(items as any);
+      jest.spyOn(orderItemModifierRepository, 'find').mockResolvedValue([] as any);
+      jest.spyOn(orderPaymentRepository, 'find').mockResolvedValue([
+        { amount: 40, tip_amount: 1.25, is_refund: false },
+      ] as any);
+      jest.spyOn(orderTaxRepository, 'find').mockResolvedValue([
+        { amount: 5 },
+      ] as any);
       const saveSpy = jest
         .spyOn(orderRepository, 'save')
         .mockImplementation(async (o: any) => o);
@@ -1495,10 +1547,13 @@ describe('OrdersService', () => {
       expect(saveSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           subtotal: 50, // (2*20-5) + (1*15-0)
-          total: 50, // 50 - 10 + 5 + 3 + 2
-          balance_due: 10, // 50 - 40
+          tax_total: 5,
+          tip_total: 4.25, // manual 3 + payment tips 1.25
+          total: 51.25, // 50 - 10 + 5 + 4.25 + 2
+          paid_total: 41.25, // 40 + 1.25 tip on payment row
+          balance_due: 10, // 51.25 - 41.25
           is_paid: false,
-          kitchen_status: KitchenStatus.SENT,
+          kitchen_status: KitchenStatus.PREPARING,
         }),
       );
     });
@@ -1508,22 +1563,30 @@ describe('OrdersService', () => {
         ...mockOrder,
         tax_total: 0,
         discount_total: 0,
+        manual_tip_total: 0,
         tip_total: 0,
         delivery_fee: 0,
         paid_total: 25,
       };
       const items = [
         {
+          id: 201,
           quantity: 1,
           price: 25,
           discount: 0,
           status: OrderItemStatus.ACTIVE,
-          kitchen_status: KitchenStatus.PENDING,
+          kitchen_status: 'pending',
+          total_price: 25,
         },
       ];
 
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(persisted as any);
       jest.spyOn(orderItemRepository, 'find').mockResolvedValue(items as any);
+      jest.spyOn(orderItemModifierRepository, 'find').mockResolvedValue([] as any);
+      jest.spyOn(orderPaymentRepository, 'find').mockResolvedValue([
+        { amount: 25, tip_amount: 0, is_refund: false },
+      ] as any);
+      jest.spyOn(orderTaxRepository, 'find').mockResolvedValue([] as any);
       const saveSpy = jest
         .spyOn(orderRepository, 'save')
         .mockImplementation(async (o: any) => o);
@@ -1533,7 +1596,9 @@ describe('OrdersService', () => {
       expect(saveSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           subtotal: 25,
+          tax_total: 0,
           total: 25,
+          paid_total: 25,
           balance_due: 0,
           is_paid: true,
         }),
@@ -1542,11 +1607,9 @@ describe('OrdersService', () => {
 
     it('update should trigger aggregate recalculation when financial fields are changed', async () => {
       const dto: UpdateOrderDto = {
-        taxTotal: 4,
         discountTotal: 2,
         tipTotal: 3,
         deliveryFee: 5,
-        paidTotal: 10,
       };
 
       jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);

@@ -61,7 +61,7 @@ export class OrderItemController {
   )
   @ApiOperation({ 
     summary: 'Create a new Order Item',
-    description: 'Creates a new order item for the authenticated user\'s merchant. Only portal administrators and merchant administrators can create order items. The order, product, variant (if provided), and modifier (if provided) must exist and belong to the merchant.'
+    description: 'Creates a new order item for the authenticated user\'s merchant. Only portal administrators and merchant administrators can create order items. The order, product, and variant (if provided) must exist and belong to the merchant.'
   })
   @ApiCreatedResponse({
     description: 'Order item created successfully',
@@ -80,7 +80,7 @@ export class OrderItemController {
     type: ErrorResponse,
   })
   @ApiNotFoundResponse({ 
-    description: 'Order, Product, Variant or Modifier not found',
+    description: 'Order, Product or Variant not found',
     type: ErrorResponse,
   })
   @ApiBody({ 
@@ -98,15 +98,15 @@ export class OrderItemController {
         }
       },
       example2: {
-        summary: 'Create order item with product, variant and modifier',
+        summary: 'Create order item with product, variant and kitchen status',
         value: {
           orderId: 1,
           productId: 1,
           variantId: 1,
-          modifierId: 1,
           quantity: 1,
           price: 150.00,
           discount: 0,
+          kitchenStatus: 'pending',
           notes: 'Extra sauce on the side',
         }
       }
@@ -131,7 +131,7 @@ export class OrderItemController {
   )
   @ApiOperation({ 
     summary: 'Get all Order Items with pagination and filters',
-    description: 'Retrieves a paginated list of order items for the authenticated user\'s merchant. Supports filtering by order, product, variant, modifier, status, and creation date.'
+    description: 'Retrieves a paginated list of order items for the authenticated user\'s merchant. Supports filtering by order, product, variant, kitchen status, logical status, and creation date.'
   })
   @ApiQuery({
     name: 'page',
@@ -169,11 +169,11 @@ export class OrderItemController {
     example: 1
   })
   @ApiQuery({
-    name: 'modifierId',
+    name: 'kitchenStatus',
     required: false,
-    type: Number,
-    description: 'Filter by modifier ID',
-    example: 1
+    enum: ['pending', 'in_preparation', 'ready', 'served'],
+    description: 'Filter by line kitchen status',
+    example: 'pending',
   })
   @ApiQuery({
     name: 'status',
@@ -289,7 +289,7 @@ export class OrderItemController {
     type: ErrorResponse,
   })
   @ApiNotFoundResponse({ 
-    description: 'Order item, Order, Product, Variant or Modifier not found',
+    description: 'Order item, Order, Product or Variant not found',
     type: ErrorResponse,
   })
   @ApiBadRequestResponse({ 

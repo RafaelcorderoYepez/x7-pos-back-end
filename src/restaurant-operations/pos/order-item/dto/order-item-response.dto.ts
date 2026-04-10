@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { SuccessResponse } from '../../../../common/dtos/success-response.dto';
 import { OrderItemStatus } from '../constants/order-item-status.enum';
-import { KitchenStatus } from '../../orders/constants/kitchen-status.enum';
 
 export class OrderItemResponseDto {
   @ApiProperty({ example: 1, description: 'Unique identifier of the Order Item' })
@@ -89,25 +88,11 @@ export class OrderItemResponseDto {
   })
   discount: number;
 
-  @ApiPropertyOptional({
-    example: 1,
-    description: 'Identifier of the Modifier associated with this item',
+  @ApiProperty({
+    example: 241.0,
+    description: 'Total price for the line (qty * price - discount)',
   })
-  modifierId?: number | null;
-
-  @ApiPropertyOptional({
-    description: 'Basic modifier information',
-    example: {
-      id: 1,
-      name: 'Extra Cheese',
-      priceDelta: 2.50,
-    },
-  })
-  modifier?: {
-    id: number;
-    name: string;
-    priceDelta: number;
-  } | null;
+  totalPrice: number;
 
   @ApiPropertyOptional({
     example: 'Extra sauce on the side',
@@ -123,11 +108,11 @@ export class OrderItemResponseDto {
   status: OrderItemStatus;
 
   @ApiProperty({
-    example: KitchenStatus.PENDING,
-    enum: KitchenStatus,
-    description: 'Kitchen workflow status for this line',
+    example: 'pending',
+    description:
+      'Kitchen workflow status for this line (pending, in_preparation, ready, served)',
   })
-  kitchenStatus: KitchenStatus;
+  kitchenStatus: string;
 
   @ApiProperty({
     example: '2023-10-01T12:00:00Z',

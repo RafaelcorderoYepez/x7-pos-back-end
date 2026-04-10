@@ -24,6 +24,8 @@ import { LoyaltyRewardsRedemtion } from 'src/loyalty/loyalty-rewards-redemtions/
 import { LoyaltyCoupon } from 'src/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
 import { Receipt } from 'src/core/billing-transactions/receipts/entities/receipt.entity';
 import { OrderItem } from '../../order-item/entities/order-item.entity';
+import { OrderPayment } from '../../order-payments/entities/order-payment.entity';
+import { OrderTax } from '../../order-taxes/entities/order-tax.entity';
 import { OrderSource } from '../constants/order-source.enum';
 import { DeliveryStatus } from '../constants/delivery-status.enum';
 import { KitchenStatus } from '../constants/kitchen-status.enum';
@@ -163,6 +165,18 @@ export class Order {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   discount_total: number;
 
+  /** Propina de cabecera (create/update); la de pagos va en order_payments.tip_amount y se suma en sync. */
+  @ApiProperty({ example: 0 })
+  @Column({
+    type: 'decimal',
+    precision: 12,
+    scale: 2,
+    default: 0,
+    name: 'manual_tip_total',
+  })
+  manual_tip_total: number;
+
+  /** manual_tip_total + suma de propinas en pagos (se recalcula en syncOrderAggregates). */
   @ApiProperty({ example: 0 })
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   tip_total: number;
@@ -223,6 +237,12 @@ export class Order {
 
   @OneToMany(() => OrderItem, (item) => item.order)
   orderItems: OrderItem[];
+
+  @OneToMany(() => OrderPayment, (payment) => payment.order)
+  orderPayments: OrderPayment[];
+
+  @OneToMany(() => OrderTax, (tax) => tax.order)
+  orderTaxes: OrderTax[];
 
   @ApiProperty({
     example: '2024-01-15T08:00:00Z',
