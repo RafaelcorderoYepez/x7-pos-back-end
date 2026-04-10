@@ -9,7 +9,7 @@ import { NotFoundException, ForbiddenException, BadRequestException, ConflictExc
 import { ShiftAssignmentsService } from './shift-assignments.service';
 import { ShiftAssignment } from './entities/shift-assignment.entity';
 import { Shift } from '../shifts/entities/shift.entity';
-import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
+import { Collaborator } from '../../../finance-hr/hr/collaborators/entities/collaborator.entity';
 import { CreateShiftAssignmentDto } from './dto/create-shift-assignment.dto';
 import { UpdateShiftAssignmentDto } from './dto/update-shift-assignment.dto';
 import { GetShiftAssignmentsQueryDto } from './dto/get-shift-assignments-query.dto';
@@ -383,7 +383,7 @@ describe('ShiftAssignmentsService', () => {
 
     it('should throw BadRequestException if startDate format is invalid', async () => {
       const queryWithInvalidDate = { ...query, startDate: 'invalid-date' };
-      
+
       await expect(service.findAll(queryWithInvalidDate, 1)).rejects.toThrow(
         BadRequestException,
       );
@@ -398,7 +398,7 @@ describe('ShiftAssignmentsService', () => {
         startDate: '2024-01-31',
         endDate: '2024-01-01',
       };
-      
+
       await expect(service.findAll(queryWithInvalidRange, 1)).rejects.toThrow(
         BadRequestException,
       );

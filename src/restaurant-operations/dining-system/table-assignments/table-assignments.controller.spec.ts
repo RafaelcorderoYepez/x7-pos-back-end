@@ -300,6 +300,7 @@ describe('TableAssignmentsController', () => {
   describe('PUT /table-assignments/:id (update)', () => {
     const updateDto: UpdateTableAssignmentDto = {
       releasedAt: '2024-01-15T16:00:00Z',
+      status: 'active',
     };
 
     it('should update a table assignment successfully', async () => {
@@ -345,6 +346,7 @@ describe('TableAssignmentsController', () => {
     it('should handle partial updates', async () => {
       const partialDto: UpdateTableAssignmentDto = {
         releasedAt: '2024-01-15T18:00:00Z',
+        status: 'active',
       };
       const updateSpy = jest.spyOn(service, 'update');
       const updatedResponse: OneTableAssignmentResponseDto = {

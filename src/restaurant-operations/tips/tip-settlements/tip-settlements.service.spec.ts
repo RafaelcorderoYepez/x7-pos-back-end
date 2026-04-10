@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TipSettlementsService } from './tip-settlements.service';
 import { TipSettlement } from './entities/tip-settlement.entity';
-import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
+import { Collaborator } from '../../../finance-hr/hr/collaborators/entities/collaborator.entity';
 import { Shift } from '../../shift/shifts/entities/shift.entity';
 import { User } from '../../../platform-saas/users/entities/user.entity';
 import { Merchant } from '../../../platform-saas/merchants/entities/merchant.entity';

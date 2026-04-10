@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { SuplierInvoiceItemService } from './suplier-invoice-item.service';
 import { SuplierInvoiceItem } from './entities/suplier-invoice-item.entity';
 import { SuplierInvoice } from '../suplier-invoices/entities/suplier-invoice.entity';
-import { Product } from '../../inventory/products-inventory/products/entities/product.entity';
+import { Product } from '../../../inventory/products-inventory/products/entities/product.entity';
 
 describe('SuplierInvoiceItemService', () => {
   let service: SuplierInvoiceItemService;

@@ -9,7 +9,7 @@ import { NotFoundException, ForbiddenException, BadRequestException, ConflictExc
 import { CashDrawersService } from './cash-drawers.service';
 import { CashDrawer } from './entities/cash-drawer.entity';
 import { Shift } from '../../shift/shifts/entities/shift.entity';
-import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
+import { Collaborator } from '../../../finance-hr/hr/collaborators/entities/collaborator.entity';
 import { CreateCashDrawerDto } from './dto/create-cash-drawer.dto';
 import { UpdateCashDrawerDto } from './dto/update-cash-drawer.dto';
 import { GetCashDrawersQueryDto } from './dto/get-cash-drawers-query.dto';
@@ -396,7 +396,7 @@ describe('CashDrawersService', () => {
     it('should throw BadRequestException if page is invalid', async () => {
       // Use negative value since 0 is treated as falsy and defaults to 1
       const queryWithInvalidPage = { ...query, page: -1 };
-      
+
       await expect(service.findAll(queryWithInvalidPage, 1)).rejects.toThrow(
         BadRequestException,
       );
@@ -407,7 +407,7 @@ describe('CashDrawersService', () => {
 
     it('should throw BadRequestException if limit is invalid', async () => {
       const queryWithInvalidLimit = { ...query, limit: 101 };
-      
+
       await expect(service.findAll(queryWithInvalidLimit, 1)).rejects.toThrow(
         BadRequestException,
       );
@@ -418,7 +418,7 @@ describe('CashDrawersService', () => {
 
     it('should throw BadRequestException if createdDate format is invalid', async () => {
       const queryWithInvalidDate = { ...query, createdDate: 'invalid-date' };
-      
+
       await expect(service.findAll(queryWithInvalidDate, 1)).rejects.toThrow(
         BadRequestException,
       );
@@ -449,7 +449,7 @@ describe('CashDrawersService', () => {
       const result = await service.findOne(1, 1);
 
       expect(cashDrawerRepository.findOne).toHaveBeenCalledWith({
-        where: { 
+        where: {
           id: 1,
           merchant_id: 1,
         },

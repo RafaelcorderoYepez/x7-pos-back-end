@@ -9,7 +9,7 @@ import { NotFoundException, ForbiddenException, BadRequestException } from '@nes
 import { CashTransactionsService } from './cash-transactions.service';
 import { CashTransaction } from './entities/cash-transaction.entity';
 import { CashDrawer } from '../cash-drawers/entities/cash-drawer.entity';
-import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
+import { Collaborator } from '../../../finance-hr/hr/collaborators/entities/collaborator.entity';
 import { Order } from '../../../orders/entities/order.entity';
 import { CreateCashTransactionDto } from './dto/create-cash-transaction.dto';
 import { UpdateCashTransactionDto } from './dto/update-cash-transaction.dto';
@@ -426,7 +426,7 @@ describe('CashTransactionsService', () => {
     it('should throw BadRequestException if page is invalid', async () => {
       // Use negative value since 0 is treated as falsy and defaults to 1
       const queryWithInvalidPage = { ...query, page: -1 };
-      
+
       await expect(service.findAll(queryWithInvalidPage, 1)).rejects.toThrow(
         BadRequestException,
       );
@@ -437,7 +437,7 @@ describe('CashTransactionsService', () => {
 
     it('should throw BadRequestException if limit is invalid', async () => {
       const queryWithInvalidLimit = { ...query, limit: 101 };
-      
+
       await expect(service.findAll(queryWithInvalidLimit, 1)).rejects.toThrow(
         BadRequestException,
       );
