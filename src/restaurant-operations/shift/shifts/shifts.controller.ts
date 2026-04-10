@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Controller,
   Get,
@@ -7,8 +10,6 @@ import {
   Put,
   Delete,
   ParseIntPipe,
-  HttpCode,
-  HttpStatus,
   UseGuards,
   Request,
   ForbiddenException,
@@ -17,17 +18,12 @@ import {
 import { ShiftsService } from './shifts.service';
 import { CreateShiftDto } from './dto/create-shift.dto';
 import { UpdateShiftDto } from './dto/update-shift.dto';
-import {
-  ShiftResponseDto,
-  OneShiftResponseDto,
-  AllShiftsResponseDto,
-} from './dto/shift-response.dto';
+import { OneShiftResponseDto } from './dto/shift-response.dto';
 import { GetShiftsQueryDto } from './dto/get-shifts-query.dto';
 import { PaginatedShiftsResponseDto } from './dto/paginated-shifts-response.dto';
 import {
   ApiTags,
   ApiOperation,
-  ApiResponse,
   ApiBearerAuth,
   ApiUnauthorizedResponse,
   ApiNotFoundResponse,

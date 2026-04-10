@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsOptional } from 'class-validator';
+import { IsDateString, IsIn, IsOptional, IsString } from 'class-validator';
 
 export class UpdateTableAssignmentDto {
   @ApiProperty({ 
@@ -10,4 +10,10 @@ export class UpdateTableAssignmentDto {
   @IsDateString()
   @IsOptional()
   releasedAt?: string;
+
+  @ApiProperty({ example: 'active', enum: ['active', 'inactive'] })
+    @IsString()
+    @IsOptional()
+    @IsIn(['active', 'inactive'])
+    status: string;
 }

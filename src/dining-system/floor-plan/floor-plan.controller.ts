@@ -46,9 +46,8 @@ export class FloorPlanController {
   constructor(private readonly floorPlanService: FloorPlanService) {}
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.MERCHANT_ADMIN)
   @Scopes(
-    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
@@ -124,9 +123,8 @@ export class FloorPlanController {
   }
 
   @Get()
-  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.MERCHANT_ADMIN)
   @Scopes(
-    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
@@ -178,9 +176,8 @@ export class FloorPlanController {
   }
 
   @Get(':id')
-  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.MERCHANT_ADMIN)
   @Scopes(
-    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
@@ -271,9 +268,8 @@ export class FloorPlanController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.MERCHANT_ADMIN)
   @Scopes(
-    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
@@ -368,9 +364,8 @@ export class FloorPlanController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
+  @Roles(UserRole.MERCHANT_ADMIN)
   @Scopes(
-    Scope.ADMIN_PORTAL,
     Scope.MERCHANT_WEB,
     Scope.MERCHANT_ANDROID,
     Scope.MERCHANT_IOS,
