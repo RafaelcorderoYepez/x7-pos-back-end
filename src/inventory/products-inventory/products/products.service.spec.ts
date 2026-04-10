@@ -639,7 +639,7 @@ describe('ProductsService', () => {
       });
 
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Product Updated successfully',
         data: {
           id: updatedProduct.id,
@@ -810,7 +810,7 @@ describe('ProductsService', () => {
         ],
       });
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Product Deleted successfully',
         data: {
           id: inactiveProduct.id,

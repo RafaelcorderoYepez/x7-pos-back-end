@@ -484,7 +484,7 @@ describe('LocationsService', () => {
         address: mockUpdateLocationDto.address,
       });
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Location Updated successfully',
         data: {
           id: updatedLocation.id,
@@ -610,7 +610,7 @@ describe('LocationsService', () => {
       expect(locationToDelete.isActive).toBe(false);
       expect(locationRepo.save).toHaveBeenCalledWith(locationToDelete);
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Location Deleted successfully',
         data: {
           id: inactiveLocation.id,

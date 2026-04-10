@@ -14,8 +14,8 @@ import { CreateTableAssignmentDto } from './dto/create-table-assignment.dto';
 import { UpdateTableAssignmentDto } from './dto/update-table-assignment.dto';
 import { GetTableAssignmentsQueryDto } from './dto/get-table-assignments-query.dto';
 import { Shift } from 'src/restaurant-operations/shift/shifts/entities/shift.entity';
-import { Collaborator } from 'src/hr/collaborators/entities/collaborator.entity';
-import { ShiftRole } from 'src/hr/collaborators/constants';
+import { Collaborator } from '../../../finance-hr/hr/collaborators/entities/collaborator.entity';
+import { ShiftRole } from '../../../finance-hr/hr/collaborators/constants';
 
 describe('TableAssignmentsService', () => {
   let service: TableAssignmentsService;
@@ -518,6 +518,7 @@ describe('TableAssignmentsService', () => {
   describe('update', () => {
     const updateTableAssignmentDto: UpdateTableAssignmentDto = {
       releasedAt: '2024-01-15T16:00:00Z',
+      status: 'active',
     };
 
     it('should update a table assignment successfully', async () => {
@@ -581,6 +582,7 @@ describe('TableAssignmentsService', () => {
     it('should throw BadRequestException if release time is before assignment time', async () => {
       const dtoWithInvalidReleaseTime = {
         releasedAt: '2024-01-15T07:00:00Z', // Before assignedAt
+        status: 'active',
       };
       jest.spyOn(tableAssignmentRepository, 'findOne').mockResolvedValue(mockTableAssignment as any);
 
@@ -606,7 +608,7 @@ describe('TableAssignmentsService', () => {
         .mockResolvedValueOnce(updatedAssignment as any); // Get updated assignment
       jest.spyOn(tableAssignmentRepository, 'update').mockResolvedValue(undefined as any);
 
-      const result = await service.update(1, { releasedAt: undefined }, 1);
+      const result = await service.update(1, { releasedAt: undefined, status: 'active' }, 1);
 
       expect(result.statusCode).toBe(200);
       expect(result.data.releasedAt).toBeNull();

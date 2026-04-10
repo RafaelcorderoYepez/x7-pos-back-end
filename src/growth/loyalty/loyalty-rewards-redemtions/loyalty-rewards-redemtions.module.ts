@@ -11,5 +11,6 @@ import { Order } from '../../../orders/entities/order.entity';
   imports: [TypeOrmModule.forFeature([LoyaltyRewardsRedemtion, LoyaltyReward, LoyaltyCustomer, Order])],
   controllers: [LoyaltyRewardsRedemtionsController],
   providers: [LoyaltyRewardsRedemtionsService],
+  exports: [LoyaltyRewardsRedemtionsService],
 })
 export class LoyaltyRewardsRedemtionsModule { }

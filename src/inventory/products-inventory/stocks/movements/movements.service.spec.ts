@@ -887,7 +887,7 @@ describe('MovementsService', () => {
       expect(movementToDelete.isActive).toBe(false);
       expect(movementRepo.save).toHaveBeenCalledWith(movementToDelete);
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Movement Deleted successfully',
         data: {
           id: inactiveMovement.id,

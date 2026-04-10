@@ -448,7 +448,7 @@ describe('JournalEntryService', () => {
 
       const result = await service.update(mockJournalEntry.id, mockMerchant.id, mockUpdateDto);
 
-      expect(result.statusCode).toBe(201);
+      expect(result.statusCode).toBe(200);
       expect(result.message).toBe('Journal Entry Updated successfully');
     });
 

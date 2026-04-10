@@ -85,7 +85,6 @@ export class CustomersService {
     if (!customer) throw new NotFoundException();
     if (customer.merchantId !== user.merchant.id)
       throw new ForbiddenException();
-    console.log('Customer: ', customer);
     return {
       id: customer.id,
       name: customer.name,

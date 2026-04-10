@@ -209,14 +209,14 @@ export class PurchaseOrderService {
         break;
       case 'Updated':
         response = {
-          statusCode: 201,
+          statusCode: 200,
           message: `Purchase Order ${createdUpdateDelete} successfully`,
           data: result,
         };
         break;
       case 'Deleted':
         response = {
-          statusCode: 201,
+          statusCode: 200,
           message: `Purchase Order ${createdUpdateDelete} successfully`,
           data: result,
         };
