@@ -4,7 +4,7 @@ import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { Order } from './entities/order.entity';
 import { Merchant } from '../platform-saas/merchants/entities/merchant.entity';
-import { Table } from 'src/dining-system/tables/entities/table.entity';
+import { Table } from 'src/restaurant-operations/dining-system/tables/entities/table.entity';
 import { Collaborator } from 'src/finance-hr/hr/collaborators/entities/collaborator.entity';
 import { MerchantSubscription } from '../platform-saas/subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
 import { Customer } from 'src/core/business-partners/customers/entities/customer.entity';

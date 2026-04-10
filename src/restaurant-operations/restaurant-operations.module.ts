@@ -3,11 +3,24 @@ import { ShiftModule } from './shift/shift.module';
 import { TipsModule } from './tips/tips.module';
 import { CashdrawerModule } from './cashdrawer/cashdrawer.module';
 import { KitchenDisplaySystemModule } from './kitchen-display-system/kitchen-display-system.module';
+import { DiningSystemModule } from './dining-system/dining-system.module';
 
 @Module({
-  imports: [ShiftModule, TipsModule, CashdrawerModule, KitchenDisplaySystemModule],
+  imports: [
+    ShiftModule,
+    TipsModule,
+    CashdrawerModule,
+    KitchenDisplaySystemModule,
+    DiningSystemModule,
+  ],
   controllers: [],
   providers: [],
-  exports: [ShiftModule, TipsModule, CashdrawerModule, KitchenDisplaySystemModule],
+  exports: [
+    ShiftModule,
+    TipsModule,
+    CashdrawerModule,
+    KitchenDisplaySystemModule,
+    DiningSystemModule,
+  ],
 })
 export class RestaurantOperationsModule { }

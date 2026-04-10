@@ -20,8 +20,6 @@ import { PayrollEntriesModule } from './finance-hr/payroll/payroll-entries/payro
 import { PayrollRunsModule } from './finance-hr/payroll/payroll-runs/payroll-runs.module';
 import { PayrollTaxDetailsModule } from './finance-hr/payroll/payroll-tax-details/payroll-tax-details.module';
 import { RestaurantOperationsModule } from './restaurant-operations/restaurant-operations.module';
-import { TableAssignmentsModule } from './dining-system/table-assignments/table-assignments.module';
-import { TablesModule } from './dining-system/tables/tables.module';
 import { PlatformSaasModule } from './platform-saas/platform-saas.module';
 import { CommerceModule } from './commerce/commerce.module';
 import { GrowthModule } from './growth/growth.module';
@@ -112,8 +110,8 @@ import { SupplierCreditNote } from './finance-hr/acount-payable/supplier-credit-
 import { SupplierPayment } from './finance-hr/acount-payable/supplier-payments/entities/supplier-payment.entity';
 import { SupplierPaymentAllocation } from './finance-hr/acount-payable/supplier_payment_allocations/entities/supplier_payment_allocation.entity';
 import { SupplierPaymentItem } from './finance-hr/acount-payable/supplier-payment-items/entities/supplier-payment-item.entity';
-import { Table } from './dining-system/tables/entities/table.entity';
-import { TableAssignment } from './dining-system/table-assignments/entities/table-assignment.entity';
+import { Table } from './restaurant-operations/dining-system/tables/entities/table.entity';
+import { TableAssignment } from './restaurant-operations/dining-system/table-assignments/entities/table-assignment.entity';
 import { TimeEntry } from './finance-hr/hr/collaborator-time-entries/entities/time-entry.entity';
 import { Tip } from './restaurant-operations/tips/tips/entities/tip.entity';
 import { TipAllocation } from './restaurant-operations/tips/tip-allocations/entities/tip-allocation.entity';
@@ -122,9 +120,9 @@ import { TipPoolMember } from './restaurant-operations/tips/tip-pool-members/ent
 import { TipSettlement } from './restaurant-operations/tips/tip-settlements/entities/tip-settlement.entity';
 import { User } from './platform-saas/users/entities/user.entity';
 import { Variant } from './inventory/products-inventory/variants/entities/variant.entity';
-import { FloorZone } from './dining-system/floor-zone/entity/floor-zone.entity';
-import { FloorPlan } from './dining-system/floor-plan/entity/floor-plan.entity';
 import { FinanceHrModule } from './finance-hr/finance-hr.module';
+import { FloorZone } from './restaurant-operations/dining-system/floor-zone/entity/floor-zone.entity';
+import { FloorPlan } from './restaurant-operations/dining-system/floor-plan/entity/floor-plan.entity';
 
 @Module({
   imports: [
@@ -262,12 +260,10 @@ import { FinanceHrModule } from './finance-hr/finance-hr.module';
     ReceiptTaxModule,
     ReceiptsModule,
     RestaurantOperationsModule,
-    TableAssignmentsModule,
-    TablesModule,
     PlatformSaasModule,
     CommerceModule,
     GrowthModule,
     FinanceHrModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
