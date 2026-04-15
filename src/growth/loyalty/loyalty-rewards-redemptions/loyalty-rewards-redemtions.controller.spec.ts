@@ -7,7 +7,7 @@ import { GetLoyaltyRewardsRedemtionsQueryDto } from './dto/get-loyalty-rewards-r
 import {
   OneLoyaltyRewardsRedemtionResponse,
   LoyaltyRewardsRedemtionResponseDto,
-} from './dto/loyalty-rewards-redemtion-response.dto';
+} from './dto/loyalty-rewards-redemption-response.dto';
 import { AllPaginatedLoyaltyRewardsRedemtionDto } from './dto/all-paginated-loyalty-rewards-redemtion.dto';
 import { LoyaltyRewardLittleResponseDto } from '../loyalty-reward/dto/loyalty-reward-response.dto';
 import { OrderLittleResponseDto } from 'src/orders/dto/order-response.dto';

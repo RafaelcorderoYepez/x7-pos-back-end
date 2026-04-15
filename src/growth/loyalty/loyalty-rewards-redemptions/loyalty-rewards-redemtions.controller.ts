@@ -40,7 +40,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 import { AllPaginatedLoyaltyRewardsRedemtionDto } from './dto/all-paginated-loyalty-rewards-redemtion.dto';
-import { OneLoyaltyRewardsRedemtionResponse } from './dto/loyalty-rewards-redemtion-response.dto';
+import { OneLoyaltyRewardsRedemtionResponse } from './dto/loyalty-rewards-redemption-response.dto';
 
 @ApiExtraModels(ErrorResponse)
 @ApiBearerAuth()

@@ -11,7 +11,7 @@ import { GetLoyaltyRewardsRedemtionsQueryDto } from './dto/get-loyalty-rewards-r
 import {
   LoyaltyRewardsRedemtionResponseDto,
   OneLoyaltyRewardsRedemtionResponse,
-} from './dto/loyalty-rewards-redemtion-response.dto';
+} from './dto/loyalty-rewards-redemption-response.dto';
 import { AllPaginatedLoyaltyRewardsRedemtionDto } from './dto/all-paginated-loyalty-rewards-redemtion.dto';
 import { ErrorHandler } from '../../../common/utils/error-handler.util';
 import { ErrorMessage } from '../../../common/constants/error-messages';

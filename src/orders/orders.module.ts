@@ -8,7 +8,7 @@ import { Table } from 'src/restaurant-operations/dining-system/tables/entities/t
 import { Collaborator } from 'src/finance-hr/hr/collaborators/entities/collaborator.entity';
 import { MerchantSubscription } from '../platform-saas/subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
 import { Customer } from 'src/core/business-partners/customers/entities/customer.entity';
-import { LoyaltyRewardsRedemtion } from 'src/growth/loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
+import { LoyaltyRewardsRedemtion } from 'src/growth/loyalty/loyalty-rewards-redemptions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyCoupon } from 'src/growth/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
 
 @Module({

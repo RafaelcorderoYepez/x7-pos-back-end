@@ -20,7 +20,7 @@ import { OrderBusinessStatus } from '../constants/order-business-status.enum';
 import { OrderType } from '../constants/order-type.enum';
 import { CashTransaction } from '../../restaurant-operations/cashdrawer/cash-transactions/entities/cash-transaction.entity';
 import { LoyaltyPointTransaction } from 'src/growth/loyalty/loyalty-points-transaction/entities/loyalty-points-transaction.entity';
-import { LoyaltyRewardsRedemtion } from 'src/growth/loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
+import { LoyaltyRewardsRedemtion } from 'src/growth/loyalty/loyalty-rewards-redemptions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyCoupon } from 'src/growth/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
 import { Receipt } from 'src/core/billing-transactions/receipts/entities/receipt.entity';
 

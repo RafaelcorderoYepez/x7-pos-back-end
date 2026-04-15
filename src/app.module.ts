@@ -51,7 +51,7 @@ import { LoyaltyCustomer } from './growth/loyalty/loyalty-customer/entities/loya
 import { LoyaltyPointTransaction } from './growth/loyalty/loyalty-points-transaction/entities/loyalty-points-transaction.entity';
 import { LoyaltyProgram } from './growth/loyalty/loyalty-programs/entities/loyalty-program.entity';
 import { LoyaltyReward } from './growth/loyalty/loyalty-reward/entities/loyalty-reward.entity';
-import { LoyaltyRewardsRedemtion } from './growth/loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
+import { LoyaltyRewardsRedemtion } from './growth/loyalty/loyalty-rewards-redemptions/entities/loyalty-rewards-redemtion.entity';
 import { LoyaltyTier } from './growth/loyalty/loyalty-tier/entities/loyalty-tier.entity';
 import { MarketingAutomation } from './growth/marketing/marketing-automations/entities/marketing-automation.entity';
 import { MarketingAutomationAction } from './growth/marketing/marketing-automation-actions/entities/marketing-automation-action.entity';
