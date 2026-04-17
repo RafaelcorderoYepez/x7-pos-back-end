@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import {
     Column,
     CreateDateColumn,

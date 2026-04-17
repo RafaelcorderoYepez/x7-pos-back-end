@@ -11,7 +11,7 @@ import { CreateVariantDto } from './dto/create-variant.dto';
 import { UpdateVariantDto } from './dto/update-variant.dto';
 import { GetVariantsQueryDto } from './dto/get-variants-query.dto';
 import { VariantResponseDto } from './dto/variant-response.dto';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 
 describe('VariantsService', () => {
   let service: VariantsService;
@@ -629,7 +629,7 @@ describe('VariantsService', () => {
       expect(variantRepository.save).toHaveBeenCalledWith(updatedVariant);
 
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Variant Updated successfully',
         data: {
           ...mockVariantResponseDto,
@@ -778,7 +778,7 @@ describe('VariantsService', () => {
       expect(variantRepository.save).toHaveBeenCalledWith(inactiveVariant);
 
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Variant Deleted successfully',
         data: {
           id: inactiveVariant.id,

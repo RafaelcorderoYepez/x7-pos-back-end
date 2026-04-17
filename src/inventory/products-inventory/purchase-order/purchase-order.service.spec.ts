@@ -4,8 +4,8 @@ import { PurchaseOrderService } from './purchase-order.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PurchaseOrder } from './entities/purchase-order.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
-import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
+import { Supplier } from 'src/core/business-partners/suppliers/entities/supplier.entity';
 import { PurchaseOrderItem } from '../purchase-order-item/entities/purchase-order-item.entity';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
@@ -549,7 +549,7 @@ describe('PurchaseOrderService', () => {
         relations: ['merchant', 'supplier'],
       });
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Updated successfully',
         data: {
           id: updatedPurchaseOrder.id,
@@ -631,7 +631,7 @@ describe('PurchaseOrderService', () => {
         relations: ['merchant', 'supplier'],
       });
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Updated successfully',
         data: {
           id: updatedPurchaseOrderWithNewSupplier.id,
@@ -780,7 +780,7 @@ describe('PurchaseOrderService', () => {
         where: { purchaseOrderId: mockPurchaseOrder.id, isActive: true },
       });
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Deleted successfully',
         data: {
           id: inactivePurchaseOrder.id,
@@ -870,7 +870,7 @@ describe('PurchaseOrderService', () => {
         mockPurchaseOrderItem2WithRelations,
       );
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Deleted successfully',
         data: {
           id: inactivePurchaseOrder.id,

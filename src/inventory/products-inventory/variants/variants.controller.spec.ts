@@ -6,8 +6,8 @@ import { AllPaginatedVariants } from './dto/all-paginated-variants.dto'; // Assu
 import { CreateVariantDto } from './dto/create-variant.dto'; // Assuming the DTO path and name
 import { UpdateVariantDto } from './dto/update-variant.dto'; // Assuming the DTO path and name
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 
 describe('VariantsController', () => {
   let controller: VariantsController;

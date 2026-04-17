@@ -9,7 +9,7 @@ import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { GetLocationsQueryDto } from './dto/get-locations-query.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 
 describe('LocationsService', () => {
@@ -99,18 +99,18 @@ describe('LocationsService', () => {
 
     jest.clearAllMocks();
 
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => { });
     jest
       .spyOn(ErrorHandler, 'notFound')
-      .mockImplementation((message: string) => {
+      .mockImplementation((message?: string) => {
         throw new NotFoundException(message);
       });
-    jest.spyOn(ErrorHandler, 'exists').mockImplementation((message: string) => {
+    jest.spyOn(ErrorHandler, 'exists').mockImplementation((message?: string) => {
       throw new BadRequestException(message);
     });
     jest
       .spyOn(ErrorHandler, 'invalidId')
-      .mockImplementation((message: string) => {
+      .mockImplementation((message?: string) => {
         throw new BadRequestException(message);
       });
   });
@@ -484,7 +484,7 @@ describe('LocationsService', () => {
         address: mockUpdateLocationDto.address,
       });
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Location Updated successfully',
         data: {
           id: updatedLocation.id,
@@ -610,7 +610,7 @@ describe('LocationsService', () => {
       expect(locationToDelete.isActive).toBe(false);
       expect(locationRepo.save).toHaveBeenCalledWith(locationToDelete);
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Location Deleted successfully',
         data: {
           id: inactiveLocation.id,

@@ -1,17 +1,47 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards, Query, Request, ParseIntPipe, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+  Request,
+  ParseIntPipe,
+  Put,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { ApiBearerAuth, ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiExtraModels, ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { Roles } from '../../../auth/decorators/roles.decorator';
 import { Scopes } from '../../../auth/decorators/scopes.decorator';
-import { UserRole } from '../../../users/constants/role.enum';
-import { Scope } from '../../../users/constants/scope.enum';
-import { OneOrderResponseDto, PaginatedOrdersResponseDto } from './dto/order-response.dto';
+import { UserRole } from '../../../platform-saas/users/constants/role.enum';
+import { Scope } from '../../../platform-saas/users/constants/scope.enum';
+import {
+  OneOrderResponseDto,
+  PaginatedOrdersResponseDto,
+} from './dto/order-response.dto';
 import { GetOrdersQueryDto, OrderSortBy } from './dto/get-orders-query.dto';
 import { ErrorResponse } from '../../../common/dtos/error-response.dto';
+import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
 
 @ApiTags('Orders')
 @ApiBearerAuth()
@@ -29,12 +59,13 @@ export class OrdersController {
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create a new order',
-    description: 'Creates a new order for the authenticated merchant. Validates that all related entities (table, collaborator, subscription, customer) belong to the merchant.',
+    description:
+      'Creates a new order for the authenticated merchant. Validates that all related entities (table, collaborator, subscription, customer) belong to the merchant.',
   })
   @ApiBody({ type: CreateOrderDto })
-  @ApiCreatedResponse({ 
+  @ApiCreatedResponse({
     description: 'Order created successfully',
     type: OneOrderResponseDto,
     schema: {
@@ -58,7 +89,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid data',
     type: ErrorResponse,
     schema: {
@@ -69,7 +100,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized',
     type: ErrorResponse,
     schema: {
@@ -80,7 +111,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiForbiddenResponse({ 
+  @ApiForbiddenResponse({
     description: 'Forbidden',
     type: ErrorResponse,
     schema: {
@@ -91,7 +122,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiNotFoundResponse({ 
+  @ApiNotFoundResponse({
     description: 'Related resource not found',
     type: ErrorResponse,
     schema: {
@@ -102,8 +133,11 @@ export class OrdersController {
       },
     },
   })
-  async create(@Body() dto: CreateOrderDto, @Request() req: any): Promise<OneOrderResponseDto> {
-    const authenticatedUserMerchantId = req.user?.merchant?.id;
+  async create(
+    @Body() dto: CreateOrderDto,
+    @Request() req: AuthenticatedUser,
+  ): Promise<OneOrderResponseDto> {
+    const authenticatedUserMerchantId = req.merchant?.id;
     return this.ordersService.create(dto, authenticatedUserMerchantId);
   }
 
@@ -115,23 +149,84 @@ export class OrdersController {
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get all orders',
-    description: 'Retrieves all orders for the authenticated merchant with pagination and filtering options. Only returns orders with status = ACTIVE by default.',
+    description:
+      'Retrieves all orders for the authenticated merchant with pagination and filtering options. Only returns orders with status = ACTIVE by default.',
   })
-  @ApiQuery({ name: 'tableId', required: false, type: Number, description: 'Filter by table ID' })
-  @ApiQuery({ name: 'collaboratorId', required: false, type: Number, description: 'Filter by collaborator ID' })
-  @ApiQuery({ name: 'subscriptionId', required: false, type: Number, description: 'Filter by subscription ID' })
-  @ApiQuery({ name: 'customerId', required: false, type: Number, description: 'Filter by customer ID' })
-  @ApiQuery({ name: 'businessStatus', required: false, enum: ['pending', 'in_progress', 'completed', 'cancelled'], description: 'Filter by business status' })
-  @ApiQuery({ name: 'type', required: false, enum: ['dine_in', 'take_out', 'delivery'], description: 'Filter by order type' })
-  @ApiQuery({ name: 'status', required: false, enum: ['active', 'deleted'], description: 'Filter by logical status (for deletion)' })
-  @ApiQuery({ name: 'createdDate', required: false, type: String, description: 'Filter by creation date (YYYY-MM-DD)' })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (default: 1)' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page (default: 10, max: 100)' })
-  @ApiQuery({ name: 'sortBy', required: false, enum: Object.values(OrderSortBy), description: 'Field to sort by' })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['ASC', 'DESC'], description: 'Sort order (default: DESC)' })
-  @ApiOkResponse({ 
+  @ApiQuery({
+    name: 'tableId',
+    required: false,
+    type: Number,
+    description: 'Filter by table ID',
+  })
+  @ApiQuery({
+    name: 'collaboratorId',
+    required: false,
+    type: Number,
+    description: 'Filter by collaborator ID',
+  })
+  @ApiQuery({
+    name: 'subscriptionId',
+    required: false,
+    type: Number,
+    description: 'Filter by subscription ID',
+  })
+  @ApiQuery({
+    name: 'customerId',
+    required: false,
+    type: Number,
+    description: 'Filter by customer ID',
+  })
+  @ApiQuery({
+    name: 'businessStatus',
+    required: false,
+    enum: ['pending', 'in_progress', 'completed', 'cancelled'],
+    description: 'Filter by business status',
+  })
+  @ApiQuery({
+    name: 'type',
+    required: false,
+    enum: ['dine_in', 'take_out', 'delivery'],
+    description: 'Filter by order type',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: ['active', 'deleted'],
+    description: 'Filter by logical status (for deletion)',
+  })
+  @ApiQuery({
+    name: 'createdDate',
+    required: false,
+    type: String,
+    description: 'Filter by creation date (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 10, max: 100)',
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    enum: Object.values(OrderSortBy),
+    description: 'Field to sort by',
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    enum: ['ASC', 'DESC'],
+    description: 'Sort order (default: DESC)',
+  })
+  @ApiOkResponse({
     description: 'Orders retrieved successfully',
     type: PaginatedOrdersResponseDto,
     schema: {
@@ -165,7 +260,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid query',
     type: ErrorResponse,
     schema: {
@@ -176,11 +271,11 @@ export class OrdersController {
       },
     },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized',
     type: ErrorResponse,
   })
-  @ApiForbiddenResponse({ 
+  @ApiForbiddenResponse({
     description: 'Forbidden',
     type: ErrorResponse,
     schema: {
@@ -191,8 +286,11 @@ export class OrdersController {
       },
     },
   })
-  async findAll(@Query() query: GetOrdersQueryDto, @Request() req: any): Promise<PaginatedOrdersResponseDto> {
-    const authenticatedUserMerchantId = req.user?.merchant?.id;
+  async findAll(
+    @Query() query: GetOrdersQueryDto,
+    @Request() req: AuthenticatedUser,
+  ): Promise<PaginatedOrdersResponseDto> {
+    const authenticatedUserMerchantId = req.merchant?.id;
     return this.ordersService.findAll(query, authenticatedUserMerchantId);
   }
 
@@ -204,12 +302,13 @@ export class OrdersController {
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get an order by id',
-    description: 'Retrieves a single order by its ID. Only returns orders with status = ACTIVE.',
+    description:
+      'Retrieves a single order by its ID. Only returns orders with status = ACTIVE.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Order ID' })
-  @ApiOkResponse({ 
+  @ApiOkResponse({
     description: 'Order retrieved successfully',
     type: OneOrderResponseDto,
     schema: {
@@ -233,7 +332,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid id',
     type: ErrorResponse,
     schema: {
@@ -244,11 +343,11 @@ export class OrdersController {
       },
     },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized',
     type: ErrorResponse,
   })
-  @ApiForbiddenResponse({ 
+  @ApiForbiddenResponse({
     description: 'Forbidden',
     type: ErrorResponse,
     schema: {
@@ -259,7 +358,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiNotFoundResponse({ 
+  @ApiNotFoundResponse({
     description: 'Not found',
     type: ErrorResponse,
     schema: {
@@ -270,8 +369,11 @@ export class OrdersController {
       },
     },
   })
-  async findOne(@Param('id', ParseIntPipe) id: number, @Request() req: any): Promise<OneOrderResponseDto> {
-    const authenticatedUserMerchantId = req.user?.merchant?.id;
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: AuthenticatedUser,
+  ): Promise<OneOrderResponseDto> {
+    const authenticatedUserMerchantId = req.merchant?.id;
     return this.ordersService.findOne(id, authenticatedUserMerchantId);
   }
 
@@ -283,13 +385,14 @@ export class OrdersController {
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update an order',
-    description: 'Updates an existing order. Validates that all related entities belong to the merchant.',
+    description:
+      'Updates an existing order. Validates that all related entities belong to the merchant.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Order ID' })
   @ApiBody({ type: UpdateOrderDto })
-  @ApiOkResponse({ 
+  @ApiOkResponse({
     description: 'Order updated successfully',
     type: OneOrderResponseDto,
     schema: {
@@ -313,7 +416,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid data',
     type: ErrorResponse,
     schema: {
@@ -324,11 +427,11 @@ export class OrdersController {
       },
     },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized',
     type: ErrorResponse,
   })
-  @ApiForbiddenResponse({ 
+  @ApiForbiddenResponse({
     description: 'Forbidden',
     type: ErrorResponse,
     schema: {
@@ -339,7 +442,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiNotFoundResponse({ 
+  @ApiNotFoundResponse({
     description: 'Not found',
     type: ErrorResponse,
     schema: {
@@ -350,8 +453,12 @@ export class OrdersController {
       },
     },
   })
-  async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateOrderDto, @Request() req: any): Promise<OneOrderResponseDto> {
-    const authenticatedUserMerchantId = req.user?.merchant?.id;
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateOrderDto,
+    @Request() req: AuthenticatedUser,
+  ): Promise<OneOrderResponseDto> {
+    const authenticatedUserMerchantId = req.merchant?.id;
     return this.ordersService.update(id, dto, authenticatedUserMerchantId);
   }
 
@@ -363,12 +470,13 @@ export class OrdersController {
     Scope.MERCHANT_IOS,
     Scope.MERCHANT_CLOVER,
   )
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Delete an order (logical)',
-    description: 'Performs a logical deletion of an order by setting status to DELETED.',
+    description:
+      'Performs a logical deletion of an order by setting status to DELETED.',
   })
   @ApiParam({ name: 'id', type: Number, description: 'Order ID' })
-  @ApiOkResponse({ 
+  @ApiOkResponse({
     description: 'Order deleted successfully',
     type: OneOrderResponseDto,
     schema: {
@@ -392,7 +500,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiBadRequestResponse({ 
+  @ApiBadRequestResponse({
     description: 'Invalid id',
     type: ErrorResponse,
     schema: {
@@ -403,11 +511,11 @@ export class OrdersController {
       },
     },
   })
-  @ApiUnauthorizedResponse({ 
+  @ApiUnauthorizedResponse({
     description: 'Unauthorized',
     type: ErrorResponse,
   })
-  @ApiForbiddenResponse({ 
+  @ApiForbiddenResponse({
     description: 'Forbidden',
     type: ErrorResponse,
     schema: {
@@ -418,7 +526,7 @@ export class OrdersController {
       },
     },
   })
-  @ApiNotFoundResponse({ 
+  @ApiNotFoundResponse({
     description: 'Not found',
     type: ErrorResponse,
     schema: {
@@ -429,8 +537,11 @@ export class OrdersController {
       },
     },
   })
-  async remove(@Param('id', ParseIntPipe) id: number, @Request() req: any): Promise<OneOrderResponseDto> {
-    const authenticatedUserMerchantId = req.user?.merchant?.id;
+  async remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req: AuthenticatedUser,
+  ): Promise<OneOrderResponseDto> {
+    const authenticatedUserMerchantId = req.merchant?.id;
     return this.ordersService.remove(id, authenticatedUserMerchantId);
   }
 }

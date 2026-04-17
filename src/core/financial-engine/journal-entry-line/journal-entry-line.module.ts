@@ -5,8 +5,8 @@ import { JournalEntryLineController } from './journal-entry-line.controller';
 import { JournalEntryLine } from './entities/journal-entry-line.entity';
 import { JournalEntry } from '../journal-entry/entities/journal-entry.entity';
 import { LedgerAccount } from '../ledger-accounts/entities/ledger-account.entity';
-import { Company } from 'src/companies/entities/company.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 
 @Module({
   imports: [

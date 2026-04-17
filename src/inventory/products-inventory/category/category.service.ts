@@ -4,7 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import {
   CategoryResponseDto,
   OneCategoryResponse,
@@ -23,7 +23,7 @@ export class CategoryService {
     @InjectRepository(Merchant)
     private readonly merchantRepo: Repository<Merchant>,
     private readonly productsInventoryService: ProductsInventoryService,
-  ) {}
+  ) { }
 
   async create(
     merchant_id: number,
@@ -39,10 +39,10 @@ export class CategoryService {
       }),
       parentId
         ? this.categoryRepo.findOneBy({
-            id: parentId,
-            merchantId: merchant_id,
-            isActive: true,
-          })
+          id: parentId,
+          merchantId: merchant_id,
+          isActive: true,
+        })
         : Promise.resolve(null),
     ]);
 
@@ -122,9 +122,9 @@ export class CategoryService {
           name: category.name,
           merchant: category.merchant
             ? {
-                id: category.merchant.id,
-                name: category.merchant.name,
-              }
+              id: category.merchant.id,
+              name: category.merchant.name,
+            }
             : null,
         };
         result.parents =
@@ -176,9 +176,9 @@ export class CategoryService {
       name: category.name,
       merchant: category.merchant
         ? {
-            id: category.merchant.id,
-            name: category.merchant.name,
-          }
+          id: category.merchant.id,
+          name: category.merchant.name,
+        }
         : null,
     };
     dataForResponse.parents =
@@ -196,14 +196,14 @@ export class CategoryService {
         break;
       case 'Updated':
         response = {
-          statusCode: 201,
+          statusCode: 200,
           message: `Category ${createdUpdateDelete} successfully`,
           data: dataForResponse,
         };
         break;
       case 'Deleted':
         response = {
-          statusCode: 201,
+          statusCode: 200,
           message: `Category ${createdUpdateDelete} successfully`,
           data: dataForResponse,
         };

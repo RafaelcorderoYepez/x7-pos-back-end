@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { Repository, Between } from 'typeorm';
+import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import {
   BadRequestException,
@@ -12,11 +12,11 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
-import { Merchant } from '../../../merchants/entities/merchant.entity';
-import { Table } from '../../../tables/entities/table.entity';
-import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
-import { MerchantSubscription } from '../../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
-import { Customer } from 'src/business-partners/customers/entities/customer.entity';
+import { Merchant } from '../../../platform-saas/merchants/entities/merchant.entity';
+import { Table } from '../../../restaurant-operations/dining-system/tables/entities/table.entity';
+import { Collaborator } from '../../../finance-hr/hr/collaborators/entities/collaborator.entity';
+import { MerchantSubscription } from '../../../platform-saas/subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { Customer } from '../../../core/business-partners/customers/entities/customer.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { GetOrdersQueryDto, OrderSortBy } from './dto/get-orders-query.dto';
@@ -108,7 +108,7 @@ describe('OrdersService', () => {
   const mockCollaborator = {
     id: 1,
     merchant_id: 1,
-    name: 'Juan Pérez',
+    name: 'John Doe',
   };
 
   const mockSubscription = {
@@ -1070,7 +1070,9 @@ describe('OrdersService', () => {
     beforeEach(() => {
       jest
         .spyOn(orderRepository, 'save')
-        .mockImplementation(async (o: Order) => ({ ...mockOrder, ...o }) as Order);
+        .mockImplementation(
+          async (o: Order) => ({ ...mockOrder, ...o }) as Order,
+        );
       jest.spyOn(orderItemRepository, 'find').mockResolvedValue([]);
     });
 
@@ -1080,7 +1082,9 @@ describe('OrdersService', () => {
         status: OrderBusinessStatus.COMPLETED,
         type: OrderType.TAKE_OUT,
       };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(updatedOrder as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
 
       const result = await service.update(1, updateOrderDto, 1);
@@ -1095,7 +1099,9 @@ describe('OrdersService', () => {
       const dtoWithTableId: UpdateOrderDto = { tableId: 2 };
       const newTable = { ...mockTable, id: 2 };
       const updatedOrder = { ...mockOrder, table_id: 2 };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(updatedOrder as any);
       jest.spyOn(tableRepository, 'findOne').mockResolvedValue(newTable as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
 
@@ -1114,7 +1120,9 @@ describe('OrdersService', () => {
       const dtoWithCollaboratorId: UpdateOrderDto = { collaboratorId: 2 };
       const newCollaborator = { ...mockCollaborator, id: 2 };
       const updatedOrder = { ...mockOrder, collaborator_id: 2 };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(updatedOrder as any);
       jest
         .spyOn(collaboratorRepository, 'findOne')
         .mockResolvedValue(newCollaborator as any);
@@ -1135,7 +1143,9 @@ describe('OrdersService', () => {
       const dtoWithSubscriptionId: UpdateOrderDto = { subscriptionId: 2 };
       const newSubscription = { ...mockSubscription, id: 2 };
       const updatedOrder = { ...mockOrder, subscription_id: 2 };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(updatedOrder as any);
       jest
         .spyOn(subscriptionRepository, 'findOne')
         .mockResolvedValue(newSubscription as any);
@@ -1156,7 +1166,9 @@ describe('OrdersService', () => {
       const dtoWithCustomerId: UpdateOrderDto = { customerId: 2 };
       const newCustomer = { ...mockCustomer, id: 2 };
       const updatedOrder = { ...mockOrder, customer_id: 2 };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(updatedOrder as any);
       jest
         .spyOn(customerRepository, 'findOne')
         .mockResolvedValue(newCustomer as any);
@@ -1181,7 +1193,9 @@ describe('OrdersService', () => {
         ...mockOrder,
         closed_at: new Date('2024-01-15T10:00:00Z'),
       };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(updatedOrder as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
 
       await service.update(1, dtoWithClosedAt, 1);
@@ -1197,7 +1211,9 @@ describe('OrdersService', () => {
     it('should set closedAt to null when provided as empty string', async () => {
       const dtoWithEmptyClosedAt: UpdateOrderDto = { closedAt: '' };
       const updatedOrder = { ...mockOrder, closed_at: null };
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(updatedOrder as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(updatedOrder as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
 
       await service.update(1, dtoWithEmptyClosedAt, 1);
@@ -1529,15 +1545,21 @@ describe('OrdersService', () => {
         },
       ];
 
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(persisted as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(persisted as any);
       jest.spyOn(orderItemRepository, 'find').mockResolvedValue(items as any);
-      jest.spyOn(orderItemModifierRepository, 'find').mockResolvedValue([] as any);
-      jest.spyOn(orderPaymentRepository, 'find').mockResolvedValue([
-        { amount: 40, tip_amount: 1.25, is_refund: false },
-      ] as any);
-      jest.spyOn(orderTaxRepository, 'find').mockResolvedValue([
-        { amount: 5 },
-      ] as any);
+      jest
+        .spyOn(orderItemModifierRepository, 'find')
+        .mockResolvedValue([] as any);
+      jest
+        .spyOn(orderPaymentRepository, 'find')
+        .mockResolvedValue([
+          { amount: 40, tip_amount: 1.25, is_refund: false },
+        ] as any);
+      jest
+        .spyOn(orderTaxRepository, 'find')
+        .mockResolvedValue([{ amount: 5 }] as any);
       const saveSpy = jest
         .spyOn(orderRepository, 'save')
         .mockImplementation(async (o: any) => o);
@@ -1580,12 +1602,18 @@ describe('OrdersService', () => {
         },
       ];
 
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(persisted as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(persisted as any);
       jest.spyOn(orderItemRepository, 'find').mockResolvedValue(items as any);
-      jest.spyOn(orderItemModifierRepository, 'find').mockResolvedValue([] as any);
-      jest.spyOn(orderPaymentRepository, 'find').mockResolvedValue([
-        { amount: 25, tip_amount: 0, is_refund: false },
-      ] as any);
+      jest
+        .spyOn(orderItemModifierRepository, 'find')
+        .mockResolvedValue([] as any);
+      jest
+        .spyOn(orderPaymentRepository, 'find')
+        .mockResolvedValue([
+          { amount: 25, tip_amount: 0, is_refund: false },
+        ] as any);
       jest.spyOn(orderTaxRepository, 'find').mockResolvedValue([] as any);
       const saveSpy = jest
         .spyOn(orderRepository, 'save')
@@ -1612,7 +1640,9 @@ describe('OrdersService', () => {
         deliveryFee: 5,
       };
 
-      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(mockOrder as any);
+      jest
+        .spyOn(orderRepository, 'findOne')
+        .mockResolvedValue(mockOrder as any);
       jest.spyOn(orderRepository, 'update').mockResolvedValue(undefined as any);
       const syncSpy = jest
         .spyOn(service, 'syncOrderAggregates')

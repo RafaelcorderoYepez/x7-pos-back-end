@@ -10,8 +10,8 @@ import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interf
 import { LocationLittleResponseDto } from '../locations/dto/location-response.dto';
 import { ProductLittleResponseDto } from '../../products/dto/product-response.dto';
 import { VariantLittleResponseDto } from '../../variants/dto/variant-response.dto';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 
 describe('ItemsController', () => {
   let controller: ItemsController;

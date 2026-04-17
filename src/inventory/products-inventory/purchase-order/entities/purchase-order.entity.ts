@@ -8,9 +8,9 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { PurchaseOrderStatus } from '../constants/purchase-order-status.enum';
-import { Supplier } from 'src/business-partners/suppliers/entities/supplier.entity';
+import { Supplier } from 'src/core/business-partners/suppliers/entities/supplier.entity';
 import { PurchaseOrderItem } from 'src/inventory/products-inventory/purchase-order-item/entities/purchase-order-item.entity';
 
 @Entity('purchase_order')

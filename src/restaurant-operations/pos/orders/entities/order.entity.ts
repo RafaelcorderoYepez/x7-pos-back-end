@@ -10,18 +10,19 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Merchant } from '../../../../merchants/entities/merchant.entity';
-import { Table } from '../../../../tables/entities/table.entity';
-import { Collaborator } from '../../../../hr/collaborators/entities/collaborator.entity';
-import { MerchantSubscription } from '../../../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
-import { Customer } from 'src/business-partners/customers/entities/customer.entity';
+// import { ApiProperty } from '@nestjs/swagger';
+import { Merchant } from '../../../../platform-saas/merchants/entities/merchant.entity';
+import { Table } from '../../../../restaurant-operations/dining-system/tables/entities/table.entity';
+import { Collaborator } from '../../../../finance-hr/hr/collaborators/entities/collaborator.entity';
+import { MerchantSubscription } from '../../../../platform-saas/subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { Customer } from '../../../../core/business-partners/customers/entities/customer.entity';
 import { OrderStatus } from '../constants/order-status.enum';
 import { OrderBusinessStatus } from '../constants/order-business-status.enum';
 import { OrderType } from '../constants/order-type.enum';
-import { CashTransaction } from '../../../../cashdrawer/cash-transactions/entities/cash-transaction.entity';
-import { LoyaltyPointTransaction } from 'src/loyalty/loyalty-points-transaction/entities/loyalty-points-transaction.entity';
-import { LoyaltyRewardsRedemtion } from 'src/loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
-import { LoyaltyCoupon } from 'src/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
+import { CashTransaction } from '../../../../restaurant-operations/cashdrawer/cash-transactions/entities/cash-transaction.entity';
+import { LoyaltyPointTransaction } from '../../../../growth/loyalty/loyalty-points-transaction/entities/loyalty-points-transaction.entity';
+import { LoyaltyRewardsRedemption } from '../../../../growth/loyalty/loyalty-rewards-redemptions/entities/loyalty-rewards-redemption.entity';
+import { LoyaltyCoupon } from '../../../../growth/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
 import { Receipt } from 'src/core/billing-transactions/receipts/entities/receipt.entity';
 import { OrderItem } from '../../order-item/entities/order-item.entity';
 import { OrderPayment } from '../../order-payments/entities/order-payment.entity';
@@ -137,7 +138,10 @@ export class Order {
   })
   logical_status: OrderStatus;
 
-  @ApiProperty({ example: '000001', description: 'Unique order number within the merchant' })
+  @ApiProperty({
+    example: '000001',
+    description: 'Unique order number within the merchant',
+  })
   @Column({ type: 'varchar', length: 20 })
   order_number: string;
 
@@ -165,7 +169,7 @@ export class Order {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   discount_total: number;
 
-  /** Propina de cabecera (create/update); la de pagos va en order_payments.tip_amount y se suma en sync. */
+  /** Header tip (create/update); the payment tip goes in order_payments.tip_amount and is added in sync. */
   @ApiProperty({ example: 0 })
   @Column({
     type: 'decimal',
@@ -176,7 +180,7 @@ export class Order {
   })
   manual_tip_total: number;
 
-  /** manual_tip_total + suma de propinas en pagos (se recalcula en syncOrderAggregates). */
+  /** manual_tip_total + sum of tips in payments (recalculated in syncOrderAggregates). */
   @ApiProperty({ example: 0 })
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   tip_total: number;
@@ -291,33 +295,11 @@ export class Order {
   loyaltyPointTransactions: LoyaltyPointTransaction[];
 
   @OneToMany(
-    () => LoyaltyRewardsRedemtion,
-    (loyaltyRewardsRedemtion) => loyaltyRewardsRedemtion.order,
+    () => LoyaltyRewardsRedemption,
+    (loyaltyRewardsRedemption) => loyaltyRewardsRedemption.order,
   )
-  loyaltyRewardsRedemptions: LoyaltyRewardsRedemtion[];
+  loyaltyRewardsRedemptions: LoyaltyRewardsRedemption[];
 
-  @OneToMany(
-    () => LoyaltyCoupon,
-    (loyaltyCoupon) => loyaltyCoupon.order,
-  )
+  @OneToMany(() => LoyaltyCoupon, (loyaltyCoupon) => loyaltyCoupon.order)
   loyaltyCoupons: LoyaltyCoupon[];
 }
-
-/*
-Table Order {
-  id BIGSERIAL [pk]
-  merchant_id BIGSERIAL [ref: > Merchant.id]
-  table_id BIGSERIAL [ref: > Table.id]
-  collaborator_id BIGSERIAL [ref: > Collaborator.id] // mesero que tomó la orden
-  subscription_id BIGSERIAL [ref: > merchants_subscriptions.id]
-  status VARCHAR(50) // pending, in_progress, completed, cancelled
-  type VARCHAR(50) // dine_in, take_out, delivery
-  created_at TIMESTAMP
-  closed_at TIMESTAMP
-  customer_id BIGSERIAL [ref: > Customer.id]
-  logical_status OrderStatus // ACTIVE, DELETED (for logical deletion)
-  Indexes {
-    (merchant_id, status, created_at)
-  }
-}
-*/

@@ -13,7 +13,7 @@ import { GetItemsQueryDto } from './dto/get-items-query.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Product } from '../../products/entities/product.entity';
 import { Variant } from '../../variants/entities/variant.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 
 describe('ItemsService', () => {
@@ -148,18 +148,18 @@ describe('ItemsService', () => {
 
     jest.clearAllMocks();
 
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => { });
     jest
       .spyOn(ErrorHandler, 'notFound')
-      .mockImplementation((message: string) => {
+      .mockImplementation((message?: string) => {
         throw new NotFoundException(message);
       });
-    jest.spyOn(ErrorHandler, 'exists').mockImplementation((message: string) => {
+    jest.spyOn(ErrorHandler, 'exists').mockImplementation((message?: string) => {
       throw new BadRequestException(message);
     });
     jest
       .spyOn(ErrorHandler, 'invalidId')
-      .mockImplementation((message: string) => {
+      .mockImplementation((message?: string) => {
         throw new BadRequestException(message);
       });
   });
@@ -855,7 +855,7 @@ describe('ItemsService', () => {
       expect(itemToDelete.isActive).toBe(false);
       expect(itemRepo.save).toHaveBeenCalledWith(itemToDelete);
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Item Deleted successfully',
         data: {
           id: inactiveItem.id,

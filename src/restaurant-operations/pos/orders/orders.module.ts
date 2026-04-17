@@ -3,13 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { Order } from './entities/order.entity';
-import { Merchant } from '../../../merchants/entities/merchant.entity';
-import { Table } from '../../../tables/entities/table.entity';
-import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
-import { MerchantSubscription } from '../../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
-import { Customer } from 'src/business-partners/customers/entities/customer.entity';
-import { LoyaltyRewardsRedemtion } from 'src/loyalty/loyalty-rewards-redemtions/entities/loyalty-rewards-redemtion.entity';
-import { LoyaltyCoupon } from 'src/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
+import { Merchant } from '../../../platform-saas/merchants/entities/merchant.entity';
+import { Table } from '../../dining-system/tables/entities/table.entity';
+import { Collaborator } from '../../../finance-hr/hr/collaborators/entities/collaborator.entity';
+import { MerchantSubscription } from '../../../platform-saas/subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { Customer } from '../../../core/business-partners/customers/entities/customer.entity';
+import { LoyaltyRewardsRedemption } from '../../../growth/loyalty/loyalty-rewards-redemptions/entities/loyalty-rewards-redemption.entity';
+import { LoyaltyCoupon } from '../../../growth/loyalty/loyalty-coupons/entities/loyalty-coupon.entity';
 import { OrderItem } from '../order-item/entities/order-item.entity';
 import { OrderPayment } from '../order-payments/entities/order-payment.entity';
 import { OrderTax } from '../order-taxes/entities/order-tax.entity';
@@ -28,7 +28,7 @@ import { OrderItemModifier } from '../order-item-modifiers/entities/order-item-m
       Collaborator,
       MerchantSubscription,
       Customer,
-      LoyaltyRewardsRedemtion,
+      LoyaltyRewardsRedemption,
       LoyaltyCoupon,
     ]),
   ],
@@ -36,4 +36,4 @@ import { OrderItemModifier } from '../order-item-modifiers/entities/order-item-m
   providers: [OrdersService],
   exports: [OrdersService],
 })
-export class OrdersModule { }
+export class OrdersModule {}

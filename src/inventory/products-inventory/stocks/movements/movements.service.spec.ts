@@ -12,7 +12,7 @@ import { UpdateMovementDto } from './dto/update-movement.dto';
 import { GetMovementsQueryDto } from './dto/get-movements-query.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { MovementsStatus } from './constants/movements-status';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { Product } from '../../products/entities/product.entity';
 import { Variant } from '../../variants/entities/variant.entity';
 import { Location } from '../locations/entities/location.entity';
@@ -146,18 +146,18 @@ describe('MovementsService', () => {
 
     jest.clearAllMocks();
 
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => { });
     jest
       .spyOn(ErrorHandler, 'notFound')
-      .mockImplementation((message: string) => {
+      .mockImplementation((message?: string) => {
         throw new NotFoundException(message);
       });
-    jest.spyOn(ErrorHandler, 'exists').mockImplementation((message: string) => {
+    jest.spyOn(ErrorHandler, 'exists').mockImplementation((message?: string) => {
       throw new BadRequestException(message);
     });
     jest
       .spyOn(ErrorHandler, 'invalidId')
-      .mockImplementation((message: string) => {
+      .mockImplementation((message?: string) => {
         throw new BadRequestException(message);
       });
   });
@@ -887,7 +887,7 @@ describe('MovementsService', () => {
       expect(movementToDelete.isActive).toBe(false);
       expect(movementRepo.save).toHaveBeenCalledWith(movementToDelete);
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Movement Deleted successfully',
         data: {
           id: inactiveMovement.id,

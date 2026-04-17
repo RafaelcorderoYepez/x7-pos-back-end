@@ -7,9 +7,9 @@ import {
   PrimaryGeneratedColumn,
   TableInheritance,
 } from 'typeorm';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'src/users/entities/user.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 
 @Entity({ name: 'configuration' })
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })

@@ -1,8 +1,8 @@
 //src/core/configuration/merchant-overtime-rule/merchant-overtime-rule.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Company } from 'src/companies/entities/company.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
+import { User } from 'src/platform-saas/users/entities/user.entity';
 import { Repository, In } from 'typeorm';
 import { CreateMerchantOvertimeRuleDto } from './dto/create-merchant-overtime-rule.dto';
 import { OneMerchantOvertimeRuleResponseDto } from './dto/merchant-overtime-rule-response.dto';

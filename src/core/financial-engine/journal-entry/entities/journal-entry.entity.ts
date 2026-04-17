@@ -10,7 +10,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
 import { JournalEntryLine } from 'src/core/financial-engine/journal-entry-line/entities/journal-entry-line.entity';
 
 import { JournalEntryStatus } from '../constants/journal-entry-status.enum';

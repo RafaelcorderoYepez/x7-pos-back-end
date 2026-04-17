@@ -5,13 +5,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { UsersModule } from '../platform-saas/users/users.module';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { RolesGuard } from './guards/roles.guard';
-import { User } from '../users/entities/user.entity';
-import { Company } from '../companies/entities/company.entity';
-import { Merchant } from '../merchants/entities/merchant.entity';
+import { User } from '../platform-saas/users/entities/user.entity';
+import { Company } from '../platform-saas/companies/entities/company.entity';
+import { Merchant } from '../platform-saas/merchants/entities/merchant.entity';
 import { MailModule } from '../mail/mail.module';
 
 @Module({

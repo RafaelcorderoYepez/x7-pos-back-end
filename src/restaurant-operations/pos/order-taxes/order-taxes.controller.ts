@@ -30,13 +30,17 @@ import {
   ApiBadRequestResponse,
   ApiQuery,
 } from '@nestjs/swagger';
+import { AuthenticatedUser } from '../../../auth/interfaces/authenticated-user.interface';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
-import { GetOrderTaxQueryDto, OrderTaxSortBy } from './dto/get-order-tax-query.dto';
+import { UserRole } from '../../../platform-saas/users/constants/role.enum';
+import { Scope } from '../../../platform-saas/users/constants/scope.enum';
+import {
+  GetOrderTaxQueryDto,
+  OrderTaxSortBy,
+} from './dto/get-order-tax-query.dto';
 import { OneOrderTaxResponseDto } from './dto/order-tax-response.dto';
 import { PaginatedOrderTaxResponseDto } from './dto/paginated-order-tax-response.dto';
 import { ErrorResponse } from 'src/common/dtos/error-response.dto';
@@ -66,9 +70,9 @@ export class OrderTaxesController {
   @ApiNotFoundResponse({ type: ErrorResponse })
   async create(
     @Body() dto: CreateOrderTaxDto,
-    @Request() req: any,
+    @Request() req: AuthenticatedUser,
   ): Promise<OneOrderTaxResponseDto> {
-    return this.orderTaxesService.create(dto, req.user?.merchant?.id);
+    return this.orderTaxesService.create(dto, req.merchant?.id);
   }
 
   @Get()
@@ -91,9 +95,9 @@ export class OrderTaxesController {
   @ApiOkResponse({ type: PaginatedOrderTaxResponseDto })
   async findAll(
     @Query() query: GetOrderTaxQueryDto,
-    @Request() req: any,
+    @Request() req: AuthenticatedUser,
   ): Promise<PaginatedOrderTaxResponseDto> {
-    return this.orderTaxesService.findAll(query, req.user?.merchant?.id);
+    return this.orderTaxesService.findAll(query, req.merchant?.id);
   }
 
   @Get(':id')
@@ -110,9 +114,9 @@ export class OrderTaxesController {
   @ApiOkResponse({ type: OneOrderTaxResponseDto })
   async findOne(
     @Param('id', ParseIntPipe) id: number,
-    @Request() req: any,
+    @Request() req: AuthenticatedUser,
   ): Promise<OneOrderTaxResponseDto> {
-    return this.orderTaxesService.findOne(id, req.user?.merchant?.id);
+    return this.orderTaxesService.findOne(id, req.merchant?.id);
   }
 
   @Put(':id')
@@ -131,9 +135,9 @@ export class OrderTaxesController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateOrderTaxDto,
-    @Request() req: any,
+    @Request() req: AuthenticatedUser,
   ): Promise<OneOrderTaxResponseDto> {
-    return this.orderTaxesService.update(id, dto, req.user?.merchant?.id);
+    return this.orderTaxesService.update(id, dto, req.merchant?.id);
   }
 
   @Delete(':id')
@@ -151,8 +155,8 @@ export class OrderTaxesController {
   @ApiOkResponse({ type: OneOrderTaxResponseDto })
   async remove(
     @Param('id', ParseIntPipe) id: number,
-    @Request() req: any,
+    @Request() req: AuthenticatedUser,
   ): Promise<OneOrderTaxResponseDto> {
-    return this.orderTaxesService.remove(id, req.user?.merchant?.id);
+    return this.orderTaxesService.remove(id, req.merchant?.id);
   }
 }

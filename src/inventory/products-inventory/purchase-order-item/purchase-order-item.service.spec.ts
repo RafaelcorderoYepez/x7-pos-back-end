@@ -14,9 +14,9 @@ import { CreatePurchaseOrderItemDto } from './dto/create-purchase-order-item.dto
 import { UpdatePurchaseOrderItemDto } from './dto/update-purchase-order-item.dto';
 import { GetPurchaseOrdersItemsQueryDto } from './dto/get-purchase-order-item-query.dto';
 import { PurchaseOrderStatus } from '../purchase-order/constants/purchase-order-status.enum';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { Category } from '../category/entities/category.entity';
-import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
+import { Supplier } from '../../../core/business-partners/suppliers/entities/supplier.entity';
 
 describe('PurchaseOrderItemService', () => {
   let service: PurchaseOrderItemService;
@@ -690,7 +690,7 @@ describe('PurchaseOrderItemService', () => {
           mockUpdatePurchaseOrderItemDto.unitPrice!,
       });
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Item Updated successfully',
         data: {
           id: updatedPurchaseOrderItemData.id,
@@ -902,7 +902,7 @@ describe('PurchaseOrderItemService', () => {
         }),
       );
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Item Updated successfully',
         data: {
           id: updatedPurchaseOrderItemData.id,
@@ -974,7 +974,7 @@ describe('PurchaseOrderItemService', () => {
         ],
       });
       expect(result).toEqual({
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Item Deleted successfully',
         data: {
           id: inactivePurchaseOrderItem.id,

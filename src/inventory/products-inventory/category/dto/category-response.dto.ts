@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SuccessResponse } from 'src/common/dtos/success-response.dto';
-import { MerchantLittleResponseDto } from 'src/merchants/dtos/merchant-response.dto';
+import { MerchantLittleResponseDto } from 'src/platform-saas/merchants/dtos/merchant-response.dto';
 
 export class CategoryResponseDto {
   @ApiProperty({ example: 1, description: 'Category ID' })

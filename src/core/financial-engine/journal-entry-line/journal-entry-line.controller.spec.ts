@@ -3,8 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { JournalEntryLineController } from './journal-entry-line.controller';
 import { JournalEntryLineService } from './journal-entry-line.service';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import { CreateJournalEntryLineDto } from './dto/create-journal-entry-line.dto';
 import { UpdateJournalEntryLineDto } from './dto/update-journal-entry-line.dto';
 

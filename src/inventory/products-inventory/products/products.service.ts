@@ -11,8 +11,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 import { Category } from '../category/entities/category.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
-import { Supplier } from '../../../business-partners/suppliers/entities/supplier.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
+import { Supplier } from '../../../core/business-partners/suppliers/entities/supplier.entity';
 import { ModifiersService } from '../modifiers/modifiers.service';
 import { VariantsService } from '../variants/variants.service';
 import { CategoryLittleResponseDto } from '../category/dto/category-response.dto';
@@ -290,14 +290,14 @@ export class ProductsService {
         break;
       case 'Updated':
         response = {
-          statusCode: 201,
+          statusCode: 200,
           message: `Product ${createdUpdateDelete} successfully`,
           data: result,
         };
         break;
       case 'Deleted':
         response = {
-          statusCode: 201,
+          statusCode: 200,
           message: `Product ${createdUpdateDelete} successfully`,
           data: result,
         };

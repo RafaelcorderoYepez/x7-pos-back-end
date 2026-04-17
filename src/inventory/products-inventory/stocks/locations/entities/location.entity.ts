@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import {
   Column,
   JoinColumn,

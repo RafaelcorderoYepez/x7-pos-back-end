@@ -29,11 +29,11 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { GetOrdersQueryDto, OrderSortBy } from './dto/get-orders-query.dto';
 import { Order } from './entities/order.entity';
 import { OrderStatus } from './constants/order-status.enum';
-import { Merchant } from '../../../merchants/entities/merchant.entity';
-import { Table } from '../../../tables/entities/table.entity';
-import { Collaborator } from '../../../hr/collaborators/entities/collaborator.entity';
-import { MerchantSubscription } from '../../../subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
-import { Customer } from 'src/business-partners/customers/entities/customer.entity';
+import { Merchant } from '../../../platform-saas/merchants/entities/merchant.entity';
+import { Table } from '../../../restaurant-operations/dining-system/tables/entities/table.entity';
+import { Collaborator } from '../../../finance-hr/hr/collaborators/entities/collaborator.entity';
+import { MerchantSubscription } from '../../../platform-saas/subscriptions/merchant-subscriptions/entities/merchant-subscription.entity';
+import { Customer } from '../../../core/business-partners/customers/entities/customer.entity';
 import {
   OneOrderResponseDto,
   PaginatedOrdersResponseDto,
@@ -599,7 +599,8 @@ export class OrdersService {
       where: { order_id: orderId },
     });
 
-    const modifierAddonByItemId = await this.buildModifierAddonByOrderItemId(items);
+    const modifierAddonByItemId =
+      await this.buildModifierAddonByOrderItemId(items);
 
     order.subtotal = computeSubtotalFromItems(items, modifierAddonByItemId);
     order.tax_total = computeTaxTotalFromOrderTaxes(taxes);
@@ -666,10 +667,7 @@ export class OrdersService {
       .where('o.merchant_id = :mid', { mid: merchantId })
       .getRawOne<{ maxn: string | null }>();
 
-    const n =
-      raw?.maxn != null && raw.maxn !== ''
-        ? parseInt(raw.maxn, 10)
-        : 0;
+    const n = raw?.maxn != null && raw.maxn !== '' ? parseInt(raw.maxn, 10) : 0;
     const next = Number.isFinite(n) ? n + 1 : 1;
     const str = String(next);
     return str.length > 20 ? str.slice(0, 20) : str.padStart(6, '0');

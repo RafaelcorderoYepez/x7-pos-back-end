@@ -6,8 +6,8 @@ import { JournalEntryLine } from 'src/core/financial-engine/journal-entry-line/e
 
 
 import { LedgerAccount } from '../ledger-accounts/entities/ledger-account.entity';
-import { Company } from 'src/companies/entities/company.entity';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Company } from 'src/platform-saas/companies/entities/company.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import { CreateJournalEntryDto } from './dto/create-journal-entry.dto';
 import { UpdateJournalEntryDto } from './dto/update-journal-entry.dto';
 import { GetJournalEntriesQueryDto } from './dto/get-journal-entries-query.dto';
@@ -91,9 +91,11 @@ export class JournalEntryService {
       case 'Created':
         return { statusCode: 201, message: 'Journal Entry Created successfully', data };
       case 'Updated':
-        return { statusCode: 201, message: 'Journal Entry Updated successfully', data };
+        return { statusCode: 200, message: 'Journal Entry Updated successfully', data };
       case 'Deleted':
-        return { statusCode: 201, message: 'Journal Entry Deleted successfully', data };
+        return { statusCode: 200, message: 'Journal Entry Deleted successfully', data };
+      case 'Voided':
+        return { statusCode: 200, message: 'Journal Entry Voided successfully', data };
       default:
         return { statusCode: 200, message: 'Journal Entry retrieved successfully', data };
     }

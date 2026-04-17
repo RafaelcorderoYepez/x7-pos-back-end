@@ -8,7 +8,7 @@ import { AllPaginatedLocations } from './dto/all-paginated-locations.dto';
 import { Location } from './entities/location.entity';
 import { ErrorHandler } from 'src/common/utils/error-handler.util';
 import { ErrorMessage } from 'src/common/constants/error-messages';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 import {
   LocationResponseDto,
   OneLocationResponse,
@@ -21,7 +21,7 @@ export class LocationsService {
     private readonly locationRepository: Repository<Location>,
     @InjectRepository(Merchant)
     private readonly merchantRepo: Repository<Merchant>,
-  ) {}
+  ) { }
 
   async create(
     merchant_id: number,
@@ -123,9 +123,9 @@ export class LocationsService {
           address: location.address,
           merchant: location.merchant
             ? {
-                id: location.merchant.id,
-                name: location.merchant.name,
-              }
+              id: location.merchant.id,
+              name: location.merchant.name,
+            }
             : null,
         };
         return result;
@@ -178,9 +178,9 @@ export class LocationsService {
       address: location.address,
       merchant: location.merchant
         ? {
-            id: location.merchant.id,
-            name: location.merchant.name,
-          }
+          id: location.merchant.id,
+          name: location.merchant.name,
+        }
         : null,
     };
 
@@ -196,14 +196,14 @@ export class LocationsService {
         break;
       case 'Updated':
         response = {
-          statusCode: 201,
+          statusCode: 200,
           message: `Location ${createdUpdateDelete} successfully`,
           data: dataForResponse,
         };
         break;
       case 'Deleted':
         response = {
-          statusCode: 201,
+          statusCode: 200,
           message: `Location ${createdUpdateDelete} successfully`,
           data: dataForResponse,
         };

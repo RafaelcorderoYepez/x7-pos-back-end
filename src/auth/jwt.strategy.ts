@@ -5,11 +5,11 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
+import { User } from '../platform-saas/users/entities/user.entity';
 import { AuthenticatedUser } from './interfaces/authenticated-user.interface';
-import { UserRole } from '../users/constants/role.enum';
-import { Scope } from '../users/constants/scope.enum';
-import { Merchant } from 'src/merchants/entities/merchant.entity';
+import { UserRole } from '../platform-saas/users/constants/role.enum';
+import { Scope } from '../platform-saas/users/constants/scope.enum';
+import { Merchant } from 'src/platform-saas/merchants/entities/merchant.entity';
 
 interface JwtPayload {
   sub: string;

@@ -24,8 +24,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/users/constants/role.enum';
-import { Scope } from 'src/users/constants/scope.enum';
+import { UserRole } from 'src/platform-saas/users/constants/role.enum';
+import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
@@ -41,7 +41,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 @Controller('purchase-order')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class PurchaseOrderController {
-  constructor(private readonly purchaseOrderService: PurchaseOrderService) {}
+  constructor(private readonly purchaseOrderService: PurchaseOrderService) { }
 
   @Post()
   @Roles(UserRole.MERCHANT_ADMIN, UserRole.MERCHANT_USER)
@@ -379,7 +379,7 @@ export class PurchaseOrderController {
     // type: OnePurchaseOrderResponse, // Asumo que existe un DTO de respuesta para OnePurchaseOrderResponse
     schema: {
       example: {
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Updated successfully',
         data: {
           id: 1,
@@ -493,7 +493,7 @@ export class PurchaseOrderController {
     // type: OnePurchaseOrderResponse, // Asumo que existe un DTO de respuesta para OnePurchaseOrderResponse
     schema: {
       example: {
-        statusCode: 201,
+        statusCode: 200,
         message: 'Purchase Order Deleted successfully',
         data: {
           id: 1,
