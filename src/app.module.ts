@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AcountPayableModule } from './finance-hr/acount-payable/acount-payable.module';
+import { AccountPayableModule } from './finance-hr/account-payable/account-payable.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigurationModule } from './core/configuration/configuration.module';
 import { CoreModule } from './core/core.module';
@@ -51,7 +51,7 @@ import { LoyaltyCustomer } from './growth/loyalty/loyalty-customer/entities/loya
 import { LoyaltyPointTransaction } from './growth/loyalty/loyalty-points-transaction/entities/loyalty-points-transaction.entity';
 import { LoyaltyProgram } from './growth/loyalty/loyalty-programs/entities/loyalty-program.entity';
 import { LoyaltyReward } from './growth/loyalty/loyalty-reward/entities/loyalty-reward.entity';
-import { LoyaltyRewardsRedemtion } from './growth/loyalty/loyalty-rewards-redemptions/entities/loyalty-rewards-redemtion.entity';
+import { LoyaltyRewardsRedemption } from './growth/loyalty/loyalty-rewards-redemptions/entities/loyalty-rewards-redemption.entity';
 import { LoyaltyTier } from './growth/loyalty/loyalty-tier/entities/loyalty-tier.entity';
 import { MarketingAutomation } from './growth/marketing/marketing-automations/entities/marketing-automation.entity';
 import { MarketingAutomationAction } from './growth/marketing/marketing-automation-actions/entities/marketing-automation-action.entity';
@@ -106,13 +106,13 @@ import { ShiftAssignment } from './restaurant-operations/shift/shift-assignments
 import { SubscriptionApplication } from './platform-saas/subscriptions/subscription-application/entity/subscription-application.entity';
 import { SubscriptionPayment } from './platform-saas/subscriptions/subscription-payments/entity/subscription-payments.entity';
 import { SubscriptionPlan } from './platform-saas/subscriptions/subscription-plan/entity/subscription-plan.entity';
-import { SuplierInvoice } from './finance-hr/acount-payable/suplier-invoices/entities/suplier-invoice.entity';
-import { SuplierInvoiceItem } from './finance-hr/acount-payable/suplier-invoice-item/entities/suplier-invoice-item.entity';
+import { SupplierInvoice } from './finance-hr/account-payable/supplier-invoices/entities/supplier-invoice.entity';
+import { SupplierInvoiceItem } from './finance-hr/account-payable/supplier-invoice-item/entities/supplier-invoice-item.entity';
 import { Supplier } from './core/business-partners/suppliers/entities/supplier.entity';
-import { SupplierCreditNote } from './finance-hr/acount-payable/supplier-credit-notes/entities/supplier-credit-note.entity';
-import { SupplierPayment } from './finance-hr/acount-payable/supplier-payments/entities/supplier-payment.entity';
-import { SupplierPaymentAllocation } from './finance-hr/acount-payable/supplier_payment_allocations/entities/supplier_payment_allocation.entity';
-import { SupplierPaymentItem } from './finance-hr/acount-payable/supplier-payment-items/entities/supplier-payment-item.entity';
+import { SupplierCreditNote } from './finance-hr/account-payable/supplier-credit-notes/entities/supplier-credit-note.entity';
+import { SupplierPayment } from './finance-hr/account-payable/supplier-payments/entities/supplier-payment.entity';
+import { SupplierPaymentAllocation } from './finance-hr/account-payable/supplier_payment_allocations/entities/supplier_payment_allocation.entity';
+import { SupplierPaymentItem } from './finance-hr/account-payable/supplier-payment-items/entities/supplier-payment-item.entity';
 import { Table } from './restaurant-operations/dining-system/tables/entities/table.entity';
 import { TableAssignment } from './restaurant-operations/dining-system/table-assignments/entities/table-assignment.entity';
 import { TimeEntry } from './finance-hr/hr/collaborator-time-entries/entities/time-entry.entity';
@@ -176,7 +176,7 @@ import { FloorPlan } from './restaurant-operations/dining-system/floor-plan/enti
           LoyaltyPointTransaction,
           LoyaltyProgram,
           LoyaltyReward,
-          LoyaltyRewardsRedemtion,
+          LoyaltyRewardsRedemption,
           LoyaltyTier,
           MarketingAutomation,
           MarketingAutomationAction,
@@ -225,8 +225,8 @@ import { FloorPlan } from './restaurant-operations/dining-system/floor-plan/enti
           SubscriptionApplication,
           SubscriptionPayment,
           SubscriptionPlan,
-          SuplierInvoice,
-          SuplierInvoiceItem,
+          SupplierInvoice,
+          SupplierInvoiceItem,
           Supplier,
           SupplierCreditNote,
           SupplierPayment,
@@ -249,7 +249,7 @@ import { FloorPlan } from './restaurant-operations/dining-system/floor-plan/enti
         synchronize: true,
       }),
     }),
-    AcountPayableModule,
+    AccountPayableModule,
     AuthModule,
     ConfigurationModule,
     CoreModule,
