@@ -166,6 +166,7 @@ import { OnboardingSession } from './onboarding/entities/onboarding-session.enti
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     EventEmitterModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
