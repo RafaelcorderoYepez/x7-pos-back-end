@@ -10,6 +10,10 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    // TS 6.0 marca `baseUrl` como deprecado y aborta la compilación. El proyecto todavía
+    // resuelve por rutas absolutas (`src/...`) en cientos de imports, así que se silencia el
+    // aviso hasta que esa migración se haga de verdad; sin esto `npm run build` no arranca.
+    "ignoreDeprecations": "6.0",
     "strictPropertyInitialization": false,
 
     "incremental": false,
