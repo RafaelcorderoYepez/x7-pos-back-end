@@ -33,7 +33,7 @@ import { AllPaginatedReservationTables } from './dto/all-paginated-reservation-t
 import { GetReservationTablesQueryDto } from './dto/get-reservation-tables-query.dto';
 import { BulkAssignReservationTablesDto } from './dto/bulk-assign-reservation-tables.dto';
 
-@ApiTags('Reservation Tables')
+@ApiTags('Restaurant operations - Reservations - Tables')
 @ApiBearerAuth()
 @Controller('reservation-table')
 @UseGuards(JwtAuthGuard, RolesGuard)

@@ -21,7 +21,7 @@ function computeStockLevelState(
   if (currentQty <= 0) {
     return InventoryStockAlertType.OUT_OF_STOCK;
   }
-  if (minimumQty != null && currentQty <= minimumQty) {
+  if (minimumQty != null && currentQty < minimumQty) {
     return InventoryStockAlertType.LOW;
   }
   return 'OK';
@@ -118,7 +118,8 @@ export class StockLevelMonitorService {
         variantId: item.variantId ?? null,
         supplyId: item.supplyId ?? null,
         locationId: item.locationId,
-        categoryId: item.product?.categoryId ?? item.supply?.category_id ?? null,
+        categoryId:
+          item.product?.categoryId ?? item.supply?.category_id ?? null,
         alertType: newState,
         currentQty,
         minimumQty,

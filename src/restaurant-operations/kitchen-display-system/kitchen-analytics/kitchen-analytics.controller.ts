@@ -3,14 +3,21 @@ import { KitchenAnalyticsService } from './kitchen-analytics.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AuthenticatedUser } from 'src/auth/interfaces/authenticated-user.interface';
-import { ApiBearerAuth, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PrepTimeResponseDto } from './dto/prep-time-response.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/platform-saas/users/constants/role.enum';
 import { Scope } from 'src/platform-saas/users/constants/scope.enum';
 import { Scopes } from 'src/auth/decorators/scopes.decorator';
 import { GetCancelledOrdersDto } from './dto/get-cancelled-orders.dto';
+import { GetExecutiveAnalyticsQueryDto } from './dto/executive-analytics.dto';
 
+@ApiTags('Restaurant operations - Kitchen Display System - Kitchen Analytics')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('kitchen-analytics')
@@ -47,10 +54,10 @@ export class KitchenAnalyticsController {
   @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
   async getCancelledOrders(
     @Query() query: GetCancelledOrdersDto,
-    @Request() req,
+    @Request() req: AuthenticatedUser,
   ) {
     const data = await this.service.getCancelledKitchenOrders(
-      req.user.merchant.id,
+      req.merchant.id,
       query.startDate,
       query.endDate,
     );
@@ -64,14 +71,76 @@ export class KitchenAnalyticsController {
 
   @Get('cancelled-orders/summary')
   @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN)
-  async getSummary(@Request() req) {
-    const data = await this.service.getCancellationSummary(
-      req.user.merchant.id,
-    );
+  async getSummary(@Request() req: AuthenticatedUser) {
+    const data = await this.service.getCancellationSummary(req.merchant.id);
 
     return {
       statusCode: 200,
       message: 'Cancellation summary retrieved successfully',
+      data,
+    };
+  }
+
+  @Get('executive-summary')
+  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN, UserRole.MERCHANT_USER)
+  @Scopes(
+    Scope.ADMIN_PORTAL,
+    Scope.MERCHANT_WEB,
+    Scope.MERCHANT_ANDROID,
+    Scope.MERCHANT_IOS,
+    Scope.MERCHANT_CLOVER,
+  )
+  @ApiOperation({
+    summary: 'Get executive kitchen analytics, SOS metrics, and SLA throughput',
+  })
+  async getExecutiveSummary(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() query: GetExecutiveAnalyticsQueryDto,
+  ) {
+    const merchantId = user.merchant.id;
+    const data = await this.service.getExecutiveAnalytics(
+      merchantId,
+      query.startDate,
+      query.endDate,
+      query.stationId,
+      query.targetSlaMinutes,
+    );
+
+    return {
+      statusCode: 200,
+      message: 'Executive kitchen analytics retrieved successfully',
+      data,
+    };
+  }
+
+  @Get()
+  @Roles(UserRole.PORTAL_ADMIN, UserRole.MERCHANT_ADMIN, UserRole.MERCHANT_USER)
+  @Scopes(
+    Scope.ADMIN_PORTAL,
+    Scope.MERCHANT_WEB,
+    Scope.MERCHANT_ANDROID,
+    Scope.MERCHANT_IOS,
+    Scope.MERCHANT_CLOVER,
+  )
+  @ApiOperation({
+    summary: 'Primary endpoint for kitchen analytics overview and SOS metrics',
+  })
+  async getAnalyticsRoot(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() query: GetExecutiveAnalyticsQueryDto,
+  ) {
+    const merchantId = user.merchant.id;
+    const data = await this.service.getExecutiveAnalytics(
+      merchantId,
+      query.startDate,
+      query.endDate,
+      query.stationId,
+      query.targetSlaMinutes,
+    );
+
+    return {
+      statusCode: 200,
+      message: 'Kitchen analytics overview retrieved successfully',
       data,
     };
   }

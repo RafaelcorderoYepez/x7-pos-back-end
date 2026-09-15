@@ -49,11 +49,12 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ErrorResponse } from 'src/common/dtos/error-response.dto';
 import { KitchenOrderBusinessStatus } from './constants/kitchen-order-business-status.enum';
+import { KitchenCancellationReason } from './constants/kitchen-order-cancellation-reason.dto';
 import { CancelKitchenOrderDto } from './dto/cancel-kitchen-order.dto';
 
 type AuthenticatedRequest = ExpressRequest & { user: AuthenticatedUser };
 
-@ApiTags('Kitchen Orders')
+@ApiTags('Restaurant operations - Kitchen Display System - Kitchen Orders')
 @ApiBearerAuth()
 @Controller('kitchen-orders')
 @RequireFeature(SUBSCRIPTION_FEATURE_IDS.KITCHEN_ORDERS)
@@ -192,6 +193,24 @@ export class KitchenOrderController {
     required: false,
     type: String,
     description: 'Filter by creation date (YYYY-MM-DD format)',
+  })
+  @ApiQuery({
+    name: 'startDate',
+    required: false,
+    type: String,
+    description: 'Filter orders created on or after this date (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'endDate',
+    required: false,
+    type: String,
+    description: 'Filter orders created on or before this date (YYYY-MM-DD)',
+  })
+  @ApiQuery({
+    name: 'cancellationReason',
+    required: false,
+    enum: KitchenCancellationReason,
+    description: 'Filter by cancellation reason',
   })
   @ApiQuery({
     name: 'page',
@@ -356,6 +375,7 @@ export class KitchenOrderController {
       id,
       updateKitchenOrderDto,
       authenticatedUserMerchantId,
+      req.user?.id,
     );
   }
 
@@ -421,8 +441,8 @@ export class KitchenOrderController {
   async cancelKitchenOrder(
     @Param('id') id: number,
     @Body() dto: CancelKitchenOrderDto,
-    @Request() req,
+    @Request() req: AuthenticatedUser,
   ) {
-    return this.kitchenOrderService.cancelKitchenOrder(id, dto, req.user);
+    return this.kitchenOrderService.cancelKitchenOrder(id, dto, req);
   }
 }

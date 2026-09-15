@@ -359,7 +359,11 @@ describe('MerchantTaxRuleService', () => {
       saveSpy.mockResolvedValue(mockMerchantTaxRule as MerchantTaxRule);
 
       await service.create(
-        { ...mockCreateMerchantTaxRuleDto, taxType: TaxType.PERCENTAGE, rate: 1 },
+        {
+          ...mockCreateMerchantTaxRuleDto,
+          taxType: TaxType.PERCENTAGE,
+          rate: 1,
+        },
         mockMerchantAdminUser,
       );
 
@@ -525,7 +529,6 @@ describe('MerchantTaxRuleService', () => {
 
   describe('Find One Merchant Tax Rule', () => {
     it('should throw error for invalid ID (null)', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       await expect(
         service.findOne(null as any, mockMerchantAdminUser),
       ).rejects.toThrow();

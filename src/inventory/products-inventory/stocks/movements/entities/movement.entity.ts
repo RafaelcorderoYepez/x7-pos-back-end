@@ -1,3 +1,4 @@
+import { Location } from '../../locations/entities/location.entity';
 import {
   Column,
   CreateDateColumn,
@@ -120,16 +121,35 @@ export class Movement {
   @Column({ type: 'int', name: 'source_location_id', nullable: true })
   sourceLocationId: number | null;
 
+  @ManyToOne(() => Location, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'source_location_id' })
+  sourceLocation: Location | null;
+
   @ApiPropertyOptional({ example: 2, description: 'Destination Location ID' })
   @Column({ type: 'int', name: 'destination_location_id', nullable: true })
   destinationLocationId: number | null;
 
-  @ApiPropertyOptional({ example: 'Admin', description: 'User who created the movement' })
+  @ManyToOne(() => Location, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'destination_location_id' })
+  destinationLocation: Location | null;
+
+  @ApiPropertyOptional({
+    example: 'Admin',
+    description: 'User who created the movement',
+  })
   @Column({ type: 'varchar', length: 255, name: 'created_by', nullable: true })
   createdBy: string | null;
 
-  @ApiPropertyOptional({ example: 'TRANSFER', description: 'Raw material stock movement type' })
-  @Column({ type: 'varchar', length: 50, name: 'movement_type', nullable: true })
+  @ApiPropertyOptional({
+    example: 'TRANSFER',
+    description: 'Raw material stock movement type',
+  })
+  @Column({
+    type: 'varchar',
+    length: 50,
+    name: 'movement_type',
+    nullable: true,
+  })
   movementType: string | null;
 
   @ApiPropertyOptional({
