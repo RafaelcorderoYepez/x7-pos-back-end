@@ -11,6 +11,7 @@ import { KitchenOrder } from './entities/kitchen-order.entity';
 import { KitchenOrderItem } from '../kitchen-order-item/entities/kitchen-order-item.entity';
 import { KitchenOrderItemStatus } from '../kitchen-order-item/constants/kitchen-order-item-status.enum';
 import { KitchenOrderItemPreparationStatus } from '../kitchen-order-item/constants/kitchen-order-item-preparation-status.enum';
+import { KitchenCourse, calculatePacingHoldMinutes } from '../kitchen-order-item/constants/kitchen-course.enum';
 import { OrderItem } from '../../pos/order-item/entities/order-item.entity';
 import { OrderItemStatus } from '../../pos/order-item/constants/order-item-status.enum';
 import { KitchenOrderSyncService } from './kitchen-order-sync.service';
@@ -21,6 +22,50 @@ import { KitchenStation } from '../kitchen-station/entities/kitchen-station.enti
 import { Product } from '../../../inventory/products-inventory/products/entities/product.entity';
 import { Variant } from '../../../inventory/products-inventory/variants/entities/variant.entity';
 import { CreateKitchenOrderDto } from './dto/create-kitchen-order.dto';
+
+function inferKitchenCourse(productName?: string | null, explicitCourse?: string): KitchenCourse {
+  if (explicitCourse) {
+    const norm = explicitCourse.toLowerCase().trim();
+    if (norm === 'beverage' || norm === 'drink') return KitchenCourse.BEVERAGE;
+    if (norm === 'appetizer' || norm === 'starter') return KitchenCourse.APPETIZER;
+    if (norm === 'dessert') return KitchenCourse.DESSERT;
+    if (norm === 'main_course' || norm === 'main') return KitchenCourse.MAIN_COURSE;
+  }
+
+  const p = (productName || '').toLowerCase();
+  // Beverages
+  if (
+    p.includes('cappuccino') || p.includes('latte') || p.includes('cafe') || p.includes('coffee') ||
+    p.includes('espresso') || p.includes('tea') || p.includes('té') || p.includes('beer') ||
+    p.includes('cerveza') || p.includes('vino') || p.includes('wine') || p.includes('soda') ||
+    p.includes('juice') || p.includes('jugo') || p.includes('water') || p.includes('agua') ||
+    p.includes('cocktail') || p.includes('drink') || p.includes('beverage') || p.includes('limonada')
+  ) {
+    return KitchenCourse.BEVERAGE;
+  }
+
+  // Desserts
+  if (
+    p.includes('cake') || p.includes('torta') || p.includes('pastel') || p.includes('helado') ||
+    p.includes('ice cream') || p.includes('dessert') || p.includes('postre') || p.includes('pie') ||
+    p.includes('brownie') || p.includes('cheesecake') || p.includes('croissant') || p.includes('volcan')
+  ) {
+    return KitchenCourse.DESSERT;
+  }
+
+  // Appetizers
+  if (
+    p.includes('salad') || p.includes('ensalada') || p.includes('bruschetta') || p.includes('nacho') ||
+    p.includes('soup') || p.includes('sopa') || p.includes('wings') || p.includes('alitas') ||
+    p.includes('calamari') || p.includes('fries') || p.includes('papas') || p.includes('carpaccio') ||
+    p.includes('taco') || p.includes('sushi') || p.includes('roll')
+  ) {
+    return KitchenCourse.APPETIZER;
+  }
+
+  return KitchenCourse.MAIN_COURSE;
+}
+
 import { UpdateKitchenOrderDto } from './dto/update-kitchen-order.dto';
 import {
   GetKitchenOrderQueryDto,
@@ -281,6 +326,11 @@ export class KitchenOrderService {
             }
           }
 
+          const assignedCourse = inferKitchenCourse(matchedProduct.name || it.productName || '', it.course || undefined);
+          const orderPriority = kitchenOrder.priority ?? 0;
+          const { isHeld, delayMinutes } = calculatePacingHoldMinutes(assignedCourse, orderPriority);
+          const holdUntilDate = isHeld ? new Date(Date.now() + delayMinutes * 60 * 1000) : null;
+
           const koi = queryRunner.manager.create(KitchenOrderItem, {
             kitchen_order_id: savedKitchenOrder.id,
             order_item_id: null,
@@ -288,7 +338,12 @@ export class KitchenOrderService {
             variant_id: matchedVariantId,
             quantity: it.quantity && it.quantity > 0 ? it.quantity : 1,
             prepared_quantity: 0,
-            preparation_status: KitchenOrderItemPreparationStatus.PENDING,
+            course: assignedCourse,
+            preparation_status: isHeld
+              ? KitchenOrderItemPreparationStatus.HELD
+              : KitchenOrderItemPreparationStatus.PENDING,
+            hold_until: holdUntilDate,
+            fired_at: null,
             status: KitchenOrderItemStatus.ACTIVE,
             started_at: null,
             completed_at: null,
@@ -490,6 +545,9 @@ export class KitchenOrderService {
                         : 'kitchenOrder.created_at';
     const sortOrder = query.sortOrder || 'DESC';
     queryBuilder.orderBy(sortField, sortOrder);
+    if (query.sortBy === KitchenOrderSortBy.PRIORITY) {
+      queryBuilder.addOrderBy('kitchenOrder.created_at', 'ASC');
+    }
 
     queryBuilder.skip(skip).take(limit);
 
@@ -1155,6 +1213,9 @@ export class KitchenOrderService {
       quantity: kitchenOrderItem.quantity,
       preparedQuantity: kitchenOrderItem.prepared_quantity,
       preparationStatus: kitchenOrderItem.preparation_status,
+      course: kitchenOrderItem.course || KitchenCourse.MAIN_COURSE,
+      holdUntil: kitchenOrderItem.hold_until || null,
+      firedAt: kitchenOrderItem.fired_at || null,
       status: kitchenOrderItem.status,
       startedAt: kitchenOrderItem.started_at,
       completedAt: kitchenOrderItem.completed_at,
