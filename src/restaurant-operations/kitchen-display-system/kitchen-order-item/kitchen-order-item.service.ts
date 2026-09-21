@@ -6,7 +6,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, IsNull } from 'typeorm';
 import { KitchenOrderItem } from './entities/kitchen-order-item.entity';
 import { KitchenOrder } from '../kitchen-order/entities/kitchen-order.entity';
 import { OrderItem } from '../../../restaurant-operations/pos/order-item/entities/order-item.entity';
@@ -1125,12 +1125,65 @@ export class KitchenOrderItemService {
         parentOrder.business_status = KitchenOrderBusinessStatus.COMPLETED;
         parentOrder.completed_at = now;
         if (!parentOrder.started_at) {
-          parentOrder.started_at = now;
+          parentOrder.started_at = parentOrder.created_at || now;
         }
         await this.kitchenOrderRepository.save(parentOrder);
 
         try {
           const eventLogRepo = this.dataSource.getRepository(KitchenEventLog);
+
+          // 1. Asegurar que la comanda tenga su evento de INICIO
+          const hasOrderInicio = await eventLogRepo.findOne({
+            where: {
+              kitchen_order_id: parentOrder.id,
+              kitchen_order_item_id: IsNull(),
+              event_type: KitchenEventLogEventType.INICIO,
+              status: KitchenEventLogStatus.ACTIVE,
+            },
+          });
+          if (!hasOrderInicio) {
+            const orderStartTime = parentOrder.started_at || parentOrder.created_at || now;
+            await eventLogRepo.save(
+              eventLogRepo.create({
+                kitchen_order_id: parentOrder.id,
+                station_id: parentOrder.station_id || null,
+                event_type: KitchenEventLogEventType.INICIO,
+                event_time: orderStartTime,
+                status: KitchenEventLogStatus.ACTIVE,
+                user_id: userId || null,
+                message: `Order #${parentOrder.id} received and started in kitchen`,
+              }),
+            );
+          }
+
+          // 2. Asegurar que cada plato tenga su evento de LISTO si no lo tenía
+          for (const it of activeItems) {
+            const hasItemListo = await eventLogRepo.findOne({
+              where: {
+                kitchen_order_id: parentOrder.id,
+                kitchen_order_item_id: it.id,
+                event_type: KitchenEventLogEventType.LISTO,
+                status: KitchenEventLogStatus.ACTIVE,
+              },
+            });
+            if (!hasItemListo) {
+              const productName = it.product?.name || `Item #${it.id}`;
+              await eventLogRepo.save(
+                eventLogRepo.create({
+                  kitchen_order_id: parentOrder.id,
+                  kitchen_order_item_id: it.id,
+                  station_id: parentOrder.station_id || null,
+                  event_type: KitchenEventLogEventType.LISTO,
+                  event_time: it.completed_at || now,
+                  status: KitchenEventLogStatus.ACTIVE,
+                  user_id: userId || null,
+                  message: `Item #${it.id} (${productName}) reached quantity and is READY`,
+                }),
+              );
+            }
+          }
+
+          // 3. Registrar evento de FINALIZACIÓN (SERVIDO) de la comanda
           await eventLogRepo.save(
             eventLogRepo.create({
               kitchen_order_id: parentOrder.id,
@@ -1172,6 +1225,33 @@ export class KitchenOrderItemService {
         parentOrder.business_status = KitchenOrderBusinessStatus.STARTED;
         parentOrder.started_at = now;
         await this.kitchenOrderRepository.save(parentOrder);
+
+        try {
+          const eventLogRepo = this.dataSource.getRepository(KitchenEventLog);
+          const hasOrderInicio = await eventLogRepo.findOne({
+            where: {
+              kitchen_order_id: parentOrder.id,
+              kitchen_order_item_id: IsNull(),
+              event_type: KitchenEventLogEventType.INICIO,
+              status: KitchenEventLogStatus.ACTIVE,
+            },
+          });
+          if (!hasOrderInicio) {
+            await eventLogRepo.save(
+              eventLogRepo.create({
+                kitchen_order_id: parentOrder.id,
+                station_id: parentOrder.station_id || null,
+                event_type: KitchenEventLogEventType.INICIO,
+                event_time: now,
+                status: KitchenEventLogStatus.ACTIVE,
+                user_id: userId || null,
+                message: `Order #${parentOrder.id} started preparation in kitchen`,
+              }),
+            );
+          }
+        } catch (err) {
+          console.error('Failed to log INICIO on order start:', err);
+        }
 
         if (parentOrder.order_id) {
           await this.kitchenOrderSyncService.syncPosOrderFromKitchenOrders(
@@ -1248,33 +1328,30 @@ export class KitchenOrderItemService {
       );
     }
 
-    item.preparation_status = KitchenOrderItemPreparationStatus.PENDING;
+    item.preparation_status =
+      KitchenOrderItemPreparationStatus.IN_PREPARATION;
     item.fired_at = new Date();
+    item.started_at = item.started_at || new Date();
     item.hold_until = null;
     await this.kitchenOrderItemRepository.save(item);
+
+    // Promote parent order to started if it was pending
+    if (item.kitchen_order_id) {
+      await this.dataSource.query(
+        `UPDATE kitchen_order
+         SET business_status = 'started',
+             started_at = COALESCE(started_at, NOW())
+         WHERE id = $1 AND business_status = 'pending'`,
+        [item.kitchen_order_id],
+      );
+    }
 
     await this.checkAndCascadeParentOrderAutoBump(
       item.kitchen_order_id,
       userId,
     );
 
-    try {
-      const eventLogRepo = this.dataSource.getRepository(KitchenEventLog);
-      await eventLogRepo.save(
-        eventLogRepo.create({
-          kitchen_order_id: item.kitchen_order_id,
-          kitchen_order_item_id: item.id,
-          station_id: item.kitchenOrder?.station_id || null,
-          event_type: KitchenEventLogEventType.INICIO,
-          event_time: new Date(),
-          status: KitchenEventLogStatus.ACTIVE,
-          user_id: userId || null,
-          message: `Item #${item.id} (${item.product?.name || 'Item'}) [${item.course}] FIRED from HELD to PENDING queue`,
-        }),
-      );
-    } catch (err) {
-      console.error('Failed to log fireItem event:', err);
-    }
+
 
     const reloaded = await this.reloadKitchenOrderItemAfterSaveAndSync(item.id);
     return {
@@ -1382,34 +1459,29 @@ export class KitchenOrderItemService {
     const updatedResponses: KitchenOrderItemResponseDto[] = [];
 
     for (const item of heldItems) {
-      item.preparation_status = KitchenOrderItemPreparationStatus.PENDING;
+      item.preparation_status =
+        KitchenOrderItemPreparationStatus.IN_PREPARATION;
       item.fired_at = now;
+      item.started_at = item.started_at || now;
       item.hold_until = null;
       await this.kitchenOrderItemRepository.save(item);
 
-      try {
-        const eventLogRepo = this.dataSource.getRepository(KitchenEventLog);
-        await eventLogRepo.save(
-          eventLogRepo.create({
-            kitchen_order_id: kitchenOrder.id,
-            kitchen_order_item_id: item.id,
-            station_id: kitchenOrder.station_id || null,
-            event_type: KitchenEventLogEventType.INICIO,
-            event_time: now,
-            status: KitchenEventLogStatus.ACTIVE,
-            user_id: userId || null,
-            message: `Course ${course.toUpperCase()} FIRED: Item #${item.id} (${item.product?.name || 'Dish'}) moved to PENDING`,
-          }),
-        );
-      } catch (err) {
-        console.error('Failed to log course fire event:', err);
-      }
+
 
       const reloaded = await this.reloadKitchenOrderItemAfterSaveAndSync(item.id);
       updatedResponses.push(this.formatKitchenOrderItemResponse(reloaded));
     }
 
     if (heldItems.length > 0) {
+      if (kitchenOrder.id) {
+        await this.dataSource.query(
+          `UPDATE kitchen_order
+           SET business_status = 'started',
+               started_at = COALESCE(started_at, NOW())
+           WHERE id = $1 AND business_status = 'pending'`,
+          [kitchenOrder.id],
+        );
+      }
       await this.checkAndCascadeParentOrderAutoBump(kitchenOrder.id, userId);
     }
 
@@ -1456,8 +1528,10 @@ export class KitchenOrderItemService {
     const affectedOrderIds = new Set<number>();
 
     for (const item of expiredItems) {
-      item.preparation_status = KitchenOrderItemPreparationStatus.PENDING;
+      item.preparation_status =
+        KitchenOrderItemPreparationStatus.IN_PREPARATION;
       item.fired_at = now;
+      item.started_at = item.started_at || now;
       item.hold_until = null;
       await this.kitchenOrderItemRepository.save(item);
       affectedOrderIds.add(item.kitchen_order_id);
@@ -1473,7 +1547,7 @@ export class KitchenOrderItemService {
             event_time: now,
             status: KitchenEventLogStatus.ACTIVE,
             user_id: userId || null,
-            message: `AUTOMATED PACING ALERT: Item #${item.id} (${item.product?.name || 'Dish'}) hold timer expired. Auto-fired to line queue.`,
+            message: `AUTOMATED PACING ALERT: Item #${item.id} (${item.product?.name || 'Dish'}) hold timer expired. Auto-fired to IN_PREPARATION.`,
           }),
         );
       } catch (err) {
@@ -1485,6 +1559,13 @@ export class KitchenOrderItemService {
     }
 
     for (const orderId of affectedOrderIds) {
+      await this.dataSource.query(
+        `UPDATE kitchen_order
+         SET business_status = 'started',
+             started_at = COALESCE(started_at, NOW())
+         WHERE id = $1 AND business_status = 'pending'`,
+        [orderId],
+      );
       await this.checkAndCascadeParentOrderAutoBump(orderId, userId);
     }
 

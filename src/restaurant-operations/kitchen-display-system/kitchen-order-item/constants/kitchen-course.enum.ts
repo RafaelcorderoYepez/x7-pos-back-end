@@ -34,7 +34,10 @@ export function getCourseLabel(course: KitchenCourse): string {
  * Calculates dynamic pacing hold time according to ticket priority.
  * Higher priority tickets have accelerated pacing (shorter hold delay).
  */
-export function calculatePacingHoldMinutes(course: KitchenCourse, priority: number = 0): { isHeld: boolean; delayMinutes: number } {
+export function calculatePacingHoldMinutes(
+  course: KitchenCourse,
+  priority: number = 0,
+): { isHeld: boolean; delayMinutes: number } {
   const isEligibleForHold = course === KitchenCourse.MAIN_COURSE || course === KitchenCourse.DESSERT;
   if (!isEligibleForHold) {
     return { isHeld: false, delayMinutes: 0 };

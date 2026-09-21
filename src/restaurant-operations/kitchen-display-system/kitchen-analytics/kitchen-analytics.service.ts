@@ -29,7 +29,12 @@ export class KitchenAnalyticsService {
           .addSelect('ko.completed_at', 'completed_at')
           .addSelect('ko.started_at', 'started_at')
           .addSelect(
-            'EXTRACT(EPOCH FROM (ko.completed_at - ko.started_at))',
+            'CASE ' +
+              'WHEN ko.completed_at IS NOT NULL AND ko.started_at IS NOT NULL AND ko.started_at < ko.completed_at ' +
+                'THEN EXTRACT(EPOCH FROM (ko.completed_at - ko.started_at)) ' +
+              'WHEN ko.completed_at IS NOT NULL AND ko.created_at IS NOT NULL ' +
+                'THEN EXTRACT(EPOCH FROM (ko.completed_at - ko.created_at)) ' +
+              'ELSE NULL END',
             'prep_time_seconds',
           )
           .from('kitchen_order', 'ko')
@@ -39,8 +44,7 @@ export class KitchenAnalyticsService {
             'koi.kitchen_order_id = ko.id',
           )
           .where('ko.business_status = :status', { status: 'completed' })
-          .andWhere('ko.completed_at IS NOT NULL')
-          .andWhere('ko.started_at IS NOT NULL');
+          .andWhere('ko.completed_at IS NOT NULL');
       }, 'sub')
 
       .innerJoin('product', 'p', 'p.id = sub.product_id')
@@ -161,8 +165,11 @@ export class KitchenAnalyticsService {
       .addSelect('ko.completed_at', 'completed_at')
       .addSelect('ko.cancelled_at', 'cancelled_at')
       .addSelect(
-        'CASE WHEN ko.completed_at IS NOT NULL AND ko.started_at IS NOT NULL ' +
-          'THEN EXTRACT(EPOCH FROM (ko.completed_at - ko.started_at)) ' +
+        'CASE ' +
+          'WHEN ko.completed_at IS NOT NULL AND ko.started_at IS NOT NULL AND ko.started_at < ko.completed_at ' +
+            'THEN EXTRACT(EPOCH FROM (ko.completed_at - ko.started_at)) ' +
+          'WHEN ko.completed_at IS NOT NULL AND ko.created_at IS NOT NULL ' +
+            'THEN EXTRACT(EPOCH FROM (ko.completed_at - ko.created_at)) ' +
           'ELSE NULL END',
         'prepSeconds',
       )

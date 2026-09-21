@@ -6,7 +6,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Repository, IsNull } from 'typeorm';
 import { KitchenOrder } from './entities/kitchen-order.entity';
 import { KitchenOrderItem } from '../kitchen-order-item/entities/kitchen-order-item.entity';
 import { KitchenOrderItemStatus } from '../kitchen-order-item/constants/kitchen-order-item-status.enum';
@@ -245,8 +245,12 @@ export class KitchenOrderService {
     kitchenOrder.priority = createKitchenOrderDto.priority ?? 0;
     kitchenOrder.business_status =
       createKitchenOrderDto.businessStatus ||
-      KitchenOrderBusinessStatus.PENDING;
-    kitchenOrder.started_at = createKitchenOrderDto.startedAt || null;
+      KitchenOrderBusinessStatus.STARTED;
+    kitchenOrder.started_at =
+      createKitchenOrderDto.startedAt ||
+      (kitchenOrder.business_status === KitchenOrderBusinessStatus.STARTED
+        ? new Date()
+        : null);
     kitchenOrder.completed_at = createKitchenOrderDto.completedAt || null;
 
     let notesText = createKitchenOrderDto.notes?.trim() || '';
@@ -276,6 +280,7 @@ export class KitchenOrderService {
         const productRepo = queryRunner.manager.getRepository(Product);
         const variantRepo = queryRunner.manager.getRepository(Variant);
 
+        const createdKoiList: KitchenOrderItem[] = [];
         for (const it of createKitchenOrderDto.kitchenOrderItems) {
           let matchedProduct: Product | null = null;
           if (it.productId) {
@@ -328,7 +333,11 @@ export class KitchenOrderService {
 
           const assignedCourse = inferKitchenCourse(matchedProduct.name || it.productName || '', it.course || undefined);
           const orderPriority = kitchenOrder.priority ?? 0;
-          const { isHeld, delayMinutes } = calculatePacingHoldMinutes(assignedCourse, orderPriority);
+
+          const { isHeld, delayMinutes } = calculatePacingHoldMinutes(
+            assignedCourse,
+            orderPriority,
+          );
           const holdUntilDate = isHeld ? new Date(Date.now() + delayMinutes * 60 * 1000) : null;
 
           const koi = queryRunner.manager.create(KitchenOrderItem, {
@@ -341,11 +350,13 @@ export class KitchenOrderService {
             course: assignedCourse,
             preparation_status: isHeld
               ? KitchenOrderItemPreparationStatus.HELD
-              : KitchenOrderItemPreparationStatus.PENDING,
+              : (kitchenOrder.business_status === KitchenOrderBusinessStatus.STARTED
+                  ? KitchenOrderItemPreparationStatus.IN_PREPARATION
+                  : KitchenOrderItemPreparationStatus.PENDING),
             hold_until: holdUntilDate,
-            fired_at: null,
+            fired_at: !isHeld && kitchenOrder.business_status === KitchenOrderBusinessStatus.STARTED ? new Date() : null,
             status: KitchenOrderItemStatus.ACTIVE,
-            started_at: null,
+            started_at: !isHeld && kitchenOrder.business_status === KitchenOrderBusinessStatus.STARTED ? new Date() : null,
             completed_at: null,
             notes:
               it.notes ||
@@ -355,7 +366,18 @@ export class KitchenOrderService {
                 ? it.variantName
                 : null),
           });
-          await queryRunner.manager.save(KitchenOrderItem, koi);
+          const savedKoi = await queryRunner.manager.save(KitchenOrderItem, koi);
+          createdKoiList.push(savedKoi);
+        }
+
+        // Si todos los items resultaron en HELD, la orden no puede nacer en STARTED
+        const allItemsHeld = createdKoiList.length > 0 && createdKoiList.every(
+          (k) => k.preparation_status === KitchenOrderItemPreparationStatus.HELD,
+        );
+        if (allItemsHeld) {
+          savedKitchenOrder.business_status = KitchenOrderBusinessStatus.PENDING;
+          savedKitchenOrder.started_at = null;
+          await queryRunner.manager.save(KitchenOrder, savedKitchenOrder);
         }
       } else {
         const skipAuto = createKitchenOrderDto.skipAutoKitchenItems === true;
@@ -397,6 +419,28 @@ export class KitchenOrderService {
       await this.kitchenOrderSyncService.syncPosOrderFromKitchenOrders(
         validOrderId,
       );
+    }
+
+    // Auditoría inicial: si la comanda nace en STARTED (ej: aperitivos o bebidas que inician automáticamente)
+    try {
+      if (savedKitchenOrder.business_status === KitchenOrderBusinessStatus.STARTED) {
+        const eventLogRepo = this.dataSource.getRepository(KitchenEventLog);
+        const orderStartTime = savedKitchenOrder.started_at || savedKitchenOrder.created_at || new Date();
+
+        await eventLogRepo.save(
+          eventLogRepo.create({
+            kitchen_order_id: savedKitchenOrder.id,
+            station_id: savedKitchenOrder.station_id || null,
+            event_type: KitchenEventLogEventType.INICIO,
+            event_time: orderStartTime,
+            status: KitchenEventLogStatus.ACTIVE,
+            user_id: null,
+            message: `Order #${savedKitchenOrder.id} received and started in kitchen`,
+          }),
+        );
+      }
+    } catch (err) {
+      console.error('Failed to log initial auto-start event:', err);
     }
 
     const completeKitchenOrder = await this.kitchenOrderRepository.findOne({
@@ -441,6 +485,34 @@ export class KitchenOrderService {
           'Created date must be in YYYY-MM-DD format',
         );
       }
+    }
+
+    // Auto-fire de ítems retenidos cuyo tiempo de hold ya expiró en cocina
+    try {
+      await this.dataSource.query(`
+        UPDATE kitchen_order_item
+        SET preparation_status = 'in_preparation',
+            hold_until = NULL,
+            fired_at = NOW(),
+            started_at = COALESCE(started_at, NOW())
+        WHERE preparation_status = 'held'
+          AND hold_until IS NOT NULL
+          AND hold_until <= NOW();
+      `);
+
+      await this.dataSource.query(`
+        UPDATE kitchen_order ko
+        SET business_status = 'started',
+            started_at = COALESCE(started_at, NOW())
+        WHERE ko.business_status = 'pending'
+          AND EXISTS (
+            SELECT 1 FROM kitchen_order_item koi
+            WHERE koi.kitchen_order_id = ko.id
+              AND koi.preparation_status = 'in_preparation'
+          );
+      `);
+    } catch (e) {
+      // safe fallback
     }
 
     const page = query.page || 1;
@@ -543,8 +615,9 @@ export class KitchenOrderService {
                       : query.sortBy === KitchenOrderSortBy.ID
                         ? 'kitchenOrder.id'
                         : 'kitchenOrder.created_at';
-    const sortOrder = query.sortOrder || 'DESC';
+    const sortOrder = query.sortOrder || 'ASC';
     queryBuilder.orderBy(sortField, sortOrder);
+    queryBuilder.addOrderBy('kitchenOrder.id', sortOrder);
     if (query.sortBy === KitchenOrderSortBy.PRIORITY) {
       queryBuilder.addOrderBy('kitchenOrder.created_at', 'ASC');
     }
@@ -737,10 +810,49 @@ export class KitchenOrderService {
 
       if (
         updateKitchenOrderDto.businessStatus ===
-          KitchenOrderBusinessStatus.STARTED &&
-        !existingKitchenOrder.started_at
+        KitchenOrderBusinessStatus.STARTED
       ) {
-        existingKitchenOrder.started_at = new Date();
+        const startNow = new Date();
+        if (!existingKitchenOrder.started_at) {
+          existingKitchenOrder.started_at = startNow;
+        }
+        await this.dataSource.query(
+          `UPDATE kitchen_order_item
+           SET preparation_status = 'in_preparation',
+               hold_until = NULL,
+               fired_at = NOW(),
+               started_at = COALESCE(started_at, NOW())
+           WHERE kitchen_order_id = $1
+             AND preparation_status IN ('held', 'pending')`,
+          [existingKitchenOrder.id],
+        );
+
+        try {
+          const eventLogRepo = this.dataSource.getRepository(KitchenEventLog);
+          const hasOrderInicio = await eventLogRepo.findOne({
+            where: {
+              kitchen_order_id: existingKitchenOrder.id,
+              kitchen_order_item_id: IsNull(),
+              event_type: KitchenEventLogEventType.INICIO,
+              status: KitchenEventLogStatus.ACTIVE,
+            },
+          });
+          if (!hasOrderInicio) {
+            await eventLogRepo.save(
+              eventLogRepo.create({
+                kitchen_order_id: existingKitchenOrder.id,
+                station_id: existingKitchenOrder.station_id || null,
+                event_type: KitchenEventLogEventType.INICIO,
+                event_time: existingKitchenOrder.started_at || startNow,
+                status: KitchenEventLogStatus.ACTIVE,
+                user_id: userId || null,
+                message: `Order #${existingKitchenOrder.id} started preparation in kitchen`,
+              }),
+            );
+          }
+        } catch (err) {
+          console.error('Failed to log INICIO on order start:', err);
+        }
       }
 
       if (
@@ -752,7 +864,7 @@ export class KitchenOrderService {
           existingKitchenOrder.completed_at = now;
         }
         if (!existingKitchenOrder.started_at) {
-          existingKitchenOrder.started_at = now;
+          existingKitchenOrder.started_at = existingKitchenOrder.created_at || now;
         }
 
         // Cascada automática: Al dar BUMP a la comanda:
@@ -762,6 +874,7 @@ export class KitchenOrderService {
           const hasInicio = await eventLogRepo.findOne({
             where: {
               kitchen_order_id: existingKitchenOrder.id,
+              kitchen_order_item_id: IsNull(),
               event_type: KitchenEventLogEventType.INICIO,
               status: KitchenEventLogStatus.ACTIVE,
             },
@@ -784,7 +897,7 @@ export class KitchenOrderService {
           console.error('Failed to log INICIO on auto-bump:', err);
         }
 
-        // 2. Todos sus ítems pasan automáticamente a READY y se registra evento LISTO si no existía
+        // 2. Todos sus ítems pasan automáticamente a READY y se asegura evento INICIO y LISTO
         const itemRepo = this.dataSource.getRepository(KitchenOrderItem);
         const orderItems = await itemRepo.find({
           where: {
@@ -799,11 +912,14 @@ export class KitchenOrderService {
           item.prepared_quantity = item.quantity;
           item.completed_at = now;
           if (!item.started_at) {
-            item.started_at = now;
+            item.started_at = item.created_at || existingKitchenOrder.started_at || existingKitchenOrder.created_at || now;
           }
           await itemRepo.save(item);
 
           try {
+            const productName = item.product?.name || `Item #${item.id}`;
+
+            // Registrar evento LISTO si no existía
             const hasListo = await eventLogRepo.findOne({
               where: {
                 kitchen_order_item_id: item.id,
@@ -812,7 +928,6 @@ export class KitchenOrderService {
               },
             });
             if (!hasListo) {
-              const productName = item.product?.name || `Item #${item.id}`;
               await eventLogRepo.save(
                 eventLogRepo.create({
                   kitchen_order_id: existingKitchenOrder.id,
@@ -827,7 +942,7 @@ export class KitchenOrderService {
               );
             }
           } catch (err) {
-            console.error('Failed to log LISTO on item auto-bump:', err);
+            console.error('Failed to log events on item auto-bump:', err);
           }
         }
       }
