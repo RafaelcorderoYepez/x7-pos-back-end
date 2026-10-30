@@ -20,7 +20,7 @@
 1,Platform SaaS,Subscription System,Subscription Applications,Alejandro,Convertir en sub-module de Platform Saas,Yes,Yes,Yes,Yes,,,,,11,SUBSCRIPTION_APPLICATIONS
 1,Platform SaaS,Subscription System,Subscription payments,Alejandro,Convertir en sub-module de Platform Saas,Yes,Yes,Yes,Yes,,,,,12,SUBSCRIPTION_PAYMENTS
 1,Platform SaaS,Users,Users HUB View (Application Dashboard),,,Yes,Yes,Yes,Yes,Yes,Yes,,,,
-1,Platform SaaS,Users,Global Users Directory,,,Yes,Yes,Yes,Yes,,,,Yes,13,USERS
+1,Platform SaaS,Users,Global Users Directory,,,Yes,Yes,Yes,Yes,,,,,13,USERS
 1,Platform SaaS,Users,Company Users Directory,,,Yes,Yes,Yes,,Yes,,,,13,USERS
 2,CORE,Billing / Transactions,Billing / Transactions HUB View (Application Dashboard),Antonio,,Yes,Yes,Yes,,Yes,Yes,,,,
 2,CORE,Billing / Transactions,Receipts,Antonio,,Yes,Yes,Yes,,Yes,,,,15,RECEIPTS

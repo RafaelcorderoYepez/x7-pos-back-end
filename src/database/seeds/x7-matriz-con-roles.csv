@@ -56,7 +56,7 @@
 5,Restaurant Operations,Kitchen Display System,Kitchen Order Items,Miguel,,,Yes,Yes,,Yes,Yes,Yes,,Yes,Yes,,,Yes,,
 5,Restaurant Operations,Kitchen Display System,Kitchen Orders,Miguel,,,Yes,Yes,,Yes,Yes,Yes,,Yes,Yes,,,Yes,,Waiter: ver qué está listo para servir
 5,Restaurant Operations,Kitchen Display System,Kitchen Stations,Miguel,,,Yes,Yes,,Yes,Yes,Yes,,,,,,,,
-5,Restaurant Operations,Kitchen Display System,Kitchen Performance,Miguel,,,Yes,Yes,,Yes,Yes,Yes,,,,,,,,Feature nueva (117): falta crearla en el backend; propuesta solo manager
+5,Restaurant Operations,Kitchen Display System,Kitchen Performance,Miguel,,,Yes,Yes,,Yes,Yes,Yes,,,,,,,,Feature nueva (117): falta crearla en el backend; solo manager (aprobado 2026-10-30)
 5,Restaurant Operations,POS,Order Discounts,,,Yes,Yes,Yes,,Yes,Yes,Yes,Yes,,,,,,,Aplicar descuentos requiere autoridad
 5,Restaurant Operations,POS,Order Items,Miguel,,Yes,Yes,Yes,,Yes,Yes,Yes,Yes,Yes,Yes,,,,,
 5,Restaurant Operations,POS,Order Payments,,,Yes,Yes,Yes,,Yes,Yes,Yes,Yes,Yes,Yes,,,,,Cobro en mesa o barra
